@@ -17,12 +17,31 @@
                 <span class="menu-title-text">MAIN</span>
             </li>
             <li class="menu-item open">
-                <a href="{{ url('/') }}" class="menu-link active">
+                <a href="{{ route('dashboard') }}" class="menu-link {{ Request::is('dashboard') ? 'active' : '' }}">
                     <span class="material-symbols-outlined menu-icon">dashboard</span>
                     <span class="title">Dashboard</span>
                 </a>
             </li>
 
+            <li class="menu-item {{ request()->routeIs('order.*') ? 'open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <span class="material-symbols-outlined menu-icon">note_stack</span>
+                    <span class="title">Orders</span>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="{{ route('order.create') }}"
+                            class="menu-link {{ Request::is('order/create') ? 'active' : '' }}">
+                            Create Order
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/landing-page" class="menu-link {{ Request::is('landing-page') ? 'active' : '' }}">
+                            All Orders
+                        </a>
+                    </li>
+                </ul>
+            </li>
             <li class="menu-item">
                 <a href="javascript:void(0);" class="menu-link menu-toggle active">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>

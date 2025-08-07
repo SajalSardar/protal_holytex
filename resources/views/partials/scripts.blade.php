@@ -19,3 +19,5 @@
 <script src="{{ asset('assets/js/custom/apexcharts.js') }}"></script>
 <script src="{{ asset('assets/js/custom/echarts.js') }}"></script>
 <script src="{{ asset('assets/js/custom/custom.js') }}"></script>
+<script src="{{ asset('assets/js/jquery-3.7.1.slim.min.js') }}"></script>
+<script src="{{ asset('assets/js/select2.min.js') }}"></script>

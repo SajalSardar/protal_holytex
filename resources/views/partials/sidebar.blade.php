@@ -31,41 +31,33 @@
                 <ul class="menu-sub">
                     <li class="menu-item">
                         <a href="{{ route('order.create') }}"
-                            class="menu-link {{ Request::is('order/create') ? 'active' : '' }}">
+                            class="menu-link {{ request()->routeIs('order.create') ? 'active' : '' }}">
                             Create Order
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="/landing-page" class="menu-link {{ Request::is('landing-page') ? 'active' : '' }}">
+                        <a href="{{ route('order.index') }}"
+                            class="menu-link {{ request()->routeIs('order.index') ? 'active' : '' }}">
                             All Orders
                         </a>
                     </li>
                 </ul>
             </li>
-            <li class="menu-item">
-                <a href="javascript:void(0);" class="menu-link menu-toggle active">
+            <li class="menu-item {{ request()->routeIs('settings.*') ? 'open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
-                    <span class="title">Front Pages</span>
+                    <span class="title">App Settings</span>
                 </a>
                 <ul class="menu-sub">
                     <li class="menu-item">
-                        <a href="/landing-page" class="menu-link {{ Request::is('landing-page') ? 'active' : '' }}">
-                            Landing Page
+                        <a href="{{ route('settings.style.index') }}"
+                            class="menu-link {{ request()->routeIs('settings.style.index') ? 'active' : '' }}">
+                            Style
                         </a>
                     </li>
                 </ul>
             </li>
 
-            <li class="menu-title small text-uppercase">
-                <span class="menu-title-text">APPS</span>
-            </li>
-
-            <li class="menu-item">
-                <a href="/calender" class="menu-link {{ Request::is('calender') ? 'active' : '' }}">
-                    <span class="material-symbols-outlined menu-icon">date_range</span>
-                    <span class="title">Calender</span>
-                </a>
-            </li>
 
             <li class="menu-item">
                 <a href="/logout" class="menu-link logout">

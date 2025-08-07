@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StyleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/test', function () {
@@ -18,6 +19,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::resource('order', OrderController::class);
+
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::resource('style', StyleController::class)->only(['index', 'edit', 'update', 'store']);
+    });
 
 });
 

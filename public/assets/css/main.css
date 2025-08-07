@@ -1,0 +1,41 @@
+/* Set width and height */
+.select2-container .select2-selection--single {
+    height: 50px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+}
+
+/* Style the text */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 40px;
+    color: #333;
+    font-size: 16px;
+}
+
+/* Remove arrow and customize it */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 48px;
+    right: 10px;
+}
+
+/* Focused style */
+.select2-container--default .select2-selection--single:focus,
+.select2-container--default .select2-selection--single:hover {
+    border-color: #1e73be;
+    box-shadow: 0 0 5px rgba(30, 115, 190, 0.5);
+}
+
+/* Dropdown menu style */
+.select2-container--default .select2-results > .select2-results__options {
+    max-height: 200px;
+    overflow-y: auto;
+    font-size: 15px;
+}
+
+/* Highlight selected option */
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #1e73be;
+    color: white;
+}

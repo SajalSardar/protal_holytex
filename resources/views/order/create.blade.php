@@ -3,12 +3,12 @@
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-        <h3 class="mb-0">Create Order</h3>
+        <h2 class="mb-0">Create Order</h2>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb align-items-center mb-0 lh-1">
                 <li class="breadcrumb-item">
-                    <a href="#" class="d-flex align-items-center text-decoration-none">
+                    <a href="{{ route('dashboard') }}" class="d-flex align-items-center text-decoration-none">
                         <i class="ri-home-4-line fs-18 text-primary me-1"></i>
                         <span class="text-secondary fw-medium hover">Dashboard</span>
                     </a>
@@ -27,27 +27,81 @@
         <div class=" col-lg-12">
             <div class="card bg-white border-0 rounded-3 mb-4">
                 <div class="card-body p-4">
-                    <h3 class="mb-lg-4 mb-3">Create Order</h3>
 
-                    <form action="{{ route('order.store') }}" method="POST">
+                    <form action="{{ route('order.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
-                                    <label class="label text-secondary">Order Number</label>
-                                    <input type="text" class="form-control h-55" name="order_number"
-                                        placeholder="Order Number">
+                                    <label class="label text-secondary">PO Number <span
+                                            style="color: rgb(205, 2, 2)">*</span></label>
+                                    <input type="text" class="form-control @error('po_number') is-invalid @enderror"
+                                        placeholder="PO Number" name="po_number">
+                                    @error('po_number')
+                                    <div class="text-danger mt-2">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
-                                    <label class="label text-secondary">PO</label>
-                                    <input type="text" class="form-control h-55" placeholder="PO" name="po_number">
+                                    <label class="label text-secondary">Customer Name</label>
+                                    <input type="text" class="form-control " name="client_name"
+                                        placeholder="Customer Name">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Email Address</label>
+                                    <input type="email" class="form-control " name="client_email"
+                                        placeholder="Enter Email Address">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Phone</label>
+                                    <input type="text" class="form-control " name="client_phone"
+                                        placeholder="Phone Number">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Order Date</label>
+                                    <input type="date" class="form-control" name="order_date">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Terms</label>
+                                    <input type="text" class="form-control" name="terms" placeholder="Terms">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Client Address</label>
+                                    <textarea class="form-control" rows="2" name="client_address"
+                                        placeholder="Enter Client Address"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Ship Address</label>
+                                    <textarea class="form-control" rows="2" name="ship_address"
+                                        placeholder="Enter Ship Address"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Upload PO</label>
+                                    <input type="file" class="form-control" name="po_file" accept="application/pdf">
+                                    <span style="font-size: 12px">Upload Only pdf file.</span>
+                                    @error('po_file')
+                                    <div class="text-danger mt-2">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
                             <hr>
-                            <h3 class="mb-lg-4 mb-3">Price</h3>
+                            <h3 class="mb-lg-4 mb-3">Price & Quantity</h3>
                             <div class="col-lg-12">
                                 <div class="mb-4">
                                     <table class="table align-middle" id="item_price_table">
@@ -81,16 +135,14 @@
                                 </div>
                             </div>
 
-                            <h3 class="mb-lg-4 mb-3">Add Price</h3>
-
                             <div class="col-md-2 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Style</label>
-                                    <select class="form-select form-control h-55" id="style"
-                                        aria-label="Default select example">
+                                    <select class="form-select form-control select2" id="style_select">
                                         <option selected disabled value="">Style</option>
-                                        <option value="MK">MK</option>
-                                        <option value="ST">ST</option>
+                                        @foreach ($styles as $style)
+                                        <option value="{{ $style->style_name }}">{{ $style->style_name }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -105,21 +157,21 @@
                             <div class="col-lg-2 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Unit Quantity</label>
-                                    <input type="number" class="form-control h-55" placeholder="Quantity"
-                                        id="unit_quantity" min="1">
+                                    <input type="number" class="form-control " placeholder="Quantity" id="unit_quantity"
+                                        min="1">
                                 </div>
                             </div>
                             <div class="col-lg-2 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Unit Price</label>
-                                    <input type="number" class="form-control h-55" min="1" placeholder="Unit Price"
+                                    <input type="number" class="form-control " min="1" placeholder="Unit Price"
                                         id="unit_price">
                                 </div>
                             </div>
                             <div class="col-lg-2 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Total Price</label>
-                                    <input type="text" readonly class="form-control h-55" placeholder="Unit Price"
+                                    <input type="text" readonly class="form-control " placeholder="Unit Price"
                                         id="total_unit_price">
                                 </div>
                             </div>
@@ -130,54 +182,6 @@
                             </div>
 
                             <hr>
-                            <h3 class="mb-lg-4 mb-3">Customer Info</h3>
-                            <div class="col-lg-6 col-sm-6">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">Customer Name</label>
-                                    <input type="email" class="form-control h-55" name="customer_name"
-                                        placeholder="Enter Email Address">
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-sm-6">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">Email Address</label>
-                                    <input type="email" class="form-control h-55" placeholder="Enter Email Address">
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-sm-6">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">City</label>
-                                    <select class="form-select form-control h-55" aria-label="Default select example">
-                                        <option selected>State</option>
-                                        <option value="1">New York</option>
-                                        <option value="2">Tokyo</option>
-                                        <option value="3">Amsterdam</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-sm-6">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">ZIP / Postcode</label>
-                                    <input type="text" class="form-control h-55" placeholder="Enter zip postcode">
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-sm-6">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">Street Address</label>
-                                    <input type="text" class="form-control h-55" placeholder="Enter Street Address">
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-sm-6">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">Country</label>
-                                    <select class="form-select form-control h-55" aria-label="Default select example">
-                                        <option selected>Select</option>
-                                        <option value="1">USA</option>
-                                        <option value="2">Canada</option>
-                                        <option value="3">Spain</option>
-                                    </select>
-                                </div>
-                            </div>
                             <div class="col-lg-12">
                                 <div class="d-flex flex-wrap gap-3">
                                     <button class="btn btn-danger py-2 px-4 fw-medium fs-16 text-white">Cancel</button>
@@ -199,6 +203,10 @@
 
 @section('script')
 <script>
+    $(function() {
+        $('.select2').select2();
+    });
+    
     const unit_price = document.getElementById("unit_price");
     const unit_quantity = document.getElementById("unit_quantity");
     const total_unit_price = document.getElementById("total_unit_price");
@@ -220,7 +228,7 @@
 
     //add list
     function addToTable() {
-        const style = document.getElementById("style");
+        const style = document.getElementById("style_select");
         const description = document.getElementById("description");
         const tableBody = document.getElementById("item_price_table").getElementsByTagName("tbody")[0];
 
@@ -297,7 +305,7 @@
         calculateTotals();
 
         // Reset form
-        style.value = "";
+       resetSelect();
         description.value = "";
         unit_quantity.value = "";
         unit_price.value = "";
@@ -314,14 +322,15 @@
         }
 
         if (e.target.classList.contains("edit-btn")) {
-            const style = document.getElementById("style");
+            const style = document.getElementById("style_select");
             const description = document.getElementById("description");
             const unit_quantity = document.getElementById("unit_quantity");
             const unit_price = document.getElementById("unit_price");
             const total_unit_price = document.getElementById("total_unit_price");
 
             // ✅ Get text from text node only (exclude input elements)
-            style.value = row.cells[0].childNodes[0].textContent.trim();
+            let selectedValue = row.cells[0].childNodes[0].textContent.trim();style.value
+            $('#style_select').val(selectedValue).trigger('change');
             description.value = row.cells[1].childNodes[0].textContent.trim();
             unit_quantity.value = row.cells[2].childNodes[0].textContent.trim();
             unit_price.value = row.cells[3].childNodes[0].textContent.trim();
@@ -349,6 +358,10 @@
 
         document.getElementById("total_quantity").value = totalQuantity;
         document.getElementById("grand_total").value = totalPrice.toFixed(2);
+    }
+
+    function resetSelect() {
+        $('#style_select').val(null).trigger('change');
     }
 </script>
 @endsection

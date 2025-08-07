@@ -1,8 +1,12 @@
 <?php
 
+use App\Http\Controllers\DyeingFactroyController;
+use App\Http\Controllers\GarmentsFactroyController;
+use App\Http\Controllers\NettingFactroyController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StyleController;
+use App\Http\Controllers\YarnFactroyController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/test', function () {
@@ -22,6 +26,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::resource('style', StyleController::class)->only(['index', 'edit', 'update', 'store']);
+        Route::resource('yarnfactroy', YarnFactroyController::class)->only(['index', 'edit', 'update', 'store']);
+        Route::resource('nettingfactroy', NettingFactroyController::class)->only(['index', 'edit', 'update', 'store']);
+        Route::resource('dyeingfactroy', DyeingFactroyController::class)->only(['index', 'edit', 'update', 'store']);
+        Route::resource('garmentsfactroy', GarmentsFactroyController::class)->only(['index', 'edit', 'update', 'store']);
     });
 
 });

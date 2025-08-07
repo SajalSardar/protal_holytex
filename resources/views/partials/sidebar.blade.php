@@ -55,6 +55,30 @@
                             Style
                         </a>
                     </li>
+                    <li class="menu-item">
+                        <a href="{{ route('settings.yarnfactroy.index') }}"
+                            class="menu-link {{ request()->routeIs('settings.yarnfactroy.index') ? 'active' : '' }}">
+                            Yarn Factory
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('settings.nettingfactroy.index') }}"
+                            class="menu-link {{ request()->routeIs('settings.nettingfactroy.index') ? 'active' : '' }}">
+                            Netting Factory
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('settings.dyeingfactroy.index') }}"
+                            class="menu-link {{ request()->routeIs('settings.dyeingfactroy.index') ? 'active' : '' }}">
+                            Deying Factory
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('settings.garmentsfactroy.index') }}"
+                            class="menu-link {{ request()->routeIs('settings.garmentsfactroy.index') ? 'active' : '' }}">
+                            Garments Factory
+                        </a>
+                    </li>
                 </ul>
             </li>
 

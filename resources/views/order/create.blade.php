@@ -36,7 +36,7 @@
                                     <label class="label text-secondary">PO Number <span
                                             style="color: rgb(205, 2, 2)">*</span></label>
                                     <input type="text" class="form-control @error('po_number') is-invalid @enderror"
-                                        placeholder="PO Number" name="po_number">
+                                        placeholder="PO Number" name="po_number" value="{{ old('po_number') }}">
                                     @error('po_number')
                                     <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror
@@ -46,47 +46,49 @@
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Customer Name</label>
                                     <input type="text" class="form-control " name="client_name"
-                                        placeholder="Customer Name">
+                                        placeholder="Customer Name" value="{{ old('client_name') }}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Email Address</label>
                                     <input type="email" class="form-control " name="client_email"
-                                        placeholder="Enter Email Address">
+                                        placeholder="Enter Email Address" value="{{ old('client_email') }}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Phone</label>
                                     <input type="text" class="form-control " name="client_phone"
-                                        placeholder="Phone Number">
+                                        placeholder="Phone Number" value="{{ old('client_phone') }}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Order Date</label>
-                                    <input type="date" class="form-control" name="order_date">
+                                    <input type="date" class="form-control" name="order_date"
+                                        value="{{ old('order_date') }}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Terms</label>
-                                    <input type="text" class="form-control" name="terms" placeholder="Terms">
+                                    <input type="text" class="form-control" name="terms" placeholder="Terms"
+                                        value="{{ old('terms') }}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Client Address</label>
                                     <textarea class="form-control" rows="2" name="client_address"
-                                        placeholder="Enter Client Address"></textarea>
+                                        placeholder="Enter Client Address">{{ old('client_address') }}</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Ship Address</label>
                                     <textarea class="form-control" rows="2" name="ship_address"
-                                        placeholder="Enter Ship Address"></textarea>
+                                        placeholder="Enter Ship Address">{{ old('ship_address') }}</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-6">

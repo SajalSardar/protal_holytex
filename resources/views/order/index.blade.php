@@ -39,6 +39,7 @@
                                         <th>Order Date</th>
                                         <th>Quantity</th>
                                         <th>Total Amount</th>
+                                        <th>Status</th>
                                         <th class="text-end">Action</th>
                                     </tr>
                                 </thead>
@@ -60,6 +61,7 @@
                                         <td>{{ $item->order_date }}</td>
                                         <td>{{ $item->total_quantity }}</td>
                                         <td>{{ $item->grand_total }}</td>
+                                        <td>{{ Str::ucfirst($item->status) }}</td>
                                         <td>
                                             <div class="d-flex align-items-center gap-1 justify-content-end">
                                                 <button

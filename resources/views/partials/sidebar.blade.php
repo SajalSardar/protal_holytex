@@ -43,6 +43,20 @@
                     </li>
                 </ul>
             </li>
+            <li class="menu-item {{ request()->routeIs('buyyarn.*') ? 'open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <span class="material-symbols-outlined menu-icon">note_stack</span>
+                    <span class="title">Yarn</span>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="{{ route('buyyarn.create') }}"
+                            class="menu-link {{ request()->routeIs('buyyarn.create') ? 'active' : '' }}">
+                            Buy Yarn
+                        </a>
+                    </li>
+                </ul>
+            </li>
             <li class="menu-item {{ request()->routeIs('settings.*') ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>

@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\BuyYarnController;
 use App\Http\Controllers\DyeingFactroyController;
 use App\Http\Controllers\GarmentsFactroyController;
 use App\Http\Controllers\NettingFactroyController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\orderDetailController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StyleController;
 use App\Http\Controllers\YarnFactroyController;
@@ -23,6 +25,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::resource('order', OrderController::class);
+    Route::resource('buyyarn', BuyYarnController::class);
+
+    Route::name('order.details')->controller(orderDetailController::class)->group(function () {
+
+        Route::get('get-style-by-po/{po_number}', 'getStyleByPo');
+    });
 
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::resource('style', StyleController::class)->only(['index', 'edit', 'update', 'store']);

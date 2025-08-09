@@ -55,6 +55,26 @@
                             Buy Yarn
                         </a>
                     </li>
+                    <li class="menu-item">
+                        <a href="{{ route('buyyarn.index') }}"
+                            class="menu-link {{ request()->routeIs('buyyarn.index') ? 'active' : '' }}">
+                            Yarn List
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="menu-item {{ request()->routeIs('netting.*') ? 'open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <span class="material-symbols-outlined menu-icon">note_stack</span>
+                    <span class="title">Netting</span>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="{{ route('netting.create') }}"
+                            class="menu-link {{ request()->routeIs('netting.create') ? 'active' : '' }}">
+                            Yarn Receive
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li class="menu-item {{ request()->routeIs('settings.*') ? 'open' : '' }}">

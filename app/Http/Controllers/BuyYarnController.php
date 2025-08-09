@@ -15,6 +15,9 @@ class BuyYarnController extends Controller {
      */
     public function index() {
         //
+        $yearnList = BuyYarn::with('yarnFactory', 'nettingFactory')->get();
+        // return $yearnList;
+        return view('buy_yarn.index', compact('yearnList'));
     }
 
     /**

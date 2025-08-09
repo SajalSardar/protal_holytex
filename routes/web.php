@@ -3,6 +3,7 @@
 use App\Http\Controllers\BuyYarnController;
 use App\Http\Controllers\DyeingFactroyController;
 use App\Http\Controllers\GarmentsFactroyController;
+use App\Http\Controllers\NettingController;
 use App\Http\Controllers\NettingFactroyController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\orderDetailController;
@@ -26,6 +27,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('order', OrderController::class);
     Route::resource('buyyarn', BuyYarnController::class);
+    Route::resource('netting', NettingController::class);
+    Route::get('get-yarn-by-po/{po_number}', [NettingController::class, 'getYarnbyPo']);
 
     Route::name('order.details')->controller(OrderDetailController::class)->group(function () {
 

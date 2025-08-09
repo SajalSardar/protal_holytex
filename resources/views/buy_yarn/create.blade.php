@@ -38,10 +38,10 @@
                                     <label class="label text-secondary">PO Number <span
                                             style="color: rgb(205, 2, 2)">*</span></label>
                                     <select name="po_number" id="po_number"
-                                        class="form-control select2  @error('po_number') is-invalid @enderror"">
+                                        class="form-control select2  @error('po_number') is-invalid @enderror">
                                         <option value="" selected disabled>Select PO Number</option>
                                         @foreach ($orders as $item)
-                                        <option value=" {{ $item }}">{{ $item }}</option>
+                                        <option value="{{ $item }}">{{ $item }}</option>
                                         @endforeach
                                     </select>
                                     @error('po_number')

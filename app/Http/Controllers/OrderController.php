@@ -29,7 +29,7 @@ class OrderController extends Controller {
      * Store a newly created resource in storage.
      */
     public function store(Request $request) {
-        //return $request;
+        // return $request;
 
         $request->validate([
             'po_number' => 'required|unique:orders,po_number',

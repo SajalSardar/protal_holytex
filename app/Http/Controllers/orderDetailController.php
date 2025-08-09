@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\OrderDetail;
 
-class orderDetailController extends Controller {
+class OrderDetailController extends Controller {
     public function getStyleByPo($po_number) {
-        $getPo = OrderDetail::where('po_number', $po_number)->pluck('style');
+        $orderDetails = OrderDetail::where('po_number', $po_number)->select('order_id', 'style', 'order_number')->get();
 
-        if ($getPo) {
+        if ($orderDetails) {
 
-            return $getPo;
+            return $orderDetails;
         } else {
             return "No style found";
         }

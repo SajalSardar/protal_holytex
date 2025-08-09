@@ -4,15 +4,28 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
+    public function up(): void {
         Schema::create('buy_yarns', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('order_id')->nullable()->index();
+            $table->string('order_number')->nullable()->index();
+            $table->string('po_number')->nullable()->index();
+            $table->date('order_date')->nullable();
+            $table->string('style')->nullable()->index();
+            $table->string('description')->nullable();
+            $table->decimal('quantity', 10)->nullable();
+            $table->decimal('price', 10)->nullable();
+            $table->decimal('total_price', 10)->nullable();
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
+            $table->integer('yarn_factory_id')->nullable();
+            $table->integer('netting_factory_id')->nullable();
+            $table->string('status')->default('pending');
+            $table->integer('approved_by')->nullable();
             $table->timestamps();
         });
     }
@@ -20,8 +33,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down(): void
-    {
+    public function down(): void {
         Schema::dropIfExists('buy_yarns');
     }
 };

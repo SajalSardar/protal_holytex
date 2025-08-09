@@ -22,10 +22,11 @@ return new class extends Migration {
             $table->text('ship_address')->nullable();
             $table->string('po_file')->nullable();
             $table->string('total_quantity')->nullable();
-            $table->decimal('grand_total',10)->nullable();
+            $table->decimal('grand_total', 10)->nullable();
             $table->string('status')->default('processing');
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
+            $table->integer('approved_by')->nullable();
             $table->timestamps();
         });
     }

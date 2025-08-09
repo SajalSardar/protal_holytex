@@ -27,7 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('order', OrderController::class);
     Route::resource('buyyarn', BuyYarnController::class);
 
-    Route::name('order.details')->controller(orderDetailController::class)->group(function () {
+    Route::name('order.details')->controller(OrderDetailController::class)->group(function () {
 
         Route::get('get-style-by-po/{po_number}', 'getStyleByPo');
     });

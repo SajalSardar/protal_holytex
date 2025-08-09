@@ -28,9 +28,11 @@
             <div class="card bg-white border-0 rounded-3 mb-4">
                 <div class="card-body p-4">
 
-                    <form action="{{ route('buyyarn.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('buyyarn.store') }}" method="POST" enctype="multipart/form-data"
+                        id="yarn_form">
                         @csrf
                         <div class="row">
+                            <input type="hidden" id="order_id" name="order_id">
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">PO Number <span
@@ -38,8 +40,8 @@
                                     <select name="po_number" id="po_number"
                                         class="form-control select2  @error('po_number') is-invalid @enderror"">
                                         <option value="" selected disabled>Select PO Number</option>
-                                        @foreach ($orders as $key => $item)
-                                        <option value=" {{ $key }}">{{ $item }}</option>
+                                        @foreach ($orders as $item)
+                                        <option value=" {{ $item }}">{{ $item }}</option>
                                         @endforeach
                                     </select>
                                     @error('po_number')
@@ -50,8 +52,15 @@
 
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
-                                    <label class="label text-secondary">Order Date</label>
+                                    <label class="label text-secondary">Date</label>
                                     <input type="date" class="form-control" name="order_date">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Order number</label>
+                                    <input type="text" class="form-control" id="order_number" name="order_number"
+                                        readonly>
                                 </div>
                             </div>
 
@@ -66,7 +75,7 @@
                                                 <th>Description</th>
                                                 <th>Quantity(KG)</th>
                                                 <th>Unit Price(TK)</th>
-                                                <th>Total Price</th>
+                                                <th>Total Price(TK)</th>
                                                 <th>Yarn Factory</th>
                                                 <th>Delivery Place</th>
                                                 <th class="text-end">Action</th>
@@ -101,6 +110,7 @@
                                         <option selected disabled value="">Style</option>
 
                                     </select>
+
                                 </div>
                             </div>
 
@@ -164,8 +174,9 @@
                             <div class="col-lg-12 mt-5">
                                 <div class="d-flex flex-wrap gap-3">
                                     <button class="btn btn-danger py-2 px-4 fw-medium fs-16 text-white">Cancel</button>
-                                    <button class="btn btn-primary py-2 px-4 fw-medium fs-16"> <i
-                                            class="ri-add-line text-white fw-medium"></i> Create Order</button>
+                                    <button type="button" id="submit_button"
+                                        class="btn btn-primary py-2 px-4 fw-medium fs-16"> <i
+                                            class="ri-add-line text-white fw-medium"></i> Create</button>
                                 </div>
                             </div>
                         </div>
@@ -205,16 +216,22 @@
                     // console.log('API response:', data);
                     $('#style_select').empty().append('<option selected disabled value="">Style</option>');
 
+                    let order_id = null;
+                    let order_number = null;
                     // Append new options
                     data.forEach(style => {
-                    $('#style_select').append(
-                        $('<option>', {
-                            value: style,
-                            text: style,
-                        })
-                    );
+                        order_id = style.order_id;
+                        order_number = style.order_number;
+                        $('#style_select').append(
+                            $('<option>', {
+                                value: style.style,
+                                text: style.style,
+                            })
+                        );
                     });
-
+                    
+                    $('#order_id').val(order_id);
+                    $('#order_number').val(order_number);
                     // Refresh Select2
                     $('#style_select').trigger('change.select2');
 
@@ -225,6 +242,17 @@
             }
             
             
+        });
+
+        $('#submit_button').on('click', function(){
+            const tableBodyData = document.getElementById("item_price_table").getElementsByTagName("tbody")[0];
+            const rowCount = tableBodyData.rows.length;
+            if(rowCount=== 0){
+                alert('Add Yarn Description,quantity,price, etc.');
+                
+            }else{
+                $('#yarn_form').submit();
+            }
         });
 
     });

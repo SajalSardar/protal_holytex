@@ -33,14 +33,10 @@
                                     <tr>
                                         <th>Order Number</th>
                                         <th>PO</th>
-                                        <th>Style</th>
                                         <th>Date</th>
                                         <th>Quantity(kg)</th>
-                                        <th>Rate(TK)</th>
                                         <th>Total(TK)</th>
                                         <th>Status</th>
-                                        <th>Yarn Factory</th>
-                                        <th>Netting Factory</th>
                                         <th class="text-end">Action</th>
                                     </tr>
                                 </thead>
@@ -49,20 +45,10 @@
                                     <tr>
                                         <td>{{ $item->order_number }}</td>
                                         <td>{{ $item->po_number }}</td>
-                                        <td>{{ $item->style }}</td>
                                         <td>{{ $item->order_date }}</td>
-                                        <td>{{ $item->quantity }}</td>
-                                        <td>{{ $item->price }}</td>
-                                        <td>{{ $item->total_price }}</td>
+                                        <td>{{ $item->total_quantity }}</td>
+                                        <td>{{ $item->grand_total }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
-                                        <td>
-                                            <p>Factory: {{ $item->yarnFactory->name }}</p>
-                                            <p>Address: {{ $item->yarnFactory->address ?? '--' }}</p>
-                                        </td>
-                                        <td>
-                                            <p>Factory: {{ $item->nettingFactory->name }}</p>
-                                            <p>Address: {{ $item->nettingFactory->address ?? '--' }}</p>
-                                        </td>
                                         <td>
                                             <div class="d-flex align-items-center gap-1 justify-content-end">
                                                 <button

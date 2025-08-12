@@ -28,11 +28,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('order', OrderController::class);
     Route::resource('buyyarn', BuyYarnController::class);
     Route::resource('netting', NettingController::class);
-    Route::get('get-yarn-by-po/{po_number}', [NettingController::class, 'getYarnbyPo']);
+    Route::get('get-yarn-style-by-po/{po_number}', [NettingController::class, 'getYarnStyleByPo']);
 
     Route::name('order.details')->controller(OrderDetailController::class)->group(function () {
 
-        Route::get('get-style-by-po/{po_number}', 'getStyleByPo');
+        Route::get('get-style-by-po-order-detail/{po_number}', 'getStyleByPo');
     });
 
     Route::prefix('settings')->name('settings.')->group(function () {

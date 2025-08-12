@@ -7,6 +7,16 @@ use App\Models\Netting;
 use Illuminate\Http\Request;
 
 class NettingController extends Controller {
+
+    public function getYarnStyleByPo($po_number) {
+        $yearns = BuyYarn::with('yarnFactory', 'nettingFactory')->where('po_number', $po_number)->get()->groupBy('style');
+        if ($yearns) {
+            return $yearns;
+        } else {
+            return 'Yarn not found!';
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -18,18 +28,11 @@ class NettingController extends Controller {
      * Show the form for creating a new resource.
      */
     public function create() {
+
         $yearns = BuyYarn::select('po_number')->groupby('po_number')->get();
         return view('netting.create', compact('yearns'));
     }
 
-    public function getYarnbyPo($po_number) {
-        $yearns = BuyYarn::with('yarnFactory', 'nettingFactory')->where('po_number', $po_number)->get();
-        if ($yearns) {
-            return $yearns;
-        } else {
-            return 'Yarn not found!';
-        }
-    }
     /**
      * Store a newly created resource in storage.
      */

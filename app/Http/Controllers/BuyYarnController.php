@@ -10,12 +10,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class BuyYarnController extends Controller {
+
     /**
      * Display a listing of the resource.
      */
     public function index() {
         //
-        $yearnList = BuyYarn::with('yarnFactory', 'nettingFactory')->get();
+        $yearnList = BuyYarn::with('yarn_details')->get();
         // return $yearnList;
         return view('buy_yarn.index', compact('yearnList'));
     }
@@ -34,7 +35,7 @@ class BuyYarnController extends Controller {
      * Store a newly created resource in storage.
      */
     public function store(Request $request) {
-        //return $request;
+        // return $request;
 
         $request->validate([
             'po_number'    => 'required',
@@ -43,18 +44,20 @@ class BuyYarnController extends Controller {
 
         foreach ($request->style as $key => $item) {
             BuyYarn::create([
-                'order_number'       => $request->order_number,
-                'po_number'          => $request->po_number,
-                'order_date'         => $request->order_date,
-                'order_id'           => $request->order_id,
-                'style'              => $item,
-                'description'        => $request->description[$key],
-                'quantity'           => $request->unit_quantity[$key],
-                'price'              => $request->unit_price[$key],
-                'total_price'        => $request->total_unit_price[$key],
-                'yarn_factory_id'    => $request->yarn_factory[$key],
-                'netting_factory_id' => $request->delivery_point[$key],
-                'created_by'         => Auth::id(),
+                'order_number'              => $request->order_number,
+                'po_number'                 => $request->po_number,
+                'order_date'                => $request->order_date,
+                'approximate_delivery_date' => $request->approximate_delivery_date,
+                'order_id'                  => $request->order_id,
+                'style'                     => $item,
+                'description'               => $request->description[$key],
+                'quantity'                  => $request->unit_quantity[$key],
+                'price'                     => $request->unit_price[$key],
+                'total_price'               => $request->total_unit_price[$key],
+                'yarn_factory_id'           => $request->yarn_factory[$key],
+                'netting_factory_id'        => $request->delivery_point[$key],
+                'remarks'                   => $request->remarks,
+                'created_by'                => Auth::id(),
             ]);
         }
 

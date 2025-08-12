@@ -72,7 +72,7 @@
                     <li class="menu-item">
                         <a href="{{ route('netting.create') }}"
                             class="menu-link {{ request()->routeIs('netting.create') ? 'active' : '' }}">
-                            Yarn Receive
+                            Netting create
                         </a>
                     </li>
                 </ul>

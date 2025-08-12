@@ -33,11 +33,11 @@
                         @csrf
                         <div class="row">
                             <input type="hidden" id="order_id" name="order_id">
-                            <div class="col-lg-6 col-sm-6">
+                            <div class="col-lg-4 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">PO Number <span
                                             style="color: rgb(205, 2, 2)">*</span></label>
-                                    <select name="po_number" id="po_number"
+                                    <select name="po_number" id="po_number" value="{{ old('po_number') }}"
                                         class="form-control select2  @error('po_number') is-invalid @enderror">
                                         <option value="" selected disabled>Select PO Number</option>
                                         @foreach ($orders as $item)
@@ -50,17 +50,32 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-6 col-sm-6">
+                            <div class="col-lg-4 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Date</label>
-                                    <input type="date" class="form-control" name="order_date">
+                                    <input type="date" value="{{ old('order_date') }}" class="form-control"
+                                        name="order_date">
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Approximate Delivery Date</label>
+                                    <input type="date" class="form-control"
+                                        value="{{ old('approximate_delivery_date') }}" name="approximate_delivery_date">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Order number</label>
-                                    <input type="text" class="form-control" id="order_number" name="order_number"
-                                        readonly>
+                                    <input type="text" value="{{ old('order_number') }}" class="form-control"
+                                        id="order_number" name="order_number" readonly>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Remarks</label>
+                                    <textarea class="form-control" name="remarks"
+                                        rows="1">{{ old('remarks') }}</textarea>
                                 </div>
                             </div>
 
@@ -205,7 +220,7 @@
                 // Optional: show a loading message
                 // console.log('Fetching data for PO:', po_number);
 
-                fetch(`/get-style-by-po/${encodeURIComponent(po_number)}`)
+                fetch(`/get-style-by-po-order-detail/${encodeURIComponent(po_number)}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');

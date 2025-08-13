@@ -6,6 +6,14 @@ use App\Models\GarmentsFactroy;
 use Illuminate\Http\Request;
 
 class GarmentsFactroyController extends Controller {
+    public function showAll() {
+        $garmentsFactroy = GarmentsFactroy::where('status', 'active')->get();
+        if ($garmentsFactroy) {
+            return json_encode($garmentsFactroy);
+        } else {
+            return 'Yarn not found!';
+        }
+    }
     /**
      * Display a listing of the resource.
      */

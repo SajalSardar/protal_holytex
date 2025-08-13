@@ -42,6 +42,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('dyeingfactroy', DyeingFactroyController::class)->only(['index', 'edit', 'update', 'store']);
         Route::resource('garmentsfactroy', GarmentsFactroyController::class)->only(['index', 'edit', 'update', 'store']);
     });
+    Route::get('get-all-dyeing-factory', [DyeingFactroyController::class, 'showAll']);
+    Route::get('get-all-garments-factory', [GarmentsFactroyController::class, 'showAll']);
 
 });
 

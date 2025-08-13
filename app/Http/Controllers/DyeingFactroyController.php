@@ -6,6 +6,15 @@ use App\Models\DyeingFactroy;
 use Illuminate\Http\Request;
 
 class DyeingFactroyController extends Controller {
+
+    public function showAll() {
+        $dyeingFactory = DyeingFactroy::where('status', 'active')->get();
+        if ($dyeingFactory) {
+            return json_encode($dyeingFactory);
+        } else {
+            return 'Yarn not found!';
+        }
+    }
     /**
      * Display a listing of the resource.
      */

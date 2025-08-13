@@ -1,9 +1,9 @@
 @extends('layouts.master')
-@section('title', 'Buy Yarn')
+@section('title', 'Netting')
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-        <h2 class="mb-0">Buy Yarn</h2>
+        <h2 class="mb-0">Netting Purchase</h2>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb align-items-center mb-0 lh-1">
@@ -17,7 +17,7 @@
                     <span class="fw-medium">Order</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Buy Yarn</span>
+                    <span class="fw-medium">Netting Purchase</span>
                 </li>
             </ol>
         </nav>
@@ -83,36 +83,10 @@
 
                             <div id="show_all_yarn_item"></div>
 
-
-
-                            <div class="col-lg-2 col-sm-6">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">Yarn Factory</label>
-                                    <select name="yarn_factory" id="yarn_factory" class="form-control select2">
-                                        <option value="" selected disabled>Select Factory</option>
-                                        {{-- @foreach ($yarnFactory as $item)
-                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                        @endforeach --}}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-2 col-sm-6">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">Delivery Point</label>
-                                    <select name="delivery_point" id="delivery_point" class="form-control select2">
-                                        <option value="" selected disabled>Select Netting Factory</option>
-                                        {{-- @foreach ($nettingFactory as $item)
-                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                        @endforeach --}}
-                                    </select>
-                                </div>
-                            </div>
-
                             <hr>
                             <div class="col-lg-12 mt-5">
                                 <div class="d-flex flex-wrap gap-3">
-                                    <button class="btn btn-danger py-2 px-4 fw-medium fs-16 text-white">Cancel</button>
-                                    <button type="button" id="submit_button"
+                                    <button type="submit" id="submit_button"
                                         class="btn btn-primary py-2 px-4 fw-medium fs-16"> <i
                                             class="ri-add-line text-white fw-medium"></i> Create</button>
                                 </div>
@@ -192,6 +166,55 @@
                                 </tr></table>
                                 
                                 </div>
+                                    <div class="card-footer">
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Total Quantity (KG)</label>
+                                                    <input type="text" class="form-control" id="quantity_${key}" name="items[${key}][quantity]" value="${total_quantity.toFixed(2)}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Rate</label>
+                                                    <input type="number" class="form-control" oninput="attachRateCalculation('${key}')" name="items[${key}][rate]"  id="rate_${key}">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Total</label>
+                                                    <input type="number" class="form-control" id="total_amount_${key}" name="items[${key}][total]" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <p class="label text-secondary">Delivery to garments factory?</p>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label>
+                                                        <input type="radio" class="form-check-input" style="border:1px solid #000" name="items[${key}][delevary_poin_check]" value="deying" onclick="showHideDeliveryPoint(this,'${key}')"> No</label>
+                                                        <label class="ms-3">
+                                                        <input type="radio" class="form-check-input" style="border:1px solid #000" name="items[${key}][delevary_poin_check]" value="garments" onclick="showHideDeliveryPoint(this,'${key}')"> Yes</label>
+                                                    </div>    
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-6" id="deying_select_section_${key}" style="display:none;">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Delivery Point</label>
+                                                    <select name="items[${key}][delivery_point]" id="deying_point_${key}" class="form-control select2">
+                                                        <option value="" selected disabled>Select Deying Factory</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-6" id="garments_select_section_${key}" style="display:none;">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Delivery Point</label>
+                                                    <select name="items[${key}][garments]" id="garments_${key}" class="form-control select2">
+                                                        <option value="" selected disabled>Select Garments Factory</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>  
+                                    </div>
                                 </div>
                             `;
                     });
@@ -200,8 +223,6 @@
                     
                     $('#order_id').val(order_id);
                     $('#order_number').val(order_number);
-                    // Refresh Select2
-                    $('#style_select').trigger('change.select2');
 
                 }).catch(error => {
                      console.error('Fetch error:', error);
@@ -212,6 +233,66 @@
         });
 
     });
+
+    function attachRateCalculation(key) {
+        let qtyInput = document.getElementById(`quantity_${key}`);
+        let rateInput = document.getElementById(`rate_${key}`);
+        let totalInput = document.getElementById(`total_amount_${key}`);
+
+        let qty = parseFloat(qtyInput.value) || 0;
+        let rate = parseFloat(rateInput.value) || 0;
+
+        totalInput.value = (qty * rate).toFixed(2);
+    }
+
+    function showHideDeliveryPoint(element,key) {
+
+        if (!element.checked) return; 
+
+        let value = element.value;
+
+        let deyingSection = document.getElementById(`deying_select_section_${key}`);
+        let garmentsSection = document.getElementById(`garments_select_section_${key}`);
+
+        if (value === "garments") {
+            garmentsSection.style.display = "block";
+            deyingSection.style.display = "none";
+
+            // Call garments API
+            fetch(`/get-all-garments-factory`)
+                .then(res => res.json())
+                .then(data => {
+                    let select = document.getElementById(`garments_${key}`);
+                    select.innerHTML = '<option value="" selected disabled>Select Garments Factory</option>';
+                    data.forEach(item => {
+                        let option = document.createElement("option");
+                        option.value = item.id;
+                        option.textContent = item.name;
+                        select.appendChild(option);
+                    });
+                    //$(`#garments_${key}`).select2();
+                });
+        } 
+        else if (value === "deying") {
+            deyingSection.style.display = "block";
+            garmentsSection.style.display = "none";
+
+            // Call deying API
+            fetch(`/get-all-dyeing-factory`)
+                .then(res => res.json())
+                .then(data => {
+                    let select = document.getElementById(`deying_point_${key}`);
+                    select.innerHTML = '<option value="" selected disabled>Select Deying Factory</option>';
+                    data.forEach(item => {
+                        let option = document.createElement("option");
+                        option.value = item.id;
+                        option.textContent = item.name;
+                        select.appendChild(option);
+                    });
+                    //$(`#deying_point_${key}`).select2();
+                });
+        }
+    }
     
     
 

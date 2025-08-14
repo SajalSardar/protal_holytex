@@ -9,7 +9,7 @@ return new class extends Migration {
      * Run the migrations.
      */
     public function up(): void {
-        Schema::create('buy_yarns', function (Blueprint $table) {
+        Schema::create('yarn_quotations', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('order_id')->nullable()->index();
             $table->string('order_number')->nullable()->index();
@@ -36,6 +36,6 @@ return new class extends Migration {
      * Reverse the migrations.
      */
     public function down(): void {
-        Schema::dropIfExists('buy_yarns');
+        Schema::dropIfExists('yarn_quotations');
     }
 };

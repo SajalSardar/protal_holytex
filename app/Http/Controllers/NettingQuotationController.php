@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BuyYarn;
-use App\Models\Netting;
+use App\Models\NettingQuotation;
+use App\Models\YarnQuotation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class NettingController extends Controller {
+class NettingQuotationController extends Controller {
 
     public function getYarnStyleByPo($po_number) {
-        $nettings = Netting::where('po_number', $po_number)->pluck('style');
-        $yearns   = BuyYarn::with('yarnFactory', 'nettingFactory')
+        $nettings = NettingQuotation::where('po_number', $po_number)->pluck('style');
+        $yearns   = YarnQuotation::with('yarnFactory', 'nettingFactory')
             ->where('po_number', $po_number)
             ->whereNotIn('style', $nettings)
             ->get()
@@ -27,7 +27,7 @@ class NettingController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        //
+        return view('netting_quotation.index');
     }
 
     /**
@@ -35,8 +35,8 @@ class NettingController extends Controller {
      */
     public function create() {
 
-        $yearns = BuyYarn::select('po_number')->groupby('po_number')->get();
-        return view('netting.create', compact('yearns'));
+        $yearns = YarnQuotation::select('po_number')->groupby('po_number')->get();
+        return view('netting_quotation.create', compact('yearns'));
     }
 
     /**
@@ -51,7 +51,7 @@ class NettingController extends Controller {
         ]);
 
         foreach ($request->items as $key => $item) {
-            Netting::create([
+            NettingQuotation::create([
                 'order_id'                  => $request->order_id,
                 'order_number'              => $request->order_number,
                 'style'                     => $key,
@@ -76,28 +76,28 @@ class NettingController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(Netting $netting) {
+    public function show(NettingQuotation $netting) {
         //
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Netting $netting) {
+    public function edit(NettingQuotation $netting) {
         //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Netting $netting) {
+    public function update(Request $request, NettingQuotation $netting) {
         //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Netting $netting) {
+    public function destroy(NettingQuotation $netting) {
         //
     }
 }

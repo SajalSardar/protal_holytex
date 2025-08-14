@@ -43,19 +43,20 @@ class OrderController extends Controller {
 
         $orderNumber = 'ORD-' . time() . rand(1000, 9999);
         $order       = Order::create([
-            'order_number'   => $orderNumber,
-            'po_number'      => $request->po_number,
-            'client_name'    => $request->client_name,
-            'client_email'   => $request->client_email,
-            'client_phone'   => $request->client_phone,
-            'order_date'     => $request->order_date,
-            'terms'          => $request->terms,
-            'client_address' => $request->client_address,
-            'ship_address'   => $request->ship_address,
-            'total_quantity' => $request->total_quantity,
-            'grand_total'    => $request->grand_total,
-            'po_file'        => $path,
-            'created_by'     => Auth::id(),
+            'order_number'              => $orderNumber,
+            'po_number'                 => $request->po_number,
+            'client_name'               => $request->client_name,
+            'client_email'              => $request->client_email,
+            'client_phone'              => $request->client_phone,
+            'order_date'                => $request->order_date,
+            'client_address'            => $request->client_address,
+            'ship_address'              => $request->ship_address,
+            'total_quantity'            => $request->total_quantity,
+            'grand_total'               => $request->grand_total,
+            'approximate_delivery_date' => $request->approximate_delivery_date,
+            'remarks'                   => $request->remarks,
+            'po_file'                   => $path,
+            'created_by'                => Auth::id(),
         ]);
         if ($order) {
             foreach ($request->style as $key => $item) {

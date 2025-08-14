@@ -9,16 +9,17 @@ return new class extends Migration {
      * Run the migrations.
      */
     public function up(): void {
-        Schema::create('dyeing_orders', function (Blueprint $table) {
+        Schema::create('netting_quotations', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('order_id')->nullable();
             $table->string('order_number')->nullable();
-            $table->bigInteger('dyeing_factory_id')->nullable();
+            $table->bigInteger('netting_factory_id')->nullable();
             $table->string('po_number')->nullable()->index();
             $table->string('style')->nullable()->index();
             $table->decimal('quantity', 10)->nullable();
             $table->decimal('price', 10)->nullable();
             $table->decimal('total_price', 10)->nullable();
+            $table->string('delivery_factory_type')->nullable();
             $table->integer('delivery_point_id')->nullable();
             $table->string('status')->default('pending');
             $table->date('approximate_delivery_date')->nullable();
@@ -30,13 +31,12 @@ return new class extends Migration {
             $table->text('remarks')->nullable();
             $table->timestamps();
         });
-
     }
 
     /**
      * Reverse the migrations.
      */
     public function down(): void {
-        Schema::dropIfExists('dyeing_orders');
+        Schema::dropIfExists('netting_quotations');
     }
 };

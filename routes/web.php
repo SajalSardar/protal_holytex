@@ -1,17 +1,18 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\StyleController;
-use App\Http\Controllers\BuyYarnController;
-use App\Http\Controllers\NettingController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DyeingOrderController;
-use App\Http\Controllers\orderDetailController;
-use App\Http\Controllers\YarnFactroyController;
+use App\Http\Controllers\AccessoriesQuotationController;
 use App\Http\Controllers\DyeingFactroyController;
-use App\Http\Controllers\NettingFactroyController;
+use App\Http\Controllers\DyeingQuotationController;
 use App\Http\Controllers\GarmentsFactroyController;
+use App\Http\Controllers\NettingFactroyController;
+use App\Http\Controllers\NettingQuotationController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\orderDetailController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StyleController;
+use App\Http\Controllers\YarnFactroyController;
+use App\Http\Controllers\YarnQuotationController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/test', function () {
     return view('dashboard-eliment.products-list');
@@ -27,9 +28,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::resource('order', OrderController::class);
-    Route::resource('buyyarn', BuyYarnController::class);
-    Route::resource('netting', NettingController::class);
-    Route::resource('dyeingorder', DyeingOrderController::class);
+    Route::resource('yarnquotation', YarnQuotationController::class);
+    Route::resource('nettingquotation', NettingQuotationController::class);
+    Route::resource('dyeingquotation', DyeingQuotationController::class);
+    Route::resource('accessoriesquotation', AccessoriesQuotationController::class);
 
     Route::name('order.details')->controller(OrderDetailController::class)->group(function () {
 
@@ -45,8 +47,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
     Route::get('get-all-dyeing-factory', [DyeingFactroyController::class, 'showAll']);
     Route::get('get-all-garments-factory', [GarmentsFactroyController::class, 'showAll']);
-    Route::get('get-yarn-style-by-po/{po_number}', [NettingController::class, 'getYarnStyleByPo']);
-    Route::get('get-netting-order/{po_number}', [DyeingOrderController::class, 'getNetting']);
+    Route::get('get-yarn-style-by-po/{po_number}', [NettingQuotationController::class, 'getYarnStyleByPo']);
+    Route::get('get-netting-order/{po_number}', [DyeingQuotationController::class, 'getNetting']);
 
 });
 

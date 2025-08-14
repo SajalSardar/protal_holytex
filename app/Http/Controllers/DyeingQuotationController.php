@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DyeingOrder;
+use App\Models\DyeingQuotation;
 use App\Models\GarmentsFactroy;
-use App\Models\Netting;
+use App\Models\NettingQuotation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class DyeingOrderController extends Controller {
+class DyeingQuotationController extends Controller {
 
     public function getNetting($po_number) {
-        $dyeing = DyeingOrder::where('po_number', $po_number)->pluck('style');
+        $dyeing = DyeingQuotation::where('po_number', $po_number)->pluck('style');
 
-        $nettings = Netting::with('dyeingFactory', 'nettingFactory')->where('po_number', $po_number)
+        $nettings = NettingQuotation::with('dyeingFactory', 'nettingFactory')
+            ->where('po_number', $po_number)
             ->where('delivery_factory_type', 'dyeing')
             ->whereNotIn('style', $dyeing)
             ->get();
@@ -29,17 +30,17 @@ class DyeingOrderController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        //
+        return view('dyeing_quotation.index');
     }
 
     /**
      * Show the form for creating a new resource.
      */
     public function create() {
-        $nettings = Netting::where('delivery_factory_type', 'dyeing')->select('po_number')->groupby('po_number')->get();
+        $nettings = NettingQuotation::where('delivery_factory_type', 'dyeing')->select('po_number')->groupby('po_number')->get();
 
         $delivery_point = GarmentsFactroy::where('status', 'active')->get();
-        return view('dyeing_order.create', compact('nettings', 'delivery_point'));
+        return view('dyeing_quotation.create', compact('nettings', 'delivery_point'));
     }
 
     /**
@@ -52,7 +53,7 @@ class DyeingOrderController extends Controller {
         ]);
 
         foreach ($request->items as $key => $item) {
-            DyeingOrder::create([
+            DyeingQuotation::create([
                 'order_id'                  => $request->order_id,
                 'order_number'              => $request->order_number,
                 'style'                     => $key,
@@ -76,28 +77,28 @@ class DyeingOrderController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(DyeingOrder $dyeingOrder) {
+    public function show(DyeingQuotation $dyeingOrder) {
         //
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(DyeingOrder $dyeingOrder) {
+    public function edit(DyeingQuotation $dyeingOrder) {
         //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, DyeingOrder $dyeingOrder) {
+    public function update(Request $request, DyeingQuotation $dyeingOrder) {
         //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(DyeingOrder $dyeingOrder) {
+    public function destroy(DyeingQuotation $dyeingOrder) {
         //
     }
 }

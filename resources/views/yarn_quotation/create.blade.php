@@ -1,9 +1,9 @@
 @extends('layouts.master')
-@section('title', 'Create Order')
+@section('title', 'Yarn Quotation')
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-        <h2 class="mb-0">Create Order</h2>
+        <h2 class="mb-0">Yarn Quotation </h2>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb align-items-center mb-0 lh-1">
@@ -17,7 +17,7 @@
                     <span class="fw-medium">Order</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Create Order</span>
+                    <span class="fw-medium">Yarn Quotation</span>
                 </li>
             </ol>
         </nav>
@@ -28,86 +28,54 @@
             <div class="card bg-white border-0 rounded-3 mb-4">
                 <div class="card-body p-4">
 
-                    <form action="{{ route('order.store') }}" method="POST" enctype="multipart/form-data"
-                        id="order_submit_form">
+                    <form action="{{ route('yarnquotation.store') }}" method="POST" enctype="multipart/form-data"
+                        id="yarn_form">
                         @csrf
                         <div class="row">
-                            <div class="col-lg-6 col-sm-6">
+                            <input type="hidden" id="order_id" name="order_id">
+                            <div class="col-lg-4 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">PO Number <span
                                             style="color: rgb(205, 2, 2)">*</span></label>
-                                    <input type="text" class="form-control @error('po_number') is-invalid @enderror"
-                                        placeholder="PO Number" name="po_number" value="{{ old('po_number') }}">
+                                    <select name="po_number" id="po_number" value="{{ old('po_number') }}"
+                                        class="form-control select2  @error('po_number') is-invalid @enderror">
+                                        <option value="" selected disabled>Select PO Number</option>
+                                        @foreach ($orders as $item)
+                                        <option value="{{ $item }}">{{ $item }}</option>
+                                        @endforeach
+                                    </select>
                                     @error('po_number')
                                     <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-sm-6">
+
+                            <div class="col-lg-4 col-sm-6">
                                 <div class="form-group mb-4">
-                                    <label class="label text-secondary">Customer Name</label>
-                                    <input type="text" class="form-control " name="client_name"
-                                        placeholder="Customer Name" value="{{ old('client_name') }}">
+                                    <label class="label text-secondary">Date</label>
+                                    <input type="date" value="{{ old('order_date') }}" class="form-control"
+                                        name="order_date">
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Approximate Delivery Date</label>
+                                    <input type="date" class="form-control"
+                                        value="{{ old('approximate_delivery_date') }}" name="approximate_delivery_date">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
-                                    <label class="label text-secondary">Email Address</label>
-                                    <input type="email" class="form-control " name="client_email"
-                                        placeholder="Enter Email Address" value="{{ old('client_email') }}">
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-sm-6">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">Phone</label>
-                                    <input type="text" class="form-control " name="client_phone"
-                                        placeholder="Phone Number" value="{{ old('client_phone') }}">
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-sm-6">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">Order Date</label>
-                                    <input type="date" class="form-control" name="order_date"
-                                        value="{{ old('order_date') }}">
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-sm-6">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">Approximate delivery date</label>
-                                    <input type="date" class="form-control" name="approximate_delivery_date"
-                                        placeholder="Approximate delivery date"
-                                        value="{{ old('approximate_delivery_date') }}">
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-sm-6">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">Client Address</label>
-                                    <textarea class="form-control" rows="2" name="client_address"
-                                        placeholder="Enter Client Address">{{ old('client_address') }}</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-sm-6">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">Ship Address</label>
-                                    <textarea class="form-control" rows="2" name="ship_address"
-                                        placeholder="Enter Ship Address">{{ old('ship_address') }}</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-sm-6">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">Upload PO</label>
-                                    <input type="file" class="form-control" name="po_file" accept="application/pdf">
-                                    <span style="font-size: 12px">Upload Only pdf file.</span>
-                                    @error('po_file')
-                                    <div class="text-danger mt-2">{{ $message }}</div>
-                                    @enderror
+                                    <label class="label text-secondary">Order number</label>
+                                    <input type="text" value="{{ old('order_number') }}" class="form-control"
+                                        id="order_number" name="order_number" readonly>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Remarks</label>
-                                    <textarea class="form-control" rows="2" name="remarks"
-                                        placeholder="Remarks">{{ old('remarks') }}</textarea>
+                                    <textarea class="form-control" name="remarks"
+                                        rows="1">{{ old('remarks') }}</textarea>
                                 </div>
                             </div>
 
@@ -120,9 +88,11 @@
                                             <tr>
                                                 <th>Style</th>
                                                 <th>Description</th>
-                                                <th>Quantity</th>
-                                                <th>Unit Price</th>
-                                                <th>Total Price</th>
+                                                <th>Quantity(KG)</th>
+                                                <th>Unit Price(TK)</th>
+                                                <th>Total Price(TK)</th>
+                                                <th>Yarn Factory</th>
+                                                <th>Delivery Place</th>
                                                 <th class="text-end">Action</th>
                                             </tr>
                                         </thead>
@@ -132,13 +102,15 @@
                                         <tfoot>
                                             <tr>
                                                 <td colspan="2"><strong class="fs-18">Total</strong></td>
-                                                <td><input class="form-control" name="total_quantity"
-                                                        id="total_quantity" class="fs-18" value="0.0" readonly
-                                                        style="width: 150px"> </td>
-                                                <td></td>
-                                                <td><input class="form-control" name="grand_total" id="grand_total"
-                                                        class="fs-18" value="0.0" readonly style="width: 150px">
+                                                <td><input class="fs-18" name="total_quantity" id="total_quantity"
+                                                        value="0.0" readonly style="width: 150px;">KG
                                                 </td>
+                                                <td></td>
+                                                <td><input class=" fs-18" name="grand_total" id="grand_total"
+                                                        value="0.0" readonly style="width: 180px">TK
+                                                </td>
+                                                <td></td>
+                                                <td></td>
                                                 <td></td>
                                             </tr>
                                         </tfoot>
@@ -151,39 +123,60 @@
                                     <label class="label text-secondary">Style</label>
                                     <select class="form-select form-control select2" id="style_select">
                                         <option selected disabled value="">Style</option>
-                                        @foreach ($styles as $style)
-                                        <option value="{{ $style->style_name }}">{{ $style->style_name }}</option>
-                                        @endforeach
+
                                     </select>
+
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group mb-4">
-                                    <label class="label text-secondary">Description</label>
+                                    <label class="label text-secondary">Yarn Description</label>
                                     <textarea rows="1" class="form-control" placeholder="Write your note here...."
                                         id="description"></textarea>
                                 </div>
                             </div>
                             <div class="col-lg-2 col-sm-6">
                                 <div class="form-group mb-4">
-                                    <label class="label text-secondary">Unit Quantity</label>
+                                    <label class="label text-secondary">Quantity(KG)</label>
                                     <input type="number" class="form-control " placeholder="Quantity" id="unit_quantity"
                                         min="1">
                                 </div>
                             </div>
                             <div class="col-lg-2 col-sm-6">
                                 <div class="form-group mb-4">
-                                    <label class="label text-secondary">Unit Price</label>
+                                    <label class="label text-secondary">Price(TK)</label>
                                     <input type="number" class="form-control " min="1" placeholder="Unit Price"
                                         id="unit_price">
                                 </div>
                             </div>
-                            <div class="col-lg-2 col-sm-6">
+                            <div class="col-lg-3 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Total Price</label>
                                     <input type="text" readonly class="form-control " placeholder="Unit Price"
                                         id="total_unit_price">
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Yarn Factory</label>
+                                    <select name="yarn_factory" id="yarn_factory" class="form-control select2">
+                                        <option value="" selected disabled>Select Factory</option>
+                                        @foreach ($yarnFactory as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Delivery Point</label>
+                                    <select name="delivery_point" id="delivery_point" class="form-control select2">
+                                        <option value="" selected disabled>Select Netting Factory</option>
+                                        @foreach ($nettingFactory as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-lg-1 col-sm-6 align-self-center">
@@ -196,9 +189,9 @@
                             <div class="col-lg-12 mt-5">
                                 <div class="d-flex flex-wrap gap-3">
                                     <button class="btn btn-danger py-2 px-4 fw-medium fs-16 text-white">Cancel</button>
-                                    <button type="button" id="order_submit_btn"
+                                    <button type="button" id="submit_button"
                                         class="btn btn-primary py-2 px-4 fw-medium fs-16"> <i
-                                            class="ri-add-line text-white fw-medium"></i> Create Order</button>
+                                            class="ri-add-line text-white fw-medium"></i> Create</button>
                                 </div>
                             </div>
                         </div>
@@ -218,16 +211,65 @@
     $(function() {
         $('.select2').select2();
 
-        $('#order_submit_btn').on('click', function(){
+
+        $('#po_number').on('change',function(){
+            var po_number = $('#po_number option:selected').text();
+            var order_number = $(this).val();
+
+             if (po_number) {
+                // Optional: show a loading message
+                // console.log('Fetching data for PO:', po_number);
+
+                fetch(`/get-style-by-po-order-detail/${encodeURIComponent(po_number)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // console.log('API response:', data);
+                    $('#style_select').empty().append('<option selected disabled value="">Style</option>');
+
+                    let order_id = null;
+                    let order_number = null;
+                    // Append new options
+                    data.forEach(style => {
+                        order_id = style.order_id;
+                        order_number = style.order_number;
+                        $('#style_select').append(
+                            $('<option>', {
+                                value: style.style,
+                                text: style.style,
+                            })
+                        );
+                    });
+                    
+                    $('#order_id').val(order_id);
+                    $('#order_number').val(order_number);
+                    // Refresh Select2
+                    $('#style_select').trigger('change.select2');
+
+                })
+                .catch(error => {
+                     console.error('Fetch error:', error);
+                });
+            }
+            
+            
+        });
+
+        $('#submit_button').on('click', function(){
             const tableBodyData = document.getElementById("item_price_table").getElementsByTagName("tbody")[0];
             const rowCount = tableBodyData.rows.length;
             if(rowCount=== 0){
-                alert('Add Style, Description,quantity,price, etc.');
+                alert('Add Yarn Description,quantity,price, etc.');
                 
             }else{
-                $('#order_submit_form').submit();
+                $('#yarn_form').submit();
             }
         });
+
     });
     
     const unit_price = document.getElementById("unit_price");
@@ -253,10 +295,16 @@
     function addToTable() {
         const style = document.getElementById("style_select");
         const description = document.getElementById("description");
+        const yarn_factory = document.getElementById("yarn_factory");
+        const delivery_point = document.getElementById("delivery_point");
         const tableBody = document.getElementById("item_price_table").getElementsByTagName("tbody")[0];
 
         if (!style.value || style.value == '') {
             alert("Please enter a valid style.");
+            return;
+        }
+        if (!description.value || description.value == '') {
+            alert("Please enter yarn description.");
             return;
         }
         if (!unit_quantity.value) {
@@ -267,32 +315,38 @@
             alert("Please enter a unit price.");
             return;
         }
+        if (!yarn_factory.value) {
+            alert("Please Select yarn factory.");
+            return;
+        }
+        if (!delivery_point.value) {
+            alert("Please Select netting factory.");
+            return;
+        }
 
         //Check for duplicate style (only if not editing)
      
-         if (!editingRow) {
-        // Only check for duplicates if adding a new row
-        const existingRows = tableBody.querySelectorAll("tr");
-            for (let row of existingRows) {
-                const existingStyle = row.cells[0].textContent.trim().toLowerCase();
-                if (existingStyle === style.value.trim().toLowerCase()) {
-                    alert("This style already exists in the table.");
-                    return;
-                }
-            }
-        } else {
-            // If editing, only check other rows (not the one being edited)
-            const existingRows = tableBody.querySelectorAll("tr");
-            for (let row of existingRows) {
-                if (row !== editingRow) {
-                    const existingStyle = row.cells[0].textContent.trim().toLowerCase();
-                    if (existingStyle === style.value.trim().toLowerCase()) {
-                        alert("This style already exists in the table.");
-                        return;
-                    }
-                }
-            }
-        }
+        //  if (!editingRow) {
+        // const existingRows = tableBody.querySelectorAll("tr");
+        //     for (let row of existingRows) {
+        //         const existingStyle = row.cells[0].textContent.trim().toLowerCase();
+        //         if (existingStyle === style.value.trim().toLowerCase()) {
+        //             alert("This style already exists in the table.");
+        //             return;
+        //         }
+        //     }
+        // } else {
+        //     const existingRows = tableBody.querySelectorAll("tr");
+        //     for (let row of existingRows) {
+        //         if (row !== editingRow) {
+        //             const existingStyle = row.cells[0].textContent.trim().toLowerCase();
+        //             if (existingStyle === style.value.trim().toLowerCase()) {
+        //                 alert("This style already exists in the table.");
+        //                 return;
+        //             }
+        //         }
+        //     }
+        // }
         
 
         
@@ -306,6 +360,8 @@
             editingRow.cells[2].innerHTML = `${unit_quantity.value} <input type="hidden" value="${unit_quantity.value}" name="unit_quantity[]">`;
             editingRow.cells[3].innerHTML = `${unit_price.value} <input type="hidden" value="${unit_price.value}" name="unit_price[]">`;
             editingRow.cells[4].innerHTML = `${totalVal} <input type="hidden" value="${totalVal}" name="total_unit_price[]">`;
+            editingRow.cells[5].innerHTML = `${yarn_factory.options[yarn_factory.selectedIndex].text} <input type="hidden" value="${yarn_factory.value}" name="yarn_factory[]">`;
+            editingRow.cells[6].innerHTML = `${delivery_point.options[delivery_point.selectedIndex].text} <input type="hidden" value="${delivery_point.value}" name="delivery_point[]">`;
             editingRow = null;
             add_item_btn.textContent = 'Add +';
         } else {
@@ -317,6 +373,8 @@
                 <td>${unit_quantity.value} <input type="hidden" value="${unit_quantity.value}" name="unit_quantity[]"></td>
                 <td>${unit_price.value} <input type="hidden" value="${unit_price.value}" name="unit_price[]"></td>
                 <td>${totalVal} <input type="hidden" value="${totalVal}" name="total_unit_price[]"></td>
+                <td>${yarn_factory.options[yarn_factory.selectedIndex].text} <input type="hidden" value="${yarn_factory.value}" name="yarn_factory[]"></td>
+                <td>${delivery_point.options[delivery_point.selectedIndex].text} <input type="hidden" value="${delivery_point.value}" name="delivery_point[]"></td>
                 <td class="text-end">
                 <i class="material-symbols-outlined fs-16 text-body edit-btn" style="cursor:pointer;">edit</i>
                 <i class="material-symbols-outlined fs-16 text-danger delete-btn" style="cursor:pointer;">delete</i>
@@ -328,11 +386,13 @@
         calculateTotals();
 
         // Reset form
-       resetSelect();
+       resetSelect('style_select');
         description.value = "";
         unit_quantity.value = "";
         unit_price.value = "";
         total_unit_price.value = "";
+        resetSelect('yarn_factory');
+        resetSelect('delivery_point');
     }
 
     //edit row
@@ -350,6 +410,8 @@
             const unit_quantity = document.getElementById("unit_quantity");
             const unit_price = document.getElementById("unit_price");
             const total_unit_price = document.getElementById("total_unit_price");
+            const yarn_factory = document.getElementById("yarn_factory");
+            const delivery_point = document.getElementById("delivery_point");
 
             // ✅ Get text from text node only (exclude input elements)
             let selectedValue = row.cells[0].childNodes[0].textContent.trim();
@@ -358,6 +420,11 @@
             unit_quantity.value = row.cells[2].childNodes[0].textContent.trim();
             unit_price.value = row.cells[3].childNodes[0].textContent.trim();
             total_unit_price.value = row.cells[4].childNodes[0].textContent.trim();
+            let yarn_factory_value = row.cells[5].childNodes[1].value.trim();
+            let netting_factory_value = row.cells[6].childNodes[1].value.trim();
+            $('#yarn_factory').val(yarn_factory_value).trigger('change');
+            $('#delivery_point').val(netting_factory_value).trigger('change');
+
 
             add_item_btn.textContent = 'Update';
             editingRow = row;
@@ -383,8 +450,8 @@
         document.getElementById("grand_total").value = totalPrice.toFixed(2);
     }
 
-    function resetSelect() {
-        $('#style_select').val(null).trigger('change');
+    function resetSelect(id) {
+        $('#'+id).val(null).trigger('change');
     }
 </script>
 @endsection

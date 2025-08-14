@@ -1,9 +1,13 @@
 @extends('layouts.master')
-@section('title', 'Yarn List')
+@section('title', 'Dyeing Quotation List')
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-        <h2 class="mb-0">Order List</h2>
+        <div class="d-flex">
+            <h2 class="mb-0">Dyeing Quotation List </h2>
+            <a href="{{ route('dyeingquotation.create') }}" class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+ Create
+                Dyeing Quotation</a>
+        </div>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb align-items-center mb-0 lh-1">
@@ -17,7 +21,7 @@
                     <span class="fw-medium">Order</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Yarn List</span>
+                    <span class="fw-medium">Dyeing Quotation List</span>
                 </li>
             </ol>
         </nav>
@@ -33,7 +37,6 @@
                                     <tr>
                                         <th>Order Number</th>
                                         <th>PO</th>
-                                        <th>Date</th>
                                         <th>Quantity(kg)</th>
                                         <th>Total(TK)</th>
                                         <th>Status</th>
@@ -41,14 +44,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($yearnList as $item)
+                                    {{-- @forelse ($yearnList as $item) --}}
                                     <tr>
-                                        <td>{{ $item->order_number }}</td>
+                                        {{-- <td>{{ $item->order_number }}</td>
                                         <td>{{ $item->po_number }}</td>
-                                        <td>{{ $item->order_date }}</td>
-                                        <td>{{ $item->total_quantity }}</td>
-                                        <td>{{ $item->grand_total }}</td>
-                                        <td>{{ Str::ucfirst($item->status) }}</td>
+                                        <td>{{ $item->quantity }}</td>
+                                        <td>{{ $item->total_price }}</td>
+                                        <td>{{ Str::ucfirst($item->status) }}</td> --}}
                                         <td>
                                             <div class="d-flex align-items-center gap-1 justify-content-end">
                                                 <button
@@ -67,9 +69,9 @@
                                             </div>
                                         </td>
                                     </tr>
-                                    @empty
+                                    {{-- @empty
 
-                                    @endforelse
+                                    @endforelse --}}
                                 </tbody>
                             </table>
                         </div>

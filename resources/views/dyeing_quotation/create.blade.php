@@ -1,9 +1,9 @@
 @extends('layouts.master')
-@section('title', 'Deying')
+@section('title', 'Deying Quotation')
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-        <h2 class="mb-0">Deying Order</h2>
+        <h2 class="mb-0">Deying Quotation</h2>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb align-items-center mb-0 lh-1">
@@ -17,7 +17,7 @@
                     <span class="fw-medium">Order</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Deying Order</span>
+                    <span class="fw-medium">Deying Quotation</span>
                 </li>
             </ol>
         </nav>
@@ -28,7 +28,7 @@
             <div class="card bg-white border-0 rounded-3 mb-4">
                 <div class="card-body p-4">
 
-                    <form action="{{ route('dyeingorder.store') }}" method="POST" enctype="multipart/form-data"
+                    <form action="{{ route('dyeingquotation.store') }}" method="POST" enctype="multipart/form-data"
                         id="netting_form">
                         @csrf
                         <div class="row">

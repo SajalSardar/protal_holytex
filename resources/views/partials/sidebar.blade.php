@@ -22,7 +22,6 @@
                     <span class="title">Dashboard</span>
                 </a>
             </li>
-
             <li class="menu-item {{ request()->routeIs('order.*') ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
@@ -43,54 +42,40 @@
                     </li>
                 </ul>
             </li>
-            <li class="menu-item {{ request()->routeIs('buyyarn.*') ? 'open' : '' }}">
+            <li
+                class="menu-item {{ request()->routeIs(['yarnquotation.*', 'nettingquotation.*','dyeingquotation.*','accessoriesquotation.*']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
-                    <span class="title">Yarn</span>
+                    <span class="title">Quotation</span>
                 </a>
                 <ul class="menu-sub">
                     <li class="menu-item">
-                        <a href="{{ route('buyyarn.create') }}"
-                            class="menu-link {{ request()->routeIs('buyyarn.create') ? 'active' : '' }}">
-                            Yarn Order
+                        <a href="{{ route('yarnquotation.index') }}"
+                            class="menu-link {{ request()->routeIs('yarnquotation.*') ? 'active' : '' }}">
+                            Yarn Quotation
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('buyyarn.index') }}"
-                            class="menu-link {{ request()->routeIs('buyyarn.index') ? 'active' : '' }}">
-                            Yarn List
+                        <a href="{{ route('nettingquotation.index') }}"
+                            class="menu-link {{ request()->routeIs('nettingquotation.*') ? 'active' : '' }}">
+                            Netting Quotation
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('dyeingquotation.index') }}"
+                            class="menu-link {{ request()->routeIs('dyeingquotation.*') ? 'active' : '' }}">
+                            Dyeing Quotation
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('accessoriesquotation.index') }}"
+                            class="menu-link {{ request()->routeIs('accessoriesquotation.*') ? 'active' : '' }}">
+                            Accessories Quotation
                         </a>
                     </li>
                 </ul>
             </li>
-            <li class="menu-item {{ request()->routeIs('netting.*') ? 'open' : '' }}">
-                <a href="javascript:void(0);" class="menu-link menu-toggle">
-                    <span class="material-symbols-outlined menu-icon">note_stack</span>
-                    <span class="title">Netting</span>
-                </a>
-                <ul class="menu-sub">
-                    <li class="menu-item">
-                        <a href="{{ route('netting.create') }}"
-                            class="menu-link {{ request()->routeIs('netting.create') ? 'active' : '' }}">
-                            Netting Order
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="menu-item {{ request()->routeIs('dyeingorder.*') ? 'open' : '' }}">
-                <a href="javascript:void(0);" class="menu-link menu-toggle">
-                    <span class="material-symbols-outlined menu-icon">note_stack</span>
-                    <span class="title">Deying</span>
-                </a>
-                <ul class="menu-sub">
-                    <li class="menu-item">
-                        <a href="{{ route('dyeingorder.create') }}"
-                            class="menu-link {{ request()->routeIs('dyeingorder.create') ? 'active' : '' }}">
-                            Dyeing Order
-                        </a>
-                    </li>
-                </ul>
-            </li>
+
             <li class="menu-item {{ request()->routeIs('settings.*') ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>

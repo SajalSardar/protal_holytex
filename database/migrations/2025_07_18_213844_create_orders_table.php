@@ -17,7 +17,8 @@ return new class extends Migration {
             $table->string('client_email')->nullable()->index();
             $table->string('client_phone')->nullable();
             $table->date('order_date')->nullable();
-            $table->string('terms')->nullable();
+            $table->date('approximate_delivery_date')->nullable();
+            $table->date('delivery_date')->nullable();
             $table->text('client_address')->nullable();
             $table->text('ship_address')->nullable();
             $table->string('po_file')->nullable();
@@ -27,6 +28,7 @@ return new class extends Migration {
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->integer('approved_by')->nullable();
+            $table->date('remarks')->nullable();
             $table->timestamps();
         });
     }

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Netting extends Model {
+class NettingQuotation extends Model {
     //
     protected $guarded = ['id'];
 

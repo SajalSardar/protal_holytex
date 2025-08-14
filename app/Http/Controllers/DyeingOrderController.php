@@ -2,24 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BuyYarn;
+use App\Models\DyeingOrder;
+use App\Models\GarmentsFactroy;
 use App\Models\Netting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class NettingController extends Controller {
+class DyeingOrderController extends Controller {
 
-    public function getYarnStyleByPo($po_number) {
-        $nettings = Netting::where('po_number', $po_number)->pluck('style');
-        $yearns   = BuyYarn::with('yarnFactory', 'nettingFactory')
-            ->where('po_number', $po_number)
-            ->whereNotIn('style', $nettings)
-            ->get()
-            ->groupBy('style');
-        if ($yearns) {
-            return $yearns;
+    public function getNetting($po_number) {
+        $dyeing = DyeingOrder::where('po_number', $po_number)->pluck('style');
+
+        $nettings = Netting::with('dyeingFactory', 'nettingFactory')->where('po_number', $po_number)
+            ->where('delivery_factory_type', 'dyeing')
+            ->whereNotIn('style', $dyeing)
+            ->get();
+
+        if ($nettings) {
+            return $nettings;
         } else {
-            return 'Yarn not found!';
+            return 'Netting not found!';
         }
     }
 
@@ -34,24 +36,23 @@ class NettingController extends Controller {
      * Show the form for creating a new resource.
      */
     public function create() {
+        $nettings = Netting::where('delivery_factory_type', 'dyeing')->select('po_number')->groupby('po_number')->get();
 
-        $yearns = BuyYarn::select('po_number')->groupby('po_number')->get();
-        return view('netting.create', compact('yearns'));
+        $delivery_point = GarmentsFactroy::where('status', 'active')->get();
+        return view('dyeing_order.create', compact('nettings', 'delivery_point'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request) {
-        //
         // return $request;
-
         $request->validate([
             'po_number' => 'required',
         ]);
 
         foreach ($request->items as $key => $item) {
-            Netting::create([
+            DyeingOrder::create([
                 'order_id'                  => $request->order_id,
                 'order_number'              => $request->order_number,
                 'style'                     => $key,
@@ -61,43 +62,42 @@ class NettingController extends Controller {
                 'quantity'                  => $item['quantity'],
                 'price'                     => $item['rate'],
                 'total_price'               => $item['total'],
-                'delivery_factory_type'     => $item['delevary_poin_check'],
                 'delivery_point_id'         => $item['delivery_point'],
-                'netting_factory_id'        => $item['netting_factory_id'],
+                'dyeing_factory_id'         => $item['dyeing_factory_id'],
                 'remarks'                   => $request->remarks,
                 'created_by'                => Auth::id(),
             ]);
         }
 
-        toastr('Netting Successfully Created!');
+        toastr('Dyeing Successfully Created!');
         return back();
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Netting $netting) {
+    public function show(DyeingOrder $dyeingOrder) {
         //
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Netting $netting) {
+    public function edit(DyeingOrder $dyeingOrder) {
         //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Netting $netting) {
+    public function update(Request $request, DyeingOrder $dyeingOrder) {
         //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Netting $netting) {
+    public function destroy(DyeingOrder $dyeingOrder) {
         //
     }
 }

@@ -52,7 +52,7 @@
                     <li class="menu-item">
                         <a href="{{ route('buyyarn.create') }}"
                             class="menu-link {{ request()->routeIs('buyyarn.create') ? 'active' : '' }}">
-                            Buy Yarn
+                            Yarn Order
                         </a>
                     </li>
                     <li class="menu-item">
@@ -72,7 +72,21 @@
                     <li class="menu-item">
                         <a href="{{ route('netting.create') }}"
                             class="menu-link {{ request()->routeIs('netting.create') ? 'active' : '' }}">
-                            Netting create
+                            Netting Order
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="menu-item {{ request()->routeIs('dyeingorder.*') ? 'open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <span class="material-symbols-outlined menu-icon">note_stack</span>
+                    <span class="title">Deying</span>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="{{ route('dyeingorder.create') }}"
+                            class="menu-link {{ request()->routeIs('dyeingorder.create') ? 'active' : '' }}">
+                            Dyeing Order
                         </a>
                     </li>
                 </ul>
@@ -104,7 +118,7 @@
                     <li class="menu-item">
                         <a href="{{ route('settings.dyeingfactroy.index') }}"
                             class="menu-link {{ request()->routeIs('settings.dyeingfactroy.index') ? 'active' : '' }}">
-                            Deying Factory
+                            Dyeing Factory
                         </a>
                     </li>
                     <li class="menu-item">

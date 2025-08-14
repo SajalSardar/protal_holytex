@@ -7,4 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Netting extends Model {
     //
     protected $guarded = ['id'];
+
+    public function dyeingFactory() {
+        return $this->hasOne(DyeingFactroy::class, 'id', 'delivery_point_id');
+    }
+    public function nettingFactory() {
+        return $this->hasOne(NettingFactroy::class, 'id', 'netting_factory_id');
+    }
+
 }

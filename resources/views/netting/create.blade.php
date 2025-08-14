@@ -123,7 +123,7 @@
                     }
                     return response.json();
                 }).then(data => {
-                    console.log('API response:', data);
+                    // console.log('API response:', data);
                     let display_div = $('#show_all_yarn_item');
                     let order_id = null;
                     let order_number = null;
@@ -132,6 +132,7 @@
                     Object.entries(data).forEach(([key, value]) => {
                         // console.log(key, value);
                         let total_quantity = 0;
+                        let netting_factory_id = null;
                         singleItem +=`<div class="card border-0 rounded-3 mb-3">
                                         <div class="card-header">
                                              <h3 style="text-transform:uppercase">Style: ${key}</h3>
@@ -146,8 +147,9 @@
                                             </tr>`;
                         value.forEach(item => {
                             total_quantity += parseFloat(item.quantity);
-                            order_number = item.order_number
-                            order_id = item.order_id
+                            order_number = item.order_number;
+                            order_id = item.order_id;
+                            netting_factory_id =item.netting_factory.id;
                         singleItem += `
                             
                                 <tr>
@@ -168,6 +170,7 @@
                                 </div>
                                     <div class="card-footer">
                                         <div class="row">
+                                            <input type="hidden" value="${netting_factory_id}" name="items[${key}][netting_factory_id]"> 
                                             <div class="col-sm-3">
                                                 <div class="form-group mb-4">
                                                     <label class="label text-secondary">Total Quantity (KG)</label>
@@ -176,7 +179,7 @@
                                             </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group mb-4">
-                                                    <label class="label text-secondary">Rate</label>
+                                                    <label class="label text-secondary">Rate(TK)</label>
                                                     <input type="number" class="form-control" oninput="attachRateCalculation('${key}')" name="items[${key}][rate]"  id="rate_${key}">
                                                 </div>
                                             </div>
@@ -191,7 +194,7 @@
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label>
-                                                        <input type="radio" class="form-check-input" style="border:1px solid #000" name="items[${key}][delevary_poin_check]" value="deying" onclick="showHideDeliveryPoint(this,'${key}')"> No</label>
+                                                        <input type="radio" class="form-check-input" style="border:1px solid #000" name="items[${key}][delevary_poin_check]" value="dyeing" onclick="showHideDeliveryPoint(this,'${key}')"> No</label>
                                                         <label class="ms-3">
                                                         <input type="radio" class="form-check-input" style="border:1px solid #000" name="items[${key}][delevary_poin_check]" value="garments" onclick="showHideDeliveryPoint(this,'${key}')"> Yes</label>
                                                     </div>    
@@ -273,7 +276,7 @@
                     //$(`#garments_${key}`).select2();
                 });
         } 
-        else if (value === "deying") {
+        else if (value === "dyeing") {
             deyingSection.style.display = "block";
             garmentsSection.style.display = "none";
 
@@ -282,7 +285,7 @@
                 .then(res => res.json())
                 .then(data => {
                     let select = document.getElementById(`deying_point_${key}`);
-                    select.innerHTML = '<option value="" selected disabled>Select Deying Factory</option>';
+                    select.innerHTML = '<option value="" selected disabled>Select Dyeing Factory</option>';
                     data.forEach(item => {
                         let option = document.createElement("option");
                         option.value = item.id;

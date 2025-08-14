@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BuyYarn;
 use App\Models\Netting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NettingController extends Controller {
 
@@ -38,8 +39,31 @@ class NettingController extends Controller {
      */
     public function store(Request $request) {
         //
+        //return $request;
 
-        return $request;
+        $request->validate([
+            'po_number' => 'required',
+        ]);
+
+        foreach ($request->items as $key => $item) {
+            Netting::create([
+                'order_id'                  => $request->order_id,
+                'style'                     => $key,
+                'po_number'                 => $request->po_number,
+                'purchase_date'             => $request->order_date,
+                'approximate_delivery_date' => $request->approximate_delivery_date,
+                'quantity'                  => $item['quantity'],
+                'price'                     => $item['rate'],
+                'total_price'               => $item['total'],
+                'delivery_factory_type'     => $item['delevary_poin_check'],
+                'delivery_point_id'         => $item['delivery_point'],
+                'remarks'                   => $request->remarks,
+                'created_by'                => Auth::id(),
+            ]);
+        }
+
+        toastr('Netting Successfully Created!');
+        return back();
     }
 
     /**

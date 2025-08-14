@@ -208,7 +208,7 @@
                                             <div class="col-lg-3 col-sm-6" id="garments_select_section_${key}" style="display:none;">
                                                 <div class="form-group mb-4">
                                                     <label class="label text-secondary">Delivery Point</label>
-                                                    <select name="items[${key}][garments]" id="garments_${key}" class="form-control select2">
+                                                    <select name="items[${key}][delivery_point]" id="garments_${key}" class="form-control select2">
                                                         <option value="" selected disabled>Select Garments Factory</option>
                                                     </select>
                                                 </div>

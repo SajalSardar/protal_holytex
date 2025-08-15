@@ -36,7 +36,7 @@
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('order.index') }}"
-                            class="menu-link {{ request()->routeIs('order.index') ? 'active' : '' }}">
+                            class="menu-link {{ request()->routeIs(['order.index','order.show']) ? 'active' : '' }}">
                             All Orders
                         </a>
                     </li>

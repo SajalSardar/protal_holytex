@@ -64,11 +64,11 @@
                                         <td>{{ Str::ucfirst($item->status) }}</td>
                                         <td>
                                             <div class="d-flex align-items-center gap-1 justify-content-end">
-                                                <button
+                                                <a href="{{ route('order.show',$item->id) }}"
                                                     class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
                                                     <i
                                                         class="material-symbols-outlined fs-16 text-primary">visibility</i>
-                                                </button>
+                                                </a>
                                                 <button
                                                     class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
                                                     <i class="material-symbols-outlined fs-16 text-body">edit</i>

@@ -81,7 +81,41 @@ class OrderController extends Controller {
      * Display the specified resource.
      */
     public function show(Order $order) {
-        //
+        // $order->load('orderDetails.creator', 'orderDetails.lastUpdateBy', 'yarnQuotations.yarnFactory', 'yarnQuotations.nettingFactory', 'yarnQuotations.creator', 'yarnQuotations.lastUpdateBy', 'yarnQuotations.approvedBy', 'nettingQuotations', 'approvedBy', 'creator', 'lastUpdateBy');
+        $order->load([
+            'orderDetails',
+            'approvedBy',
+            'creator',
+            'lastUpdateBy',
+            'orderDetails.creator:id,name',
+            'orderDetails.lastUpdateBy:id,name',
+            'yarnQuotations',
+            'yarnQuotations.yarnFactory:id,name,address',
+            'yarnQuotations.nettingFactory:id,name,address',
+            'yarnQuotations.creator:id,name',
+            'yarnQuotations.lastUpdateBy:id,name',
+            'yarnQuotations.approvedBy:id,name',
+            'nettingQuotations',
+            'nettingQuotations.creator:id,name',
+            'nettingQuotations.lastUpdateBy:id,name',
+            'nettingQuotations.approvedBy:id,name',
+            'nettingQuotations.nettingFactory:id,name,address',
+            'nettingQuotations.dyeingFactory:id,name,address',
+            'nettingQuotations.garmentsFactory:id,name,address',
+            'dyeingQuotations',
+            'dyeingQuotations.creator:id,name',
+            'dyeingQuotations.lastUpdateBy:id,name',
+            'dyeingQuotations.approvedBy:id,name',
+            'dyeingQuotations.garmentsFactory:id,name,address',
+            'dyeingQuotations.dyeingFactory:id,name,address',
+            'accessoriesQuotations',
+            'accessoriesQuotations.creator:id,name',
+            'accessoriesQuotations.lastUpdateBy:id,name',
+            'accessoriesQuotations.approvedBy:id,name',
+        ]);
+
+        // return $order;
+        return view('order.show', compact('order'));
     }
 
     /**

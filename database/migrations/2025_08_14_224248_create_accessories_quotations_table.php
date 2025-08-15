@@ -27,6 +27,7 @@ return new class extends Migration {
             $table->string('supplier_name')->nullable();
             $table->string('supplier_phone')->nullable();
             $table->text('supplier_address')->nullable();
+            $table->text('shiphing_address')->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->integer('approved_by')->nullable();

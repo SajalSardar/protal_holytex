@@ -14,9 +14,9 @@ use App\Http\Controllers\YarnFactroyController;
 use App\Http\Controllers\YarnQuotationController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/test', function () {
-    return view('dashboard-eliment.products-list');
-});
+// Route::get('/test', function () {
+//     return view('dashboard-eliment.products-list');
+// });
 
 // Route::get('/', function () {
 //     return view('login');

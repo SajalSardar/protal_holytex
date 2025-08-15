@@ -28,7 +28,7 @@ return new class extends Migration {
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->integer('approved_by')->nullable();
-            $table->date('remarks')->nullable();
+            $table->text('remarks')->nullable();
             $table->timestamps();
         });
     }

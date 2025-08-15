@@ -167,21 +167,21 @@
                             </div>
                             <div class="col-lg-2 col-sm-6">
                                 <div class="form-group mb-4">
-                                    <label class="label text-secondary">Unit Quantity</label>
+                                    <label class="label text-secondary">Unit Quantity(PC)</label>
                                     <input type="number" class="form-control " placeholder="Quantity" id="unit_quantity"
                                         min="1">
                                 </div>
                             </div>
                             <div class="col-lg-2 col-sm-6">
                                 <div class="form-group mb-4">
-                                    <label class="label text-secondary">Unit Price</label>
+                                    <label class="label text-secondary">Unit Price(TK)</label>
                                     <input type="number" class="form-control " min="1" placeholder="Unit Price"
                                         id="unit_price">
                                 </div>
                             </div>
                             <div class="col-lg-2 col-sm-6">
                                 <div class="form-group mb-4">
-                                    <label class="label text-secondary">Total Price</label>
+                                    <label class="label text-secondary">Total Price(TK)</label>
                                     <input type="text" readonly class="form-control " placeholder="Unit Price"
                                         id="total_unit_price">
                                 </div>

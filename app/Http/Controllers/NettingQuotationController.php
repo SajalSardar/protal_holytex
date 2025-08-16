@@ -27,7 +27,8 @@ class NettingQuotationController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        return view('netting_quotation.index');
+        $nettings = NettingQuotation::with('nettingFactory:id,name,address')->get();
+        return view('netting_quotation.index', compact('nettings'));
     }
 
     /**

@@ -31,27 +31,39 @@
         <div class=" col-lg-12">
             <div class="card bg-white border-0 rounded-3 mb-4">
                 <div class="card-body p-4">
-                    <div class="default-table-area all-products">
+                    <div class="default-table-area style-two default-table-width">
                         <div class="table-responsive">
                             <table class="table align-middle">
                                 <thead>
                                     <tr>
                                         <th>Order Number</th>
                                         <th>PO</th>
+                                        <th>Style</th>
                                         <th>Quantity(kg)</th>
+                                        <th>Rate(TK)</th>
                                         <th>Total(TK)</th>
+                                        <th>Approx. delivery_date</th>
                                         <th>Status</th>
+                                        <th>Netting Factory</th>
                                         <th class="text-end">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{-- @forelse ($yearnList as $item) --}}
+                                    @forelse ($nettings as $item)
                                     <tr>
-                                        {{-- <td>{{ $item->order_number }}</td>
+                                        <td>{{ $item->order_number }}</td>
                                         <td>{{ $item->po_number }}</td>
+                                        <td>{{ $item->style }}</td>
                                         <td>{{ $item->quantity }}</td>
+                                        <td>{{ $item->price }}</td>
                                         <td>{{ $item->total_price }}</td>
-                                        <td>{{ Str::ucfirst($item->status) }}</td> --}}
+                                        <td>{{ $item->approximate_delivery_date }}</td>
+                                        <td>{{ Str::ucfirst($item->status) }}</td>
+                                        <td>
+                                            Name:{{ $item->nettingFactory->name }} <br>
+                                            Address:{{ $item->nettingFactory->address }}
+
+                                        </td>
                                         <td>
                                             <div class="d-flex align-items-center gap-1 justify-content-end">
                                                 <button
@@ -70,9 +82,11 @@
                                             </div>
                                         </td>
                                     </tr>
-                                    {{-- @empty
-
-                                    @endforelse --}}
+                                    @empty
+                                    <tr>
+                                        <td colspan="5">No Data Found!</td>
+                                    </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>

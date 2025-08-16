@@ -30,7 +30,8 @@ class DyeingQuotationController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        return view('dyeing_quotation.index');
+        $dyeings = DyeingQuotation::with('dyeingFactory')->get();
+        return view('dyeing_quotation.index', compact('dyeings'));
     }
 
     /**

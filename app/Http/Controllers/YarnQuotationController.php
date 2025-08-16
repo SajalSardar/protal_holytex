@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DyeingQuotation;
 use App\Models\NettingFactroy;
+use App\Models\NettingQuotation;
 use App\Models\Order;
 use App\Models\YarnFactroy;
 use App\Models\YarnQuotation;
@@ -16,7 +18,11 @@ class YarnQuotationController extends Controller {
      */
     public function index() {
         //
-        $yearnList = YarnQuotation::get();
+        $yearnList = YarnQuotation::orderBy('id', 'desc')->get()
+            ->groupBy('po_number')
+            ->map(function ($items) {
+                return $items->groupBy('style');
+            });
         // return $yearnList;
         return view('yarn_quotation.index', compact('yearnList'));
     }
@@ -43,7 +49,11 @@ class YarnQuotationController extends Controller {
         ]);
 
         foreach ($request->style as $key => $item) {
-            YarnQuotation::create([
+
+            $netting = NettingQuotation::where('po_number', $request->po_number)->where('style', $item)->first();
+            $dyeing  = DyeingQuotation::where('po_number', $request->po_number)->where('style', $item)->first();
+
+            $yarnCreate = YarnQuotation::create([
                 'order_number'              => $request->order_number,
                 'po_number'                 => $request->po_number,
                 'order_date'                => $request->order_date,
@@ -59,6 +69,19 @@ class YarnQuotationController extends Controller {
                 'remarks'                   => $request->remarks,
                 'created_by'                => Auth::id(),
             ]);
+
+            if ($netting && $yarnCreate) {
+                $netting->update([
+                    'quantity'    => $netting->quantity + $request->unit_quantity[$key],
+                    'total_price' => ($netting->quantity + $request->unit_quantity[$key]) * $netting->price,
+                ]);
+            }
+            if ($dyeing && $yarnCreate) {
+                $dyeing->update([
+                    'quantity'    => $dyeing->quantity + $request->unit_quantity[$key],
+                    'total_price' => ($dyeing->quantity + $request->unit_quantity[$key]) * $dyeing->price,
+                ]);
+            }
         }
 
         toastr('Order Successfully Created!');

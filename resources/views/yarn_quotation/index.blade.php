@@ -31,26 +31,34 @@
         <div class=" col-lg-12">
             <div class="card bg-white border-0 rounded-3 mb-4">
                 <div class="card-body p-4">
-                    <div class="default-table-area all-products">
+                    <div class="default-table-area style-two default-table-width">
                         <div class="table-responsive">
                             <table class="table align-middle">
                                 <thead>
                                     <tr>
                                         <th>Order Number</th>
                                         <th>PO</th>
+                                        <th>Style</th>
                                         <th>Quantity(kg)</th>
                                         <th>Total(TK)</th>
+                                        <th>Approx. delivery date</th>
                                         <th>Status</th>
                                         <th class="text-end">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($yearnList as $item)
+                                    @forelse ($yearnList as $key=>$poItems)
+                                    @foreach ($poItems as $items)
+                                    @php
+                                    $item = $items->first();
+                                    @endphp
                                     <tr>
                                         <td>{{ $item->order_number }}</td>
                                         <td>{{ $item->po_number }}</td>
-                                        <td>{{ $item->quantity }}</td>
-                                        <td>{{ $item->total_price }}</td>
+                                        <td>{{ $item->style }}</td>
+                                        <td>{{ number_format($items->sum('quantity'), 2) }}</td>
+                                        <td>{{ number_format($items->sum('total_price'), 2) }}</td>
+                                        <td>{{ $item->approximate_delivery_date }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
                                         <td>
                                             <div class="d-flex align-items-center gap-1 justify-content-end">
@@ -70,8 +78,11 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    @endforeach
                                     @empty
-
+                                    <tr>
+                                        <td colspan="3">No data found!</td>
+                                    </tr>
                                     @endforelse
                                 </tbody>
                             </table>

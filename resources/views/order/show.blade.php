@@ -423,10 +423,10 @@
                             </div>
                         </div>
                         <div class="tab-pane fade" id="netting_quot_details">
-                            <div class="accordion mt-5">
+                            <div class="accordion ">
                                 @forelse ($order->nettingQuotations as $item)
 
-                                <div class="accordion-item">
+                                <div class="accordion-item mt-5">
 
                                     <h2 class="accordion-header">
                                         <button style="background: #605dff;"
@@ -545,9 +545,9 @@
                             </div>
                         </div>
                         <div class="tab-pane fade" id="dyeing_quot_details">
-                            <div class="accordion mt-5">
+                            <div class="accordion ">
                                 @forelse ($order->dyeingQuotations as $item)
-                                <div class="accordion-item">
+                                <div class="accordion-item mt-5">
 
                                     <h2 class="accordion-header">
                                         <button style="background: #605dff;"
@@ -649,10 +649,10 @@
                             </div>
                         </div>
                         <div class="tab-pane fade" id="acc_quot_details">
-                            <div class="accordion mt-5">
+                            <div class="accordion ">
                                 @forelse ($order->accessoriesQuotations->groupBy('style') as $key=>$items)
 
-                                <div class="accordion-item">
+                                <div class="accordion-item mt-5">
 
                                     <h2 class="accordion-header">
                                         <button style="background: #605dff;"

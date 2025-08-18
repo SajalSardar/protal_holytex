@@ -39,3 +39,10 @@
     background-color: #1e73be;
     color: white;
 }
+.table_action_btn{
+    background-color: #fff;
+}
+.table_action_btn li:hover a{
+    background-color: #7977fa;
+    color: #fff;
+}

@@ -12,6 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StyleController;
 use App\Http\Controllers\YarnFactroyController;
 use App\Http\Controllers\YarnQuotationController;
+use App\Http\Controllers\YarnReceivedController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/test', function () {
@@ -32,6 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('nettingquotation', NettingQuotationController::class);
     Route::resource('dyeingquotation', DyeingQuotationController::class);
     Route::resource('accessoriesquotation', AccessoriesQuotationController::class);
+    Route::resource('yarnreceived', YarnReceivedController::class);
 
     Route::name('order.details')->controller(OrderDetailController::class)->group(function () {
 
@@ -49,6 +51,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('get-all-garments-factory', [GarmentsFactroyController::class, 'showAll']);
     Route::get('get-yarn-style-by-po/{po_number}', [NettingQuotationController::class, 'getYarnStyleByPo']);
     Route::get('get-netting-order/{po_number}', [DyeingQuotationController::class, 'getNetting']);
+    Route::get('get-yarn-quotation-by-po/{po_number}', [YarnReceivedController::class, 'getYarnStyleByPo']);
 
 });
 

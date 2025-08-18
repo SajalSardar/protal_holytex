@@ -63,20 +63,30 @@
                                         <td>{{ $item->grand_total }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
                                         <td>
-                                            <div class="d-flex align-items-center gap-1 justify-content-end">
-                                                <a href="{{ route('order.show',$item->id) }}"
-                                                    class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
-                                                    <i
-                                                        class="material-symbols-outlined fs-16 text-primary">visibility</i>
+                                            <div class="dropdown">
+                                                <a class="btn btn-primary dropdown-toggle" href="#" role="button"
+                                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                                    Action
                                                 </a>
-                                                <button
-                                                    class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
-                                                    <i class="material-symbols-outlined fs-16 text-body">edit</i>
-                                                </button>
-                                                <button
-                                                    class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
-                                                    <i class="material-symbols-outlined fs-16 text-danger">delete</i>
-                                                </button>
+
+                                                <ul class="dropdown-menu dropdown-menu-end table_action_btn">
+                                                    <li><a class="dropdown-item py-2"
+                                                            href="{{ route('yarnreceived.create',['po_number'=>$item->po_number]) }}">
+                                                            <i
+                                                                class="material-symbols-outlined fs-16 text-primary">contact_page</i>
+                                                            Yarn
+                                                            Receive</a></li>
+                                                    <li><a class="dropdown-item py-2"
+                                                            href="{{ route('order.show',$item->id) }}"> <i
+                                                                class="material-symbols-outlined fs-16 text-primary">visibility</i>
+                                                            View</a></li>
+                                                    <li><a class="dropdown-item py-2" href="#"><i
+                                                                class="material-symbols-outlined fs-16 text-body">edit</i>
+                                                            Edit</a></li>
+                                                    <li><a class="dropdown-item py-2" href="#"><i
+                                                                class="material-symbols-outlined fs-16 text-danger">delete</i>
+                                                            Delete</a></li>
+                                                </ul>
                                             </div>
                                         </td>
                                     </tr>

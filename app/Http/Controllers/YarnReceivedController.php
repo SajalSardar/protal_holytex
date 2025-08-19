@@ -10,6 +10,9 @@ use Illuminate\Http\Request;
 class YarnReceivedController extends Controller {
     public function getYarnStyleByPo($po_number) {
         $yearns = YarnQuotation::with('yarnFactory', 'nettingFactory')
+            ->withSum('yarnReceived', 'quantity')
+            ->withSum('yarnLoss', 'quantity')
+            ->withSum('storeStock', 'quantity')
             ->where('po_number', $po_number)
             ->get()
             ->groupBy('style');
@@ -24,7 +27,7 @@ class YarnReceivedController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        //
+        return view('yarn_received.index');
     }
 
     /**
@@ -49,7 +52,7 @@ class YarnReceivedController extends Controller {
 
         $yearns = YarnQuotation::select('po_number')->groupby('po_number')->get();
 
-        return view('yarn_received.receive', compact('yearns'));
+        return view('yarn_received.create', compact('yearns'));
     }
 
     /**

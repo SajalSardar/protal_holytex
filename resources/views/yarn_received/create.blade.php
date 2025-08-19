@@ -1,3 +1,6 @@
+@php
+$po_number = request()->po_number ?? '';
+@endphp
 @extends('layouts.master')
 @section('title', 'Yarn Received')
 @section('content')
@@ -22,214 +25,235 @@
             </ol>
         </nav>
     </div>
-
-    <div class="row mb-4 mt-2">
-        <div class="col-12">
-            <div class="card border bg-white rounded-3 overflow-hidden">
-                <div class="card-header">
-                    <h3 class="card-title">Basic Order Info</h3>
-                </div>
-                <div class="card-body">
-                    <div class="default-table-area style-two default-table-width">
-                        <div class="table-responsive">
-                            <table class="table align-middle">
-                                <thead>
-                                    <tr>
-                                        <th><strong>PO</strong></th>
-                                        <th><strong>Order Number</strong></th>
-                                        <th><strong>Order Date</strong></th>
-                                        <th><strong>Status</strong></th>
-                                        <th><strong>Approx. delivery</strong></th>
-                                        <th><strong>Delivery Date</strong></th>
-                                        <th><strong>Approved By</strong></th>
-                                        <th><strong>PO PDF</strong></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>{{ $order->po_number }}</td>
-                                        <td>{{ $order->order_number }}</td>
-                                        <td>{{ $order->order_date }}</td>
-                                        <td>
-                                            <span
-                                                class="badge bg-success bg-opacity-10 text-success p-2 fs-12 fw-normal">{{
-                                                Str::ucfirst($order->status)
-                                                }}</span>
-                                        </td>
-                                        <td>{{ $order->approximate_delivery_date }}</td>
-                                        <td>{{ $order->delivery_date ?? '--' }}</td>
-                                        <td>{{ $order->approvedBy->name ?? '--' }}</td>
-                                        <td>
-                                            @if ($order->po_file)
-                                            <a href="{{ asset('storage/'.$order->po_file) }}" target="_blank"><span
-                                                    class="material-symbols-outlined">
-                                                    picture_as_pdf
-                                                </span></a>
-                                            @else
-                                            --
-                                            @endif
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <table class="table align-middle mt-4">
-                                <thead>
-                                    <tr>
-                                        <th><strong>Created By</strong></th>
-                                        <th><strong>Created at</strong></th>
-                                        <th><strong>Last updated by</strong></th>
-                                        <th><strong>Last update at</strong></th>
-                                        <th><strong>Shipping Address</strong></th>
-                                        <th><strong>Remarks</strong></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>{{ $order->creator->name ?? '--' }}</td>
-                                        <td>{{ $order->created_at->format('d M Y')}}</td>
-                                        <td>{{ $order->lastUpdateBy->name ?? '--'}}</td>
-                                        <td>{{ $order->updated_at->format('d M Y')}}</td>
-                                        <td>{{ $order->ship_address }}</td>
-                                        <td>{{ $order->remarks }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class=" col-lg-12">
-            <div class="card bg-white border-0 rounded-3 mb-4">
-                <div class="card-body p-4">
-                    @forelse ($order->yarnQuotations->groupBy('style') as $key => $items)
-                    <div class="accordion  mb-5">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button style="background: #605dff;" class="accordion-button text-uppercase text-white"
-                                    type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ $key }}">
-                                    <strong>Style: {{ $key }}</strong>
-                                </button>
-                            </h2>
-
-                            <div id="collapse{{ $key }}" class="accordion-collapse collapse show">
-                                <div class="accordion-body p-0">
-                                    <div class="default-table-area style-two default-table-width">
-                                        <div class="table-responsive">
-                                            <table class="table align-middle">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Description</th>
-                                                        <th>Qty(KG)</th>
-                                                        <th>Status</th>
-                                                        <th>Delevired Qty.</th>
-                                                        <th>Reveive(kg)</th>
-                                                        <th>Loss Qty</th>
-                                                    </tr>
-                                                </thead>
-
-                                                <tbody>
-                                                    @foreach ($items as $item)
-                                                    <tr>
-                                                        <td>{{ $item->description }}</td>
-                                                        <td>{{ $item->quantity }}</td>
-                                                        <td>{{ $item->status }}</td>
-                                                        <td>--</td>
-                                                        <td>
-                                                            <input type="text">
-                                                        </td>
-                                                        <td>--</td>
-                                                        <td>--</td>
-                                                    </tr>
-                                                    @endforeach
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td class="text-center"><strong>Total:</strong></td>
-                                                        <td colspan="2">
-                                                            <strong>{{
-                                                                number_format($items->sum('quantity'),
-                                                                2)
-                                                                }}KG</strong>
-                                                        </td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="table-responsive  mt-4">
-                                        <table class="table align-middle">
-                                            <thead class="table-dark">
-                                                <tr>
-                                                    <th>Description</th>
-                                                    <th>Approx. Delivery</th>
-                                                    <th>Delivery Date</th>
-                                                    <th>remarks</th>
-                                                    <th>Approved By</th>
-                                                    <th>Created By</th>
-                                                    <th>Created At</th>
-                                                    <th>Last Up. By</th>
-                                                    <th>Last Up. At</th>
-                                                    <th>Yarn Fac.</th>
-                                                    <th>Netting Fac.</th>
-                                                </tr>
-                                            </thead>
-
-                                            <tbody>
-                                                @foreach ($items as $item)
-                                                <tr>
-                                                    <td>{{ $item->description }}</td>
-                                                    <td>{{ $item->approximate_delivery_date }}</td>
-                                                    <td>{{ $item->delivery_date ?? '--' }}</td>
-                                                    <td>{{ $item->remarks }}</td>
-                                                    <td>{{ $item->approvedBy->name ?? '--' }}</td>
-                                                    <td>{{ $item->creator->name ?? '--' }}</td>
-                                                    <td>{{ $item->created_at->format('d M Y')}}</td>
-                                                    <td>{{ $item->lastUpdateBy->name ?? '--'}}</td>
-                                                    <td>{{ $item->updated_at->format('d M Y')}}</td>
-                                                    <td>Name: {{ $item->yarnFactory->name}} <br> Address: {{
-                                                        $item->yarnFactory->address}}</td>
-                                                    <td>Name: {{ $item->nettingFactory->name}} <br> Address:
-                                                        {{
-                                                        $item->nettingFactory->address}}</td>
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
+    <form action="{{ route('yarnreceived.store') }}" method="POST" enctype="multipart/form-data" id="yarn_form">
+        @csrf
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card bg-white border-0 rounded-3 mb-4">
+                    <div class="card-body p-4">
+                        <div class="row">
+                            <input type="hidden" id="order_id" name="order_id">
+                            <input type="hidden" id="order_number" name="order_number">
+                            <div class="col-lg-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">PO Number <span
+                                            style="color: rgb(205, 2, 2)">*</span></label>
+                                    <select name="po_number" id="po_number"
+                                        class="form-control select2  @error('po_number') is-invalid @enderror">
+                                        <option value="" selected disabled>Select PO Number</option>
+                                        @foreach ($yearns as $item)
+                                        <option value="{{ $item->po_number }}" {{ $po_number==$item->po_number ?
+                                            "selected" : '' }}>{{ $item->po_number }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('po_number')
+                                    <div class="text-danger mt-2">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
                     </div>
-                    @empty
-                    <p>No Data Found!</p>
-                    @endforelse
-                    <div class="card mt-3">
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <h3>Total Quantity(KG): {{
-                                    number_format($order->yarnQuotations->sum('quantity'),
-                                    2)
-                                    }}KG</h3>
-
-                                <h3 class="ms-5">Total TK: {{
-                                    number_format($order->yarnQuotations->sum('total_price'),
-                                    2)
-                                    }}TK</h3>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
-
             </div>
         </div>
-    </div>
-</div>
+        <div id="show_all_yarn_item" class="row"></div>
+    </form>
 </div>
 
 <div class="flex-grow-1"></div>
+@endsection
+
+
+@section('script')
+<script>
+    $(function() {
+        $('.select2').select2();
+
+        $('#po_number').on('change',function(){
+            let selected_po_number = $(this).val();
+            let currentUrl = window.location.origin + window.location.pathname;
+            window.location.href = currentUrl + "?po_number=" + selected_po_number;
+
+           loadYarnData(selected_po_number);
+        });
+        
+        $(window).on('load',function(){
+            let request_po ="{{ $po_number }}"
+            if(request_po != ''){
+                loadYarnData(request_po);
+            }
+        });
+
+
+        function loadYarnData(po_number){
+             if (po_number) {
+
+                fetch(`/get-yarn-quotation-by-po/${encodeURIComponent(po_number)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    // console.log('API response:', response);
+                    return response.json();
+                })
+                .then(data => {
+                    let order_id = null;
+                    let order_number = null;
+                    console.log('API response:', data);
+                    let display_div = $('#show_all_yarn_item');
+                    let singleItem = `<div class="col-lg-12">
+                                    <div class="card bg-white border-0 rounded-3 mb-4">
+                                        <div class="card-body p-4">
+                                            <div class="row">
+                                                <div class="col-12 mb-3">
+                                                    <h3>CHALLAN INFO</h3>
+                                                </div>
+                                                <div class="col-lg-3 col-sm-4">
+                                                    <div class="form-group mb-4">
+                                                        <label class="label text-secondary">Challan No.</label>
+                                                        <input type="text" name="challan_number" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-2 col-sm-4">
+                                                    <div class="form-group mb-4">
+                                                        <label class="label text-secondary">Vehicle Number</label>
+                                                        <input type="text" name="vehicle_number" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-2 col-sm-4">
+                                                    <div class="form-group mb-4">
+                                                        <label class="label text-secondary">Challan Date</label>
+                                                        <input type="date" name="challan_date" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-2 col-sm-4">
+                                                    <div class="form-group mb-4">
+                                                        <label class="label text-secondary">Received Date</label>
+                                                        <input type="date" name="received_date" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3 col-sm-4">
+                                                    <div class="form-group mb-4">
+                                                        <label class="label text-secondary">Upload Challan</label>
+                                                        <input type="file" name="challan_file" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>`;
+                    // Append new options
+                    Object.entries(data).forEach(([key, items]) => {
+                        singleItem +=`<div class="col-lg-12">
+                            <div class="accordion mb-5" style="border-bottom:5px solid #605dff;">
+                        <div class="accordion-item">
+                                <h2 class="accordion-header mb-3">
+                                    <button style="background: #605dff;" class="accordion-button text-uppercase text-white"
+                                        type="button" data-bs-toggle="collapse" data-bs-target="#collapse${key}">
+                                        <strong>Style: ${key}</strong>
+                                    </button>
+                                </h2>
+                            <div id="collapse${key}" class="accordion-collapse collapse show">
+                                <div class="accordion-body p-0 px-2">`;
+                         items.forEach(item => {
+                            order_id = item.order_id;
+                            order_number = item.order_number;
+                            let quotation = parseFloat(item.quantity);
+                            let allTotalRecevied =
+                                                (Number(item.yarn_received_sum_quantity) || 0) +
+                                                (Number(item.yarn_loss_sum_quantity) || 0) +
+                                                (Number(item.store_stock_sum_quantity) || 0);
+                            let noreceived = parseFloat(quotation - allTotalRecevied).toFixed(2);;
+                            singleItem +=`
+                                    <div class="row my-4">
+                                        <input type="hidden" name="items[${item.id}][yarn_id]" value="${item.id}">
+                                        <input type="hidden" name="items[${item.id}][description]" value="${item.description}">
+                                        <input type="hidden" name="items[${item.id}][yarn_factory_id]" value="${item.yarn_factory_id}">
+                                        <input type="hidden" name="items[${item.id}][netting_factory_id]" value="${item.netting_factory_id}">
+                                        <input type="hidden" name="items[${item.id}][style]" value="${item.style}">
+                                        
+                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Description</label><input class="form-control" value="${item.description}" readonly></div>
+                                        <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Quotation(KG)</label><input type="text" class="form-control" readonly value="${item.quantity}"></div>
+                                        <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.yarn_received_sum_quantity??0}"></div>
+                                        <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Loss</label><input type="text" class="form-control" readonly  value="${item.yarn_loss_sum_quantity ?? 0}"></div>
+                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store In Stock</label><input type="text" class="form-control" readonly value="${item.store_stock_sum_quantity ?? 0}"></div>
+                                        <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">No Received</label><input type="text" class="form-control" readonly value="${noreceived}"></div>
+                                        <div class="col-md-2 pe-0 mb-3"><label class="label text-secondary">Yarn Factory</label><input class="form-control" readonly value="${item.yarn_factory.name}"></div>
+                                        <div class="col-md-2 mb-3"><label class="label text-secondary">Netting Factory</label><input class="form-control" readonly value="${item.netting_factory.name}"></div>
+
+                                        
+                                        <div class="col-12">
+                                            <div class="row">
+                                                <div class="col-12 mb-2 mt-3">
+                                                    <h4 class="fs-16 text-primary">Insert Netting, Loss, Store In Stock Data:</h4>
+                                                </div>
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Lot No.</label><input type="text" class="form-control" name="items[${item.id}][loat_no]"></div>
+                                                <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Bags</label><input type="text" class="form-control" name="items[${item.id}][bag_count]"></div>
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Netting(KG)</label><input type="text" max="${noreceived}" id="netting_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][netting]"></div>
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Loss(KG)</label><input type="text" class="form-control" max="${noreceived}" id="loss_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][loss]"></div>
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store In Stock(KG)</label><input type="text" class="form-control" max="${noreceived}" id="store_stock_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][store_stock]"></div>
+                                                <div class="col-lg-3 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="items[${item.id}][remarks]"></textarea></div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div> <hr class="m-0">
+                                `;
+                        });
+                       singleItem +=`</div></div></div>
+                                    </div></div>`;
+                    });
+                   
+                    singleItem +=`<div class="col-lg-12 my-3">
+                                    <div class="d-flex flex-wrap gap-3">
+                                        <button type="submit" class="btn btn-primary py-2 px-4 fw-medium fs-16"> <i
+                                                class="ri-add-line text-white fw-medium"></i> Create</button>
+                                    </div>
+                                </div>`;
+                    display_div.html(singleItem);
+                    $('#order_id').val(order_id);
+                     $('#order_number').val(order_number);
+
+                })
+                .catch(error => {
+                     console.error('Fetch error:', error);
+                });
+            }
+            
+            
+        };
+
+        // $('#submit_button').on('click', function(){
+        //     const tableBodyData = document.getElementById("item_price_table").getElementsByTagName("tbody")[0];
+        //     const rowCount = tableBodyData.rows.length;
+        //     if(rowCount=== 0){
+        //         alert('Add Yarn Description,quantity,price, etc.');
+                
+        //     }else{
+        //         $('#yarn_form').submit();
+        //     }
+        // });
+
+        
+
+    });
+    
+    function limitWeightValue(input, id){
+        let netting_= document.getElementById('netting_'+id).value;
+        let loss_= document.getElementById('loss_'+id).value;
+        let store_stock_= document.getElementById('store_stock_'+id).value;
+
+        let maxVal = parseFloat(input.max);
+        let val = parseFloat(input.value);
+        let totalVal = (Number(netting_) || 0) + (Number(loss_) || 0) + (Number(store_stock_) || 0);
+        // console.log(totalVal);
+        if (totalVal > maxVal) {
+            alert(`Max allowed is ${maxVal}Kg (Netting + Loss + Store In Stock)`);
+            input.value = 0;
+        }
+    }
+
+    function resetSelect(id) {
+        $('#'+id).val(null).trigger('change');
+    }
+</script>
 @endsection

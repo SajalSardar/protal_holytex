@@ -46,3 +46,7 @@
     background-color: #7977fa;
     color: #fff;
 }
+
+input[readonly] {
+  background-color: #f0f0f0;
+}

@@ -123,7 +123,7 @@
                     }
                     return response.json();
                 }).then(data => {
-                    console.log('API response:', data);
+                    // console.log('API response:', data);
                     let display_div = $('#show_all_netting_item');
                     let order_id = null;
                     let order_number = null;

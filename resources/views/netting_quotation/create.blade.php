@@ -123,14 +123,14 @@
                     }
                     return response.json();
                 }).then(data => {
-                    // console.log('API response:', data);
+                    console.log('API response:', data);
                     let display_div = $('#show_all_yarn_item');
                     let order_id = null;
                     let order_number = null;
                     let singleItem = '';
                     // Append new options
-                    Object.entries(data).forEach(([key, value]) => {
-                        // console.log(key, value);
+                    Object.entries(data).forEach(([key, style]) => {
+                    Object.entries(style).forEach(([keyFa, factoryId]) => {
                         let total_quantity = 0;
                         let netting_factory_id = null;
                         singleItem +=`<div class="card border-0 rounded-3 mb-3">
@@ -145,7 +145,7 @@
                                                 <th>Yarn Factory</th>
                                                 <th>Netting Factory</th>
                                             </tr>`;
-                        value.forEach(item => {
+                        factoryId.forEach(item => {
                             total_quantity += parseFloat(item.quantity);
                             order_number = item.order_number;
                             order_id = item.order_id;
@@ -170,23 +170,23 @@
                                 </div>
                                     <div class="card-footer">
                                         <div class="row">
-                                            <input type="hidden" value="${netting_factory_id}" name="items[${key}][netting_factory_id]"> 
+                                            <input type="hidden" value="${netting_factory_id}" name="items[${key}][${keyFa}][netting_factory_id]"> 
                                             <div class="col-sm-3">
                                                 <div class="form-group mb-4">
                                                     <label class="label text-secondary">Total Quantity (KG)</label>
-                                                    <input type="text" class="form-control" id="quantity_${key}" name="items[${key}][quantity]" value="${total_quantity.toFixed(2)}" readonly>
+                                                    <input type="text" class="form-control" id="quantity_${key}_${keyFa}" name="items[${key}][${keyFa}][quantity]" value="${total_quantity.toFixed(2)}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group mb-4">
                                                     <label class="label text-secondary">Rate(TK)</label>
-                                                    <input type="number" class="form-control" oninput="attachRateCalculation('${key}')" name="items[${key}][rate]"  id="rate_${key}">
+                                                    <input type="number" class="form-control" oninput="attachRateCalculation('${key}','${keyFa}')" name="items[${key}][${keyFa}][rate]"  id="rate_${key}_${keyFa}">
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group mb-4">
                                                     <label class="label text-secondary">Total</label>
-                                                    <input type="number" class="form-control" id="total_amount_${key}" name="items[${key}][total]" readonly>
+                                                    <input type="number" class="form-control" id="total_amount_${key}_${keyFa}" name="items[${key}][${keyFa}][total]" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
@@ -194,24 +194,24 @@
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label>
-                                                        <input type="radio" class="form-check-input" style="border:1px solid #000" name="items[${key}][delevary_poin_check]" value="dyeing" onclick="showHideDeliveryPoint(this,'${key}')"> No</label>
+                                                        <input type="radio" class="form-check-input" style="border:1px solid #000" name="items[${key}][${keyFa}][delevary_poin_check]" value="dyeing" onclick="showHideDeliveryPoint(this,'${key}','${keyFa}')"> No</label>
                                                         <label class="ms-3">
-                                                        <input type="radio" class="form-check-input" style="border:1px solid #000" name="items[${key}][delevary_poin_check]" value="garments" onclick="showHideDeliveryPoint(this,'${key}')"> Yes</label>
+                                                        <input type="radio" class="form-check-input" style="border:1px solid #000" name="items[${key}][${keyFa}][delevary_poin_check]" value="garments" onclick="showHideDeliveryPoint(this,'${key}','${keyFa}')"> Yes</label>
                                                     </div>    
                                                 </div>
                                             </div>
-                                            <div class="col-lg-3 col-sm-6" id="deying_select_section_${key}" style="display:none;">
+                                            <div class="col-lg-3 col-sm-6" id="deying_select_section_${key}_${keyFa}" style="display:none;">
                                                 <div class="form-group mb-4">
                                                     <label class="label text-secondary">Delivery Point</label>
-                                                    <select name="items[${key}][delivery_point]" id="deying_point_${key}" class="form-control select2">
+                                                    <select name="items[${key}][${keyFa}][delivery_point]" id="deying_point_${key}_${keyFa}" class="form-control select2">
                                                         <option value="" selected disabled>Select Deying Factory</option>
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-3 col-sm-6" id="garments_select_section_${key}" style="display:none;">
+                                            <div class="col-lg-3 col-sm-6" id="garments_select_section_${key}_${keyFa}" style="display:none;">
                                                 <div class="form-group mb-4">
                                                     <label class="label text-secondary">Delivery Point</label>
-                                                    <select name="items[${key}][delivery_point]" id="garments_${key}" class="form-control select2">
+                                                    <select name="items[${key}][${keyFa}][delivery_point]" id="garments_${key}_${keyFa}" class="form-control select2">
                                                         <option value="" selected disabled>Select Garments Factory</option>
                                                     </select>
                                                 </div>
@@ -221,6 +221,7 @@
                                 </div>
                             `;
                     });
+                     });
                     
                      display_div.html(singleItem);
                     
@@ -237,25 +238,25 @@
 
     });
 
-    function attachRateCalculation(key) {
-        let qtyInput = document.getElementById(`quantity_${key}`);
-        let rateInput = document.getElementById(`rate_${key}`);
-        let totalInput = document.getElementById(`total_amount_${key}`);
-
+    function attachRateCalculation(style,factoryId) {
+        let qtyInput = document.getElementById(`quantity_${style}_${factoryId}`);
+        let rateInput = document.getElementById(`rate_${style}_${factoryId}`);
+        let totalInput = document.getElementById(`total_amount_${style}_${factoryId}`);
+        console.log(rateInput);
         let qty = parseFloat(qtyInput.value) || 0;
         let rate = parseFloat(rateInput.value) || 0;
 
         totalInput.value = (qty * rate).toFixed(2);
     }
 
-    function showHideDeliveryPoint(element,key) {
+    function showHideDeliveryPoint(element,style,factoryId) {
 
         if (!element.checked) return; 
 
         let value = element.value;
 
-        let deyingSection = document.getElementById(`deying_select_section_${key}`);
-        let garmentsSection = document.getElementById(`garments_select_section_${key}`);
+        let deyingSection = document.getElementById(`deying_select_section_${style}_${factoryId}`);
+        let garmentsSection = document.getElementById(`garments_select_section_${style}_${factoryId}`);
 
         if (value === "garments") {
             garmentsSection.style.display = "block";
@@ -265,7 +266,7 @@
             fetch(`/get-all-garments-factory`)
                 .then(res => res.json())
                 .then(data => {
-                    let select = document.getElementById(`garments_${key}`);
+                    let select = document.getElementById(`garments_${style}_${factoryId}`);
                     select.innerHTML = '<option value="" selected disabled>Select Garments Factory</option>';
                     data.forEach(item => {
                         let option = document.createElement("option");
@@ -284,7 +285,7 @@
             fetch(`/get-all-dyeing-factory`)
                 .then(res => res.json())
                 .then(data => {
-                    let select = document.getElementById(`deying_point_${key}`);
+                    let select = document.getElementById(`deying_point_${style}_${factoryId}`);
                     select.innerHTML = '<option value="" selected disabled>Select Dyeing Factory</option>';
                     data.forEach(item => {
                         let option = document.createElement("option");

@@ -12,8 +12,19 @@ return new class extends Migration {
         Schema::create('yarn_store_stocks', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('yarn_quotation_id');
+            $table->string('po_number')->nullable()->index();
+            $table->string('style')->nullable()->index();
             $table->decimal('quantity', 10, 2)->nullable();
             $table->string('unit')->default('kg');
+            $table->string('lot_number')->nullable();
+            $table->string('bag_count')->nullable();
+            $table->date('challan_date')->nullable();
+            $table->string('challan_number')->nullable();
+            $table->string('vehicle_number')->nullable();
+            $table->string('status')->default('received');
+            $table->date('received_date')->nullable()->index();
+            $table->string('challan_file')->nullable();
+            $table->text('remarks')->nullable();
             $table->integer('created_by')->nullable();
             $table->timestamps();
         });

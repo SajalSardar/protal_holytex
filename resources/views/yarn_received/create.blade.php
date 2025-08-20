@@ -99,7 +99,7 @@ $po_number = request()->po_number ?? '';
                 .then(data => {
                     let order_id = null;
                     let order_number = null;
-                    console.log('API response:', data);
+                    // console.log('API response:', data);
                     let display_div = $('#show_all_yarn_item');
                     let singleItem = `<div class="col-lg-12">
                                     <div class="card bg-white border-0 rounded-3 mb-4">
@@ -163,7 +163,7 @@ $po_number = request()->po_number ?? '';
                                                 (Number(item.yarn_received_sum_quantity) || 0) +
                                                 (Number(item.yarn_loss_sum_quantity) || 0) +
                                                 (Number(item.store_stock_sum_quantity) || 0);
-                            let noreceived = parseFloat(quotation - allTotalRecevied).toFixed(2);;
+                            let noreceived = parseFloat(quotation - allTotalRecevied).toFixed(2);
                             singleItem +=`
                                     <div class="row my-4">
                                         <input type="hidden" name="items[${item.id}][yarn_id]" value="${item.id}">
@@ -180,24 +180,27 @@ $po_number = request()->po_number ?? '';
                                         <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">No Received</label><input type="text" class="form-control" readonly value="${noreceived}"></div>
                                         <div class="col-md-2 pe-0 mb-3"><label class="label text-secondary">Yarn Factory</label><input class="form-control" readonly value="${item.yarn_factory.name}"></div>
                                         <div class="col-md-2 mb-3"><label class="label text-secondary">Netting Factory</label><input class="form-control" readonly value="${item.netting_factory.name}"></div>
-
-                                        
-                                        <div class="col-12">
-                                            <div class="row">
-                                                <div class="col-12 mb-2 mt-3">
-                                                    <h4 class="fs-16 text-primary">Insert Netting, Loss, Store In Stock Data:</h4>
+                                    `;
+                                    if(allTotalRecevied >= quotation){ 
+                                        singleItem +=`<div class="col-12">
+                                                        <div class="alert alert-success mb-3">Total Received Done!</div>
+                                                    </div> <hr class="m-0">`;
+                                    }else{
+                                        singleItem +=`<div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-12 mb-2 mt-3">
+                                                        <h4 class="fs-16 text-primary">Insert Netting, Loss, Store In Stock Data:</h4>
+                                                    </div>
+                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Lot No.</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][loat_no]"></div>
+                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Bags</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][bag_count]"></div>
+                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Netting(KG)</label><input type="text" max="${noreceived}" id="netting_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][netting]"></div>
+                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Loss(KG)</label><input type="text" class="form-control" max="${noreceived}" id="loss_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][loss]"></div>
+                                                    <div class="col-lg-4 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="items[${item.id}][remarks]"></textarea></div>
+                                                    
                                                 </div>
-                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Lot No.</label><input type="text" class="form-control" name="items[${item.id}][loat_no]"></div>
-                                                <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Bags</label><input type="text" class="form-control" name="items[${item.id}][bag_count]"></div>
-                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Netting(KG)</label><input type="text" max="${noreceived}" id="netting_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][netting]"></div>
-                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Loss(KG)</label><input type="text" class="form-control" max="${noreceived}" id="loss_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][loss]"></div>
-                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store In Stock(KG)</label><input type="text" class="form-control" max="${noreceived}" id="store_stock_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][store_stock]"></div>
-                                                <div class="col-lg-3 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="items[${item.id}][remarks]"></textarea></div>
-                                                
                                             </div>
-                                        </div>
-                                    </div> <hr class="m-0">
-                                `;
+                                        </div> <hr class="m-0">`;
+                                    }
                         });
                        singleItem +=`</div></div></div>
                                     </div></div>`;
@@ -222,32 +225,22 @@ $po_number = request()->po_number ?? '';
             
         };
 
-        // $('#submit_button').on('click', function(){
-        //     const tableBodyData = document.getElementById("item_price_table").getElementsByTagName("tbody")[0];
-        //     const rowCount = tableBodyData.rows.length;
-        //     if(rowCount=== 0){
-        //         alert('Add Yarn Description,quantity,price, etc.');
-                
-        //     }else{
-        //         $('#yarn_form').submit();
-        //     }
-        // });
-
         
 
     });
     
     function limitWeightValue(input, id){
+         input.value = input.value.replace(/^(\d*\.?\d{0,2}).*$/, '$1');
+        
         let netting_= document.getElementById('netting_'+id).value;
         let loss_= document.getElementById('loss_'+id).value;
-        let store_stock_= document.getElementById('store_stock_'+id).value;
 
         let maxVal = parseFloat(input.max);
         let val = parseFloat(input.value);
-        let totalVal = (Number(netting_) || 0) + (Number(loss_) || 0) + (Number(store_stock_) || 0);
+        let totalVal = (Number(netting_) || 0) + (Number(loss_) || 0);
         // console.log(totalVal);
         if (totalVal > maxVal) {
-            alert(`Max allowed is ${maxVal}Kg (Netting + Loss + Store In Stock)`);
+            alert(`Max allowed is ${maxVal}Kg (Netting + Loss)`);
             input.value = 0;
         }
     }

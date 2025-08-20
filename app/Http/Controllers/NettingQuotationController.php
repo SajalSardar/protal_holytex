@@ -14,8 +14,7 @@ class NettingQuotationController extends Controller {
         $yearns   = YarnQuotation::with('yarnFactory', 'nettingFactory')
             ->where('po_number', $po_number)
             ->whereNotIn('style', $nettings)
-            ->get()
-            ->groupBy('style');
+            ->get()->groupBy(['style', 'netting_factory_id']);
         if ($yearns) {
             return $yearns;
         } else {
@@ -51,23 +50,25 @@ class NettingQuotationController extends Controller {
             'po_number' => 'required',
         ]);
 
-        foreach ($request->items as $key => $item) {
-            NettingQuotation::create([
-                'order_id'                  => $request->order_id,
-                'order_number'              => $request->order_number,
-                'style'                     => $key,
-                'po_number'                 => $request->po_number,
-                'purchase_date'             => $request->order_date,
-                'approximate_delivery_date' => $request->approximate_delivery_date,
-                'quantity'                  => $item['quantity'],
-                'price'                     => $item['rate'],
-                'total_price'               => $item['total'],
-                'delivery_factory_type'     => $item['delevary_poin_check'],
-                'delivery_point_id'         => $item['delivery_point'],
-                'netting_factory_id'        => $item['netting_factory_id'],
-                'remarks'                   => $request->remarks,
-                'created_by'                => Auth::id(),
-            ]);
+        foreach ($request->items as $key => $items) {
+            foreach ($items as $item) {
+                NettingQuotation::create([
+                    'order_id'                  => $request->order_id,
+                    'order_number'              => $request->order_number,
+                    'style'                     => $key,
+                    'po_number'                 => $request->po_number,
+                    'purchase_date'             => $request->order_date,
+                    'approximate_delivery_date' => $request->approximate_delivery_date,
+                    'quantity'                  => $item['quantity'],
+                    'price'                     => $item['rate'],
+                    'total_price'               => $item['total'],
+                    'delivery_factory_type'     => $item['delevary_poin_check'],
+                    'delivery_point_id'         => $item['delivery_point'],
+                    'netting_factory_id'        => $item['netting_factory_id'],
+                    'remarks'                   => $request->remarks,
+                    'created_by'                => Auth::id(),
+                ]);
+            }
         }
 
         toastr('Netting Successfully Created!');

@@ -13,6 +13,7 @@ use App\Http\Controllers\StyleController;
 use App\Http\Controllers\YarnFactroyController;
 use App\Http\Controllers\YarnQuotationController;
 use App\Http\Controllers\YarnReceivedController;
+use App\Http\Controllers\YarnStoreStockController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/test', function () {
@@ -34,6 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('dyeingquotation', DyeingQuotationController::class);
     Route::resource('accessoriesquotation', AccessoriesQuotationController::class);
     Route::resource('yarnreceived', YarnReceivedController::class);
+    Route::resource('yarnstorestock', YarnStoreStockController::class);
 
     Route::name('order.details')->controller(OrderDetailController::class)->group(function () {
 

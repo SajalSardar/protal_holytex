@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
 use App\Models\YarnLoss;
 use App\Models\YarnQuotation;
 use App\Models\YarnReceived;
@@ -36,21 +35,6 @@ class YarnReceivedController extends Controller {
      * Show the form for creating a new resource.
      */
     public function create(Request $request) {
-        $order = Order::with([
-            'orderDetails',
-            'approvedBy',
-            'creator',
-            'lastUpdateBy',
-            'orderDetails.creator:id,name',
-            'orderDetails.lastUpdateBy:id,name',
-            'yarnQuotations',
-            'yarnQuotations.yarnFactory:id,name,address',
-            'yarnQuotations.nettingFactory:id,name,address',
-            'yarnQuotations.creator:id,name',
-            'yarnQuotations.lastUpdateBy:id,name',
-            'yarnQuotations.approvedBy:id,name',
-
-        ])->where('id', $request->order_id)->first();
 
         $yearns = YarnQuotation::select('po_number')->groupby('po_number')->get();
 
@@ -61,6 +45,10 @@ class YarnReceivedController extends Controller {
      * Store a newly created resource in storage.
      */
     public function store(Request $request) {
+
+        $request->validate([
+            'challan_file' => "nullable|max:512|image",
+        ]);
 
         $path = null;
         if ($request->hasFile('challan_file')) {

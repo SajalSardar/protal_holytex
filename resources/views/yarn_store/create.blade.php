@@ -25,7 +25,7 @@ $po_number = request()->po_number ?? '';
             </ol>
         </nav>
     </div>
-    <form action="{{ route('yarnreceived.store') }}" method="POST" enctype="multipart/form-data" id="yarn_form">
+    <form action="{{ route('yarnstorestock.store') }}" method="POST" enctype="multipart/form-data" id="yarn_form">
         @csrf
         <div class="row">
             <div class="col-lg-12">
@@ -172,9 +172,8 @@ $po_number = request()->po_number ?? '';
                                     <div class="row my-4">
                                         <input type="hidden" name="items[${item.id}][yarn_id]" value="${item.id}">
                                         <input type="hidden" name="items[${item.id}][description]" value="${item.description}">
-                                        <input type="hidden" name="items[${item.id}][yarn_factory_id]" value="${item.yarn_factory_id}">
-                                        <input type="hidden" name="items[${item.id}][netting_factory_id]" value="${item.netting_factory_id}">
                                         <input type="hidden" name="items[${item.id}][style]" value="${item.style}">
+                                        <input type="hidden" name="items[${item.id}][yarn_factory_id]" value="${item.yarn_factory_id}">
                                         
                                         <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Description</label><input class="form-control" value="${item.description}" readonly></div>
                                         <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Quotation(KG)</label><input type="text" class="form-control" readonly value="${item.quantity}"></div>
@@ -197,9 +196,9 @@ $po_number = request()->po_number ?? '';
                                                     </div>
                                                     <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Lot No.</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][loat_no]"></div>
                                                     <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Bags</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][bag_count]"></div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Netting(KG)</label><input type="text" max="${noreceived}" id="netting_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][netting]"></div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Loss(KG)</label><input type="text" class="form-control" max="${noreceived}" id="loss_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][loss]"></div>
-                                                    <div class="col-lg-4 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="items[${item.id}][remarks]"></textarea></div>
+                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Stock(KG)</label><input type="text" max="${noreceived}" id="stock_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][stock]"></div>
+                                                    <div class="col-lg-3 mb-3"><label class="label text-secondary">Store Address</label><textarea rows="1" class="form-control" name="items[${item.id}][store_address]"></textarea></div>
+                                                    <div class="col-lg-3 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="items[${item.id}][remarks]"></textarea></div>
                                                     
                                                 </div>
                                             </div>
@@ -236,12 +235,11 @@ $po_number = request()->po_number ?? '';
     function limitWeightValue(input, id){
          input.value = input.value.replace(/^(\d*\.?\d{0,2}).*$/, '$1');
         
-        let netting_= document.getElementById('netting_'+id).value;
-        let loss_= document.getElementById('loss_'+id).value;
+        let stock_= document.getElementById('stock_'+id).value;
 
         let maxVal = parseFloat(input.max);
         let val = parseFloat(input.value);
-        let totalVal = (Number(netting_) || 0) + (Number(loss_) || 0);
+        let totalVal = (Number(stock_) || 0);
         // console.log(totalVal);
         if (totalVal > maxVal) {
             alert(`Max allowed is ${maxVal}Kg (Netting + Loss)`);

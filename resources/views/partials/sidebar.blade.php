@@ -89,15 +89,15 @@
                     </li>
                 </ul>
             </li>
-            <li class="menu-item {{ request()->routeIs(['yarnreceived.*']) ? 'open' : '' }}">
+            <li class="menu-item {{ request()->routeIs(['yarnstorestock.*']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
                     <span class="title">Goods Stock</span>
                 </a>
                 <ul class="menu-sub">
                     <li class="menu-item">
-                        <a href="{{ route('yarnreceived.index') }}"
-                            class="menu-link {{ request()->routeIs('yarnreceived.*') ? 'active' : '' }}">
+                        <a href="{{ route('yarnstorestock.index') }}"
+                            class="menu-link {{ request()->routeIs('yarnstorestock.*') ? 'active' : '' }}">
                             Yarn Stock
                         </a>
                     </li>

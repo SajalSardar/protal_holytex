@@ -24,6 +24,7 @@ return new class extends Migration {
             $table->string('status')->default('received');
             $table->date('received_date')->nullable()->index();
             $table->string('challan_file')->nullable();
+            $table->text('store_address')->nullable();
             $table->text('remarks')->nullable();
             $table->integer('created_by')->nullable();
             $table->timestamps();

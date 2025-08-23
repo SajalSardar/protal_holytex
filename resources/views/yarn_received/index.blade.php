@@ -35,34 +35,30 @@
                             <table class="table align-middle">
                                 <thead>
                                     <tr>
-                                        <th>Order Number</th>
+                                        <th>Chalan</th>
                                         <th>PO</th>
                                         <th>Style</th>
                                         <th>Quantity(kg)</th>
-                                        <th>Rate(TK)</th>
-                                        <th>Total(TK)</th>
-                                        <th>Approx. delivery_date</th>
+                                        <th>Unit</th>
+                                        <th>Received Date</th>
                                         <th>Status</th>
-                                        <th>Netting Factory</th>
+                                        <th>Store Address</th>
                                         <th class="text-end">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{-- @forelse ($nettings as $item)
+                                    @forelse ($yarnReceived as $item)
                                     <tr>
-                                        <td>{{ $item->order_number }}</td>
+                                        <td>
+                                            <img src="{{ asset('storage/'.$item->challan_file) }}" alt="" width="50">
+                                        </td>
                                         <td>{{ $item->po_number }}</td>
                                         <td>{{ $item->style }}</td>
                                         <td>{{ $item->quantity }}</td>
-                                        <td>{{ $item->price }}</td>
-                                        <td>{{ $item->total_price }}</td>
-                                        <td>{{ $item->approximate_delivery_date }}</td>
+                                        <td>{{ $item->unit }}</td>
+                                        <td>{{ $item->received_date }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
-                                        <td>
-                                            Name:{{ $item->nettingFactory->name }} <br>
-                                            Address:{{ $item->nettingFactory->address }}
-
-                                        </td> --}}
+                                        <td>{{ $item->store_address }}</td>
                                         <td>
                                             <div class="d-flex align-items-center gap-1 justify-content-end">
                                                 <button
@@ -81,11 +77,11 @@
                                             </div>
                                         </td>
                                     </tr>
-                                    {{-- @empty
+                                    @empty
                                     <tr>
                                         <td colspan="5">No Data Found!</td>
                                     </tr>
-                                    @endforelse --}}
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>

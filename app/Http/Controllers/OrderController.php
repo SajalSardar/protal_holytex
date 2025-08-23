@@ -81,15 +81,19 @@ class OrderController extends Controller {
      * Display the specified resource.
      */
     public function show(Order $order) {
-        // $order->load('orderDetails.creator', 'orderDetails.lastUpdateBy', 'yarnQuotations.yarnFactory', 'yarnQuotations.nettingFactory', 'yarnQuotations.creator', 'yarnQuotations.lastUpdateBy', 'yarnQuotations.approvedBy', 'nettingQuotations', 'approvedBy', 'creator', 'lastUpdateBy');
-        $order->load([
+
+        $order = $order->load([
             'orderDetails',
             'approvedBy',
             'creator',
             'lastUpdateBy',
             'orderDetails.creator:id,name',
             'orderDetails.lastUpdateBy:id,name',
-            'yarnQuotations',
+            'yarnQuotations' => function ($q) {
+                $q->withSum('yarnReceived', 'quantity')
+                    ->withSum('yarnLoss', 'quantity')
+                    ->withSum('storeStock', 'quantity');
+            },
             'yarnQuotations.yarnFactory:id,name,address',
             'yarnQuotations.nettingFactory:id,name,address',
             'yarnQuotations.creator:id,name',

@@ -28,7 +28,8 @@ class YarnReceivedController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        return view('yarn_received.index');
+        $yarnReceived = YarnReceived::get();
+        return view('yarn_received.index', compact('yarnReceived'));
     }
 
     /**

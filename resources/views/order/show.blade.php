@@ -319,40 +319,75 @@
                                                                 <th>Price</th>
                                                                 <th>Total Price</th>
                                                                 <th>Status</th>
-                                                                <th>Del. Qty</th>
-                                                                <th>No Del. Qty</th>
-                                                                <th>Loss Qty</th>
+                                                                <th>No Received</th>
+                                                                <th>Received</th>
+                                                                <th>Loss</th>
+                                                                <th>Store In Stock</th>
                                                             </tr>
                                                         </thead>
 
                                                         <tbody>
+                                                            @php
+                                                            $noReceivedTotal = 0.00;
+                                                            @endphp
                                                             @foreach ($items as $item)
+                                                            @php
+                                                            $totalDelevary = $item->yarn_received_sum_quantity +
+                                                            $item->yarn_loss_sum_quantit +
+                                                            $item->store_stock_sum_quantity;
+                                                            $noReceivedTotal += $item->quantity - $totalDelevary;
+                                                            @endphp
                                                             <tr>
                                                                 <td>{{ $item->description }}</td>
                                                                 <td>{{ $item->quantity }}</td>
                                                                 <td>{{ $item->price }}</td>
                                                                 <td>{{ $item->total_price }}</td>
                                                                 <td>{{ $item->status }}</td>
-                                                                <td>--</td>
-                                                                <td>--</td>
-                                                                <td>--</td>
+                                                                <td>{{ number_format($item->quantity - $totalDelevary,2)
+                                                                    ?? '--' }}
+                                                                </td>
+                                                                <td>{{ $item->yarn_received_sum_quantity ?? '--' }}</td>
+                                                                <td>{{ $item->yarn_loss_sum_quantity ?? '--' }}</td>
+                                                                <td>{{ $item->store_stock_sum_quantity ?? '--' }}</td>
                                                             </tr>
                                                             @endforeach
                                                         </tbody>
                                                         <tfoot>
                                                             <tr>
-                                                                <td class="text-center"><strong>Total:</strong></td>
+                                                                <td class="text-center"><strong
+                                                                        class="theme_color">Total:</strong></td>
                                                                 <td colspan="2">
-                                                                    <strong>{{
+                                                                    <strong class="theme_color">{{
                                                                         number_format($items->sum('quantity'),
                                                                         2)
                                                                         }}KG</strong>
                                                                 </td>
                                                                 <td colspan="2">
-                                                                    <strong>{{
+                                                                    <strong class="theme_color">{{
                                                                         number_format($items->sum('total_price'),
                                                                         2)
                                                                         }}TK</strong>
+                                                                </td>
+                                                                <td><strong class="theme_color">{{
+                                                                        number_format($noReceivedTotal, 2)
+                                                                        }}KG</strong></td>
+                                                                <td>
+                                                                    <strong class="theme_color">{{
+                                                                        number_format($items->sum('yarn_received_sum_quantity'),
+                                                                        2)
+                                                                        }}KG</strong>
+                                                                </td>
+                                                                <td>
+                                                                    <strong class="theme_color">{{
+                                                                        number_format($items->sum('yarn_loss_sum_quantity'),
+                                                                        2)
+                                                                        }}KG</strong>
+                                                                </td>
+                                                                <td>
+                                                                    <strong class="theme_color">{{
+                                                                        number_format($items->sum('store_stock_sum_quantity'),
+                                                                        2)
+                                                                        }}KG</strong>
                                                                 </td>
                                                             </tr>
                                                         </tfoot>
@@ -409,12 +444,12 @@
                             <div class="card mt-3">
                                 <div class="card-body">
                                     <div class="d-flex">
-                                        <h3>Total Quantity(KG): {{
+                                        <h3 class="theme_color">Total Quantity(KG): {{
                                             number_format($order->yarnQuotations->sum('quantity'),
                                             2)
                                             }}KG</h3>
 
-                                        <h3 class="ms-5">Total TK: {{
+                                        <h3 class="ms-5 theme_color">Total TK: {{
                                             number_format($order->yarnQuotations->sum('total_price'),
                                             2)
                                             }}TK</h3>

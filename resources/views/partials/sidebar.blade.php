@@ -75,7 +75,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="menu-item {{ request()->routeIs(['yarnreceived.*']) ? 'open' : '' }}">
+            <li class="menu-item {{ request()->routeIs(['yarnreceived.*','nettingreceived.*']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
                     <span class="title">Goods Receive</span>
@@ -87,9 +87,15 @@
                             Yarn Received
                         </a>
                     </li>
+                    <li class="menu-item">
+                        <a href="{{ route('nettingreceived.index') }}"
+                            class="menu-link {{ request()->routeIs('nettingreceived.*') ? 'active' : '' }}">
+                            Netting Received
+                        </a>
+                    </li>
                 </ul>
             </li>
-            <li class="menu-item {{ request()->routeIs(['yarnstorestock.*']) ? 'open' : '' }}">
+            <li class="menu-item {{ request()->routeIs(['yarnstorestock.*','nettingstorestock.*']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
                     <span class="title">Goods Stock</span>
@@ -99,6 +105,12 @@
                         <a href="{{ route('yarnstorestock.index') }}"
                             class="menu-link {{ request()->routeIs('yarnstorestock.*') ? 'active' : '' }}">
                             Yarn Stock
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('nettingstorestock.index') }}"
+                            class="menu-link {{ request()->routeIs('nettingstorestock.*') ? 'active' : '' }}">
+                            Netting Stock
                         </a>
                     </li>
                 </ul>

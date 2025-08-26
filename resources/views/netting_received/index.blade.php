@@ -1,11 +1,11 @@
 @extends('layouts.master')
-@section('title', 'Yarn Received')
+@section('title', 'Netting Received')
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div class="d-flex">
-            <h2 class="mb-0">Yarn Received</h2>
-            <a href="{{ route('yarnreceived.create') }}" class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
+            <h2 class="mb-0">Netting Received</h2>
+            <a href="{{ route('nettingreceived.create') }}" class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
                 Create Received</a>
         </div>
 
@@ -21,7 +21,7 @@
                     <span class="fw-medium">Order</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Yarn Received</span>
+                    <span class="fw-medium">Netting Received</span>
                 </li>
             </ol>
         </nav>
@@ -47,7 +47,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($yarnReceived as $item)
+                                    @forelse ($nettingReceived as $item)
                                     <tr>
                                         <td>
                                             <img src="{{ asset('storage/'.$item->challan_file) }}" alt="" width="50">

@@ -18,6 +18,19 @@ class NettingQuotation extends Model {
         return $this->hasOne(GarmentsFactroy::class, 'id', 'delivery_point_id');
     }
 
+    public function nettingReceived() {
+        return $this->hasMany(NettingReceived::class, 'netting_quotation_id');
+    }
+    public function nettingReceiveGarments() {
+        return $this->hasMany(NettingReceivedGarments::class, 'netting_quotation_id');
+    }
+    public function nettingLoss() {
+        return $this->hasMany(NettingLoss::class, 'netting_quotation_id');
+    }
+    public function storeStock() {
+        return $this->hasMany(NettingStoreStock::class, 'netting_quotation_id');
+    }
+
     public function approvedBy() {
         return $this->hasOne(User::class, 'id', 'approved_by');
     }

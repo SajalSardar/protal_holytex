@@ -355,36 +355,36 @@
                                                         <tfoot>
                                                             <tr>
                                                                 <td class="text-center"><strong
-                                                                        class="theme_color">Total:</strong></td>
+                                                                        class="text-primary">Total:</strong></td>
                                                                 <td colspan="2">
-                                                                    <strong class="theme_color">{{
+                                                                    <strong class="text-primary">{{
                                                                         number_format($items->sum('quantity'),
                                                                         2)
                                                                         }}KG</strong>
                                                                 </td>
                                                                 <td colspan="2">
-                                                                    <strong class="theme_color">{{
+                                                                    <strong class="text-primary">{{
                                                                         number_format($items->sum('total_price'),
                                                                         2)
                                                                         }}TK</strong>
                                                                 </td>
-                                                                <td><strong class="theme_color">{{
+                                                                <td><strong class="text-primary">{{
                                                                         number_format($noReceivedTotal, 2)
                                                                         }}KG</strong></td>
                                                                 <td>
-                                                                    <strong class="theme_color">{{
+                                                                    <strong class="text-primary">{{
                                                                         number_format($items->sum('yarn_received_sum_quantity'),
                                                                         2)
                                                                         }}KG</strong>
                                                                 </td>
                                                                 <td>
-                                                                    <strong class="theme_color">{{
+                                                                    <strong class="text-primary">{{
                                                                         number_format($items->sum('yarn_loss_sum_quantity'),
                                                                         2)
                                                                         }}KG</strong>
                                                                 </td>
                                                                 <td>
-                                                                    <strong class="theme_color">{{
+                                                                    <strong class="text-primary">{{
                                                                         number_format($items->sum('store_stock_sum_quantity'),
                                                                         2)
                                                                         }}KG</strong>
@@ -444,12 +444,12 @@
                             <div class="card mt-3">
                                 <div class="card-body">
                                     <div class="d-flex">
-                                        <h3 class="theme_color">Total Quantity(KG): {{
+                                        <h3 class="text-primary">Total Quantity(KG): {{
                                             number_format($order->yarnQuotations->sum('quantity'),
                                             2)
                                             }}KG</h3>
 
-                                        <h3 class="ms-5 theme_color">Total TK: {{
+                                        <h3 class="ms-5 text-primary">Total TK: {{
                                             number_format($order->yarnQuotations->sum('total_price'),
                                             2)
                                             }}TK</h3>
@@ -460,6 +460,10 @@
                         <div class="tab-pane fade" id="netting_quot_details">
                             <div class="accordion ">
                                 @forelse ($order->nettingQuotations as $item)
+                                @php
+                                $totalNeetingRecevied = $item->netting_received_sum_quantity
+                                +$item->netting_loss_sum_quantit+$item->store_stock_sum_quantity;
+                                @endphp
 
                                 <div class="accordion-item mt-5">
 
@@ -489,12 +493,12 @@
                                                                 <th>Price</th>
                                                                 <th>Total Price</th>
                                                                 <th>Status</th>
-                                                                <th>Del. Qty</th>
-                                                                <th>No Del. Qty</th>
-                                                                <th>Loss Qty</th>
+                                                                <th>No Received</th>
+                                                                <th>Received</th>
+                                                                <th>Loss</th>
+                                                                <th>Store In Stock</th>
                                                             </tr>
                                                         </thead>
-
                                                         <tbody>
                                                             <tr>
                                                                 <td>{{ $item->style }}</td>
@@ -502,9 +506,20 @@
                                                                 <td>{{ $item->price }}</td>
                                                                 <td>{{ $item->total_price }}</td>
                                                                 <td>{{ $item->status }}</td>
-                                                                <td>--</td>
-                                                                <td>--</td>
-                                                                <td>--</td>
+                                                                <td>{{ number_format($item->quantity -
+                                                                    $totalNeetingRecevied, 2) }}</td>
+                                                                @if ($item->delivery_factory_type === 'garments')
+                                                                <td>{{ $item->netting_receive_garments_sum_quantity ??
+                                                                    '--' }}
+                                                                </td>
+                                                                @else
+                                                                <td>{{ $item->netting_received_sum_quantity ?? '--' }}
+                                                                </td>
+                                                                @endif
+
+
+                                                                <td>{{ $item->netting_loss_sum_quantity ?? '--'}}</td>
+                                                                <td>{{ $item->store_stock_sum_quantity ?? '--'}}</td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -566,12 +581,12 @@
                             <div class="card mt-3">
                                 <div class="card-body">
                                     <div class="d-flex">
-                                        <h3>Total Quantity(KG): {{
+                                        <h3 class="text-primary">Total Quantity(KG): {{
                                             number_format($order->nettingQuotations->sum('quantity'),
                                             2)
                                             }}KG</h3>
 
-                                        <h3 class="ms-5">Total TK: {{
+                                        <h3 class="ms-5 text-primary">Total TK: {{
                                             number_format($order->nettingQuotations->sum('total_price'),
                                             2)
                                             }}TK</h3>

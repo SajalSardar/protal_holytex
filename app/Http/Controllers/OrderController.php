@@ -89,7 +89,7 @@ class OrderController extends Controller {
             'lastUpdateBy',
             'orderDetails.creator:id,name',
             'orderDetails.lastUpdateBy:id,name',
-            'yarnQuotations' => function ($q) {
+            'yarnQuotations'    => function ($q) {
                 $q->withSum('yarnReceived', 'quantity')
                     ->withSum('yarnLoss', 'quantity')
                     ->withSum('storeStock', 'quantity');
@@ -106,6 +106,12 @@ class OrderController extends Controller {
             'nettingQuotations.nettingFactory:id,name,address',
             'nettingQuotations.dyeingFactory:id,name,address',
             'nettingQuotations.garmentsFactory:id,name,address',
+            'nettingQuotations' => function ($q) {
+                $q->withSum('nettingReceived', 'quantity')
+                    ->withSum('nettingReceiveGarments', 'quantity')
+                    ->withSum('nettingLoss', 'quantity')
+                    ->withSum('storeStock', 'quantity');
+            },
             'dyeingQuotations',
             'dyeingQuotations.creator:id,name',
             'dyeingQuotations.lastUpdateBy:id,name',

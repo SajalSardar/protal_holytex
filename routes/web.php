@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccessoriesQuotationController;
+use App\Http\Controllers\AccessoriesReceivedController;
 use App\Http\Controllers\DyeingFactroyController;
 use App\Http\Controllers\DyeingQuotationController;
 use App\Http\Controllers\DyeingReceivedController;
@@ -42,6 +43,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('yarnstorestock', YarnStoreStockController::class);
     Route::resource('nettingstorestock', NettingStoreStockController::class);
     Route::resource('dyeingreceived', DyeingReceivedController::class);
+    Route::resource('accessoriesreceived', AccessoriesReceivedController::class);
 
     Route::name('order.details')->controller(OrderDetailController::class)->group(function () {
 
@@ -62,6 +64,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('get-yarn-quotation-by-po/{po_number}', [YarnReceivedController::class, 'getYarnStyleByPo']);
     Route::get('get-netting-quotation-by-po/{po_number}', [NettingReceivedController::class, 'getNettingStyleByPo']);
     Route::get('get-dyeing-quotation-by-po/{po_number}', [DyeingReceivedController::class, 'getDyeingStyleByPo']);
+    Route::get('get-accessories-quotation-by-po/{po_number}', [AccessoriesReceivedController::class, 'getAccessoriesStyleByPo']);
 
 });
 

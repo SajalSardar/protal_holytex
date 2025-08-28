@@ -17,4 +17,14 @@ class AccessoriesQuotation extends Model {
     public function lastUpdateBy() {
         return $this->hasOne(User::class, 'id', 'updated_by');
     }
+
+    public function accessoriesReceived() {
+        return $this->hasMany(AccessoriesReceived::class, 'accessories_quotation_id');
+    }
+    public function accessoriesLoss() {
+        return $this->hasMany(AccessoriesLoss::class, 'accessories_quotation_id');
+    }
+    public function accessoriesStoreStock() {
+        return $this->hasMany(AccessoriesStock::class, 'accessories_quotation_id');
+    }
 }

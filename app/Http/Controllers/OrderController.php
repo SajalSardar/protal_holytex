@@ -89,7 +89,7 @@ class OrderController extends Controller {
             'lastUpdateBy',
             'orderDetails.creator:id,name',
             'orderDetails.lastUpdateBy:id,name',
-            'yarnQuotations'    => function ($q) {
+            'yarnQuotations'        => function ($q) {
                 $q->withSum('yarnReceived', 'quantity')
                     ->withSum('yarnLoss', 'quantity')
                     ->withSum('storeStock', 'quantity');
@@ -106,7 +106,7 @@ class OrderController extends Controller {
             'nettingQuotations.nettingFactory:id,name,address',
             'nettingQuotations.dyeingFactory:id,name,address',
             'nettingQuotations.garmentsFactory:id,name,address',
-            'nettingQuotations' => function ($q) {
+            'nettingQuotations'     => function ($q) {
                 $q->withSum('nettingReceived', 'quantity')
                     ->withSum('nettingReceiveGarments', 'quantity')
                     ->withSum('nettingLoss', 'quantity')
@@ -118,7 +118,7 @@ class OrderController extends Controller {
             'dyeingQuotations.approvedBy:id,name',
             'dyeingQuotations.garmentsFactory:id,name,address',
             'dyeingQuotations.dyeingFactory:id,name,address',
-            'dyeingQuotations'  => function ($q) {
+            'dyeingQuotations'      => function ($q) {
                 $q->withSum('dyeingReceiveGarments', 'quantity')
                     ->withSum('dyeingStoreStock', 'quantity');
             },
@@ -126,8 +126,12 @@ class OrderController extends Controller {
             'accessoriesQuotations.creator:id,name',
             'accessoriesQuotations.lastUpdateBy:id,name',
             'accessoriesQuotations.approvedBy:id,name',
+            'accessoriesQuotations' => function ($q) {
+                $q->withSum('accessoriesReceived', 'quantity')
+                    ->withSum('accessoriesLoss', 'quantity')
+                    ->withSum('accessoriesStoreStock', 'quantity');
+            },
         ]);
-
         // return $order;
         return view('order.show', compact('order'));
     }

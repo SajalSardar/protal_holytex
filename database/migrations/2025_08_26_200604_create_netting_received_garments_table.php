@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('netting_received_garments', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('netting_quotation_id');
+            $table->bigInteger('netting_quotation_id')->nullable();
             $table->bigInteger('dyeing_quotation_id')->nullable();
             $table->string('delived_factory_type')->nullable()->comment('dyeing,netting');
             $table->string('po_number')->nullable()->index();

@@ -15,6 +15,15 @@ class DyeingQuotation extends Model {
     public function garmentsFactory() {
         return $this->hasOne(GarmentsFactroy::class, 'id', 'delivery_point_id');
     }
+
+
+    public function dyeingReceiveGarments() {
+        return $this->hasMany(NettingReceivedGarments::class, 'dyeing_quotation_id');
+    }
+    public function dyeingStoreStock() {
+        return $this->hasMany(NettingStoreStock::class, 'dyeing_quotation_id');
+    }
+
     public function approvedBy() {
         return $this->hasOne(User::class, 'id', 'approved_by');
     }

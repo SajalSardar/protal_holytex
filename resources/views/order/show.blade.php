@@ -597,6 +597,10 @@
                         <div class="tab-pane fade" id="dyeing_quot_details">
                             <div class="accordion ">
                                 @forelse ($order->dyeingQuotations as $item)
+                                @php
+                                $totalNeetingRecevied = $item->dyeing_receive_garments_sum_quantity
+                                +$item->dyeing_store_stock_sum_quantity;
+                                @endphp
                                 <div class="accordion-item mt-5">
 
                                     <h2 class="accordion-header">
@@ -619,9 +623,9 @@
                                                                 <th>Price</th>
                                                                 <th>Total Price</th>
                                                                 <th>Status</th>
-                                                                <th>Del. Qty</th>
-                                                                <th>No Del. Qty</th>
-                                                                <th>Loss Qty</th>
+                                                                <th>No Received</th>
+                                                                <th>Received</th>
+                                                                <th>Store In Stock</th>
                                                             </tr>
                                                         </thead>
 
@@ -632,9 +636,13 @@
                                                                 <td>{{ $item->price }}</td>
                                                                 <td>{{ $item->total_price }}</td>
                                                                 <td>{{ $item->status }}</td>
-                                                                <td>--</td>
-                                                                <td>--</td>
-                                                                <td>--</td>
+                                                                <td>{{ number_format($item->quantity -
+                                                                    $totalNeetingRecevied, 2) }}</td>
+                                                                <td>{{ $item->dyeing_receive_garments_sum_quantity ?? 0
+                                                                    }}
+                                                                </td>
+                                                                <td>{{ $item->dyeing_store_stock_sum_quantity ?? 0 }}
+                                                                </td>
                                                             </tr>
                                                         </tbody>
                                                     </table>

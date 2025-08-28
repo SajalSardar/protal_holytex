@@ -51,8 +51,7 @@ class NettingReceivedController extends Controller {
             }
         }
 
-        $nettingQut = NettingQuotation::where('delivery_factory_type', 'dyeing')
-            ->select('po_number')
+        $nettingQut = NettingQuotation::select('po_number')
             ->groupby('po_number')
             ->whereIn('po_number', $yarnreceived)
             ->get();

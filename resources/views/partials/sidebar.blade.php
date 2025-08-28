@@ -75,7 +75,8 @@
                     </li>
                 </ul>
             </li>
-            <li class="menu-item {{ request()->routeIs(['yarnreceived.*','nettingreceived.*']) ? 'open' : '' }}">
+            <li
+                class="menu-item {{ request()->routeIs(['yarnreceived.*','nettingreceived.*','dyeingreceived.*']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
                     <span class="title">Goods Receive</span>
@@ -91,6 +92,12 @@
                         <a href="{{ route('nettingreceived.index') }}"
                             class="menu-link {{ request()->routeIs('nettingreceived.*') ? 'active' : '' }}">
                             Netting Received
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('dyeingreceived.index') }}"
+                            class="menu-link {{ request()->routeIs('dyeingreceived.*') ? 'active' : '' }}">
+                            Dyeing Received
                         </a>
                     </li>
                 </ul>

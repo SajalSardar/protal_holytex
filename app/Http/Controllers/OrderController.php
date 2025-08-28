@@ -118,6 +118,10 @@ class OrderController extends Controller {
             'dyeingQuotations.approvedBy:id,name',
             'dyeingQuotations.garmentsFactory:id,name,address',
             'dyeingQuotations.dyeingFactory:id,name,address',
+            'dyeingQuotations'  => function ($q) {
+                $q->withSum('dyeingReceiveGarments', 'quantity')
+                    ->withSum('dyeingStoreStock', 'quantity');
+            },
             'accessoriesQuotations',
             'accessoriesQuotations.creator:id,name',
             'accessoriesQuotations.lastUpdateBy:id,name',

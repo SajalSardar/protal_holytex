@@ -1,9 +1,9 @@
 @extends('layouts.master')
-@section('title', 'Create Order')
+@section('title', 'Edit Order')
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-        <h2 class="mb-0">Create Order</h2>
+        <h2 class="mb-0">Edit Order</h2>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb align-items-center mb-0 lh-1">
@@ -17,7 +17,7 @@
                     <span class="fw-medium">Order</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Create Order</span>
+                    <span class="fw-medium">Edit Order</span>
                 </li>
             </ol>
         </nav>
@@ -28,16 +28,18 @@
             <div class="card bg-white border-0 rounded-3 mb-4">
                 <div class="card-body p-4">
 
-                    <form action="{{ route('order.store') }}" method="POST" enctype="multipart/form-data"
+                    <form action="{{ route('order.update', $order->id) }}" method="POST" enctype="multipart/form-data"
                         id="order_submit_form">
                         @csrf
+                        @method('PUT')
                         <div class="row">
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">PO Number <span
                                             style="color: rgb(205, 2, 2)">*</span></label>
                                     <input type="text" class="form-control @error('po_number') is-invalid @enderror"
-                                        placeholder="PO Number" name="po_number" value="{{ old('po_number') }}">
+                                        placeholder="PO Number" name="po_number"
+                                        value="{{ old('po_number', $order->po_number) }}" readonly>
                                     @error('po_number')
                                     <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror
@@ -47,28 +49,31 @@
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Customer Name</label>
                                     <input type="text" class="form-control " name="client_name"
-                                        placeholder="Customer Name" value="{{ old('client_name') }}">
+                                        placeholder="Customer Name"
+                                        value="{{ old('client_name',$order->client_name) }}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Email Address</label>
                                     <input type="email" class="form-control " name="client_email"
-                                        placeholder="Enter Email Address" value="{{ old('client_email') }}">
+                                        placeholder="Enter Email Address"
+                                        value="{{ old('client_email',$order->client_email) }}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Phone</label>
                                     <input type="text" class="form-control " name="client_phone"
-                                        placeholder="Phone Number" value="{{ old('client_phone') }}">
+                                        placeholder="Phone Number"
+                                        value="{{ old('client_phone',$order->client_phone) }}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Order Date</label>
                                     <input type="date" class="form-control" name="order_date"
-                                        value="{{ old('order_date') }}">
+                                        value="{{ old('order_date',$order->order_date) }}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-6">
@@ -76,25 +81,25 @@
                                     <label class="label text-secondary">Approximate delivery date</label>
                                     <input type="date" class="form-control" name="approximate_delivery_date"
                                         placeholder="Approximate delivery date"
-                                        value="{{ old('approximate_delivery_date') }}">
+                                        value="{{ old('approximate_delivery_date',$order->approximate_delivery_date) }}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Client Address</label>
                                     <textarea class="form-control" rows="2" name="client_address"
-                                        placeholder="Enter Client Address">{{ old('client_address') }}</textarea>
+                                        placeholder="Enter Client Address">{{ old('client_address',$order->client_address) }}</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Ship Address</label>
                                     <textarea class="form-control" rows="2" name="ship_address"
-                                        placeholder="Enter Ship Address">{{ old('ship_address') }}</textarea>
+                                        placeholder="Enter Ship Address">{{ old('ship_address',$order->ship_address) }}</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-6">
-                                <div class="form-group mb-4">
+                                <div class="form-group mb-2">
                                     <label class="label text-secondary">Upload PO</label>
                                     <input type="file" class="form-control" name="po_file" accept="application/pdf">
                                     <span style="font-size: 12px">Upload Only pdf file.</span>
@@ -102,12 +107,22 @@
                                     <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror
                                 </div>
+                                @if ($order->po_file)
+                                <div class="mb-3">
+                                    <a href="{{ asset('storage/'.$order->po_file) }}" class="btn btn-primary"
+                                        target="_blank">View PO</a>
+                                </div>
+                                @else
+                                <div class="mb-3">
+                                    <p class="text-danger">PO File not found!</p>
+                                </div>
+                                @endif
                             </div>
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Remarks</label>
                                     <textarea class="form-control" rows="2" name="remarks"
-                                        placeholder="Remarks">{{ old('remarks') }}</textarea>
+                                        placeholder="Remarks">{{ old('remarks',$order->remarks) }}</textarea>
                                 </div>
                             </div>
 
@@ -133,11 +148,14 @@
                                             <tr>
                                                 <td colspan="2"><strong class="fs-18">Total</strong></td>
                                                 <td><input class="form-control" name="total_quantity"
-                                                        id="total_quantity" class="fs-18" value="0.0" readonly
-                                                        style="width: 150px"> </td>
+                                                        id="total_quantity" class="fs-18"
+                                                        value="{{ number_format($order->orderDetails->sum('unit_quantity'), 2) }}"
+                                                        readonly style="width: 150px"> </td>
                                                 <td></td>
                                                 <td><input class="form-control" name="grand_total" id="grand_total"
-                                                        class="fs-18" value="0.0" readonly style="width: 150px">
+                                                        class="fs-18"
+                                                        value="{{  number_format($order->orderDetails->sum('total_unit_price'), 2) }}"
+                                                        readonly style="width: 150px">
                                                 </td>
                                                 <td></td>
                                             </tr>
@@ -195,10 +213,10 @@
                             <hr>
                             <div class="col-lg-12 mt-5">
                                 <div class="d-flex flex-wrap gap-3">
-                                    <button class="btn btn-danger py-2 px-4 fw-medium fs-16 text-white">Cancel</button>
                                     <button type="button" id="order_submit_btn"
+                                        onclick="this.disabled=true; this.innerHTML='Saving…';"
                                         class="btn btn-primary py-2 px-4 fw-medium fs-16"> <i
-                                            class="ri-add-line text-white fw-medium"></i> Create Order</button>
+                                            class="ri-add-line text-white fw-medium"></i> Update Order</button>
                                 </div>
                             </div>
                         </div>
@@ -217,9 +235,8 @@
 <script>
     $(function() {
         $('.select2').select2();
-
+        const tableBodyData = document.getElementById("item_price_table").getElementsByTagName("tbody")[0];
         $('#order_submit_btn').on('click', function(){
-            const tableBodyData = document.getElementById("item_price_table").getElementsByTagName("tbody")[0];
             const rowCount = tableBodyData.rows.length;
             if(rowCount=== 0){
                 alert('Add Style, Description,quantity,price, etc.');
@@ -228,6 +245,25 @@
                 $('#order_submit_form').submit();
             }
         });
+
+        //load order details data
+        let orderDetailsData = @json($order->orderDetails);
+        let orderDetail = "";
+        orderDetailsData.forEach((item)=>{
+            orderDetail += `<tr>
+                <td>${item.style} <input type="hidden" value="${item.style}" name="style[]"></td>
+                <td>${item.description} <input type="hidden" value="${item.description}" name="description[]"></td>
+                <td>${item.unit_quantity} <input type="hidden" value="${item.unit_quantity}" name="unit_quantity[]"></td>
+                <td>${item.unit_price} <input type="hidden" value="${item.unit_price}" name="unit_price[]"></td>
+                <td>${item.total_unit_price} <input type="hidden" value="${item.total_unit_price}" name="total_unit_price[]"></td>
+                <td class="text-end">
+                <i class="material-symbols-outlined fs-16 text-body edit-btn" style="cursor:pointer;">edit</i>
+                </td>
+                </tr>
+            `;
+        });
+        tableBodyData.innerHTML = orderDetail;
+        
     });
     
     const unit_price = document.getElementById("unit_price");
@@ -247,7 +283,7 @@
     // Trigger on change and keyup (or more generally: input)
     unit_price.addEventListener("input", calculateTotal);
     unit_quantity.addEventListener("input", calculateTotal);
-
+    
 
     //add list
     function addToTable() {
@@ -319,7 +355,6 @@
                 <td>${totalVal} <input type="hidden" value="${totalVal}" name="total_unit_price[]"></td>
                 <td class="text-end">
                 <i class="material-symbols-outlined fs-16 text-body edit-btn" style="cursor:pointer;">edit</i>
-                <i class="material-symbols-outlined fs-16 text-danger delete-btn" style="cursor:pointer;">delete</i>
                 </td>
             `;
             tableBody.appendChild(row);
@@ -328,21 +363,17 @@
         calculateTotals();
 
         // Reset form
-       resetSelect();
+        resetSelect();
         description.value = "";
         unit_quantity.value = "";
         unit_price.value = "";
         total_unit_price.value = "";
+        $('#style_select option').prop('disabled', false);
     }
 
     //edit row
     document.querySelector("#item_price_table tbody").addEventListener("click", function (e) {
         const row = e.target.closest("tr");
-
-        if (e.target.classList.contains("delete-btn")) {
-            if (row) row.remove();
-            calculateTotals();
-        }
 
         if (e.target.classList.contains("edit-btn")) {
             const style = document.getElementById("style_select");
@@ -353,6 +384,7 @@
 
             // ✅ Get text from text node only (exclude input elements)
             let selectedValue = row.cells[0].childNodes[0].textContent.trim();
+            $('#style_select option').not('[value="' + selectedValue + '"]').prop('disabled', true);
             $('#style_select').val(selectedValue).trigger('change');
             description.value = row.cells[1].childNodes[0].textContent.trim();
             unit_quantity.value = row.cells[2].childNodes[0].textContent.trim();

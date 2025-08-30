@@ -113,7 +113,13 @@
         <div class="col-12">
             <div class="card border bg-white rounded-3 overflow-hidden">
                 <div class="card-header">
-                    <h3 class="card-title">Basic Order Info</h3>
+                    <div class="d-flex align-items-center">
+                        <h3 class="card-title">Basic Order Info</h3>
+                        <button type="button" class="btn btn-success text-white py-2 px-4 fw-semibold ms-3"
+                            data-bs-toggle="modal" data-bs-target="#status_change_modal">
+                            Update Status
+                        </button>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="default-table-area style-two default-table-width">
@@ -137,8 +143,17 @@
                                         <td>{{ $order->order_number }}</td>
                                         <td>{{ $order->order_date }}</td>
                                         <td>
-                                            <span
-                                                class="badge bg-success bg-opacity-10 text-success p-2 fs-12 fw-normal">{{
+                                            @php
+                                            $statusClasses = [
+                                            'processing' => 'bg-primary-div text-primary-div bg-opacity-10',
+                                            'pending' => 'bg-danger text-danger bg-opacity-10',
+                                            'cancelled' => 'bg-danger text-danger bg-opacity-25',
+                                            'block' => 'bg-info text-info bg-opacity-25',
+                                            ];
+                                            $statusDesign = $statusClasses[$order->status] ?? 'bg-success text-success
+                                            bg-opacity-10';
+                                            @endphp
+                                            <span class="{{ $statusDesign }} badge p-2 fs-12 fw-normal">{{
                                                 Str::ucfirst($order->status)
                                                 }}</span>
                                         </td>
@@ -852,4 +867,50 @@
 </div>
 
 <div class="flex-grow-1"></div>
+
+<!-- Modal -->
+<div class="modal fade" id="status_change_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="{{ route('order.update.status') }}" method="POST">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="status_change_modal">Change Order Status</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="order_id" id="order_id" value="{{ $order->id }}">
+                    <div class="form-group mb-2">
+                        <label for="">PO Number</label>
+                        <input type="text" class="form-control" name="po_number" id="po_number"
+                            value="{{ $order->po_number }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Select Status</label>
+                        <select name="status" class="form-select form-control">
+                            <option value="" disabled>Select Status</option>
+                            <option value="processing" {{ $order->status === "processing" ? 'selected' : ''
+                                }}>Processing</option>
+                            <option value="approved" {{ $order->status === "approved" ? 'selected' : ''
+                                }}>Approved</option>
+                            <option value="pending" {{ $order->status === "pending" ? 'selected' : ''
+                                }}>Pending</option>
+                            <option value="cancelled" {{ $order->status === "cancelled" ? 'selected' : ''
+                                }}>Cancelled</option>
+                            <option value="finished" {{ $order->status === "finished" ? 'selected' : ''
+                                }}>Finished</option>
+                            <option value="block" {{ $order->status === "block" ? 'selected' : ''
+                                }}>Block</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger text-white" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary text-white">Update</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 @endsection

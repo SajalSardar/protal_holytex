@@ -7,6 +7,7 @@ use App\Models\OrderDetail;
 use App\Models\Style;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller {
     /**
@@ -140,14 +141,80 @@ class OrderController extends Controller {
      * Show the form for editing the specified resource.
      */
     public function edit(Order $order) {
-        //
+        $styles = Style::where('status', 'active')->get();
+        $order->load('orderDetails');
+        // return $order;
+        return view('order.edit', compact('order', 'styles'));
+    }
+
+    public function updateStatus(Request $request) {
+        // return $request;
+        if (!$request->order_id) {
+            toastr('Order Id not found!', 'error');
+            return back();
+        }
+        Order::where('id', $request->order_id)->update([
+            'status' => $request->status,
+        ]);
+        toastr('Order Status Updated!');
+        return back();
     }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Order $order) {
-        //
+        // return $request;
+        if ($order->status === 'approved') {
+            toastr('The order is approved but not yet updated in the system.', 'info');
+            return back();
+        }
+        $request->validate([
+            'po_number' => 'required|unique:orders,po_number,' . $order->id,
+            'po_file'   => 'nullable|file|mimes:pdf|max:5120',
+        ]);
+
+        if ($request->hasFile('po_file')) {
+            if ($order->po_file && Storage::disk('public')->exists($order->po_file)) {
+                Storage::disk('public')->delete($order->po_file);
+            }
+            $path = $request->file('po_file')->store('orders', 'public');
+        } else {
+            $path = $order->po_file;
+        }
+
+        $order->update([
+            'client_name'               => $request->client_name,
+            'client_email'              => $request->client_email,
+            'client_phone'              => $request->client_phone,
+            'order_date'                => $request->order_date,
+            'client_address'            => $request->client_address,
+            'ship_address'              => $request->ship_address,
+            'total_quantity'            => $request->total_quantity,
+            'grand_total'               => $request->grand_total,
+            'approximate_delivery_date' => $request->approximate_delivery_date,
+            'remarks'                   => $request->remarks,
+            'po_file'                   => $path,
+            'updated_by'                => Auth::id(),
+        ]);
+        if ($order) {
+            foreach ($request->style as $key => $item) {
+                $detail = $order->orderDetails()
+                    ->where('po_number', $request->po_number)
+                    ->where('style', $item)
+                    ->first();
+                $detail->update([
+                    'description'      => $request->description[$key],
+                    'unit_quantity'    => $request->unit_quantity[$key],
+                    'unit_price'       => $request->unit_price[$key],
+                    'total_unit_price' => $request->total_unit_price[$key],
+                    'updated_by'       => Auth::id(),
+                ]);
+
+            }
+        }
+        toastr('Order Successfully Updated!');
+        return back();
     }
 
     /**

@@ -34,6 +34,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::resource('order', OrderController::class);
+    Route::post('order-update-status', [OrderController::class, 'updateStatus'])->name('order.update.status');
     Route::resource('yarnquotation', YarnQuotationController::class);
     Route::resource('nettingquotation', NettingQuotationController::class);
     Route::resource('dyeingquotation', DyeingQuotationController::class);

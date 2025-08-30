@@ -61,7 +61,20 @@
                                         <td>{{ $item->order_date }}</td>
                                         <td>{{ $item->total_quantity }}</td>
                                         <td>{{ $item->grand_total }}</td>
-                                        <td>{{ Str::ucfirst($item->status) }}</td>
+                                        <td>
+                                            @php
+                                            $statusClasses = [
+                                            'processing' => 'bg-primary-div text-primary-div bg-opacity-10',
+                                            'pending' => 'bg-danger text-danger bg-opacity-10',
+                                            'cancelled' => 'bg-danger text-danger bg-opacity-25',
+                                            'block' => 'bg-info text-info bg-opacity-25',
+                                            ];
+                                            $statusDesign = $statusClasses[$item->status] ?? 'bg-success text-success
+                                            bg-opacity-10';
+                                            @endphp
+                                            <span class="badge p-2 fs-12 fw-normal {{ $statusDesign }}">{{
+                                                Str::ucfirst($item->status) }}</span>
+                                        </td>
                                         <td>
                                             <div class="dropdown">
                                                 <a class="btn btn-primary dropdown-toggle" href="#" role="button"
@@ -70,17 +83,17 @@
                                                 </a>
 
                                                 <ul class="dropdown-menu dropdown-menu-end table_action_btn">
-                                                    <li><a class="dropdown-item py-2"
-                                                            href="{{ route('yarnreceived.create',['po_number'=>$item->po_number]) }}">
+                                                    <li><a class="dropdown-item py-2" href="#"
+                                                            onclick="showStatusModal('{{ $item->id }}', '{{ $item->po_number }}','{{ $item->status }}')">
                                                             <i
                                                                 class="material-symbols-outlined fs-16 text-primary">contact_page</i>
-                                                            Yarn
-                                                            Receive</a></li>
+                                                            Update Status</a></li>
                                                     <li><a class="dropdown-item py-2"
                                                             href="{{ route('order.show',$item->id) }}"> <i
                                                                 class="material-symbols-outlined fs-16 text-primary">visibility</i>
                                                             View</a></li>
-                                                    <li><a class="dropdown-item py-2" href="#"><i
+                                                    <li><a class="dropdown-item py-2"
+                                                            href="{{ route('order.edit',$item->id) }}"><i
                                                                 class="material-symbols-outlined fs-16 text-body">edit</i>
                                                             Edit</a></li>
                                                     <li><a class="dropdown-item py-2" href="#"><i
@@ -104,4 +117,58 @@
 </div>
 
 <div class="flex-grow-1"></div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="status_change_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="{{ route('order.update.status') }}" method="POST">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Change Order Status</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="order_id" id="order_id">
+                    <div class="form-group mb-2">
+                        <label for="">PO Number</label>
+                        <input type="text" class="form-control" name="po_number" id="po_number" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Select Status</label>
+                        <select name="status" class="form-select form-control status_select">
+                            <option value="" disabled selected>Select Status</option>
+                            <option value="processing">Processing</option>
+                            <option value="approved">Approved</option>
+                            <option value="pending">Pending</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="finished">Finished</option>
+                            <option value="block">Block</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger text-white" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary text-white">Update</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@endsection
+
+@section('script')
+<script>
+    function showStatusModal(order_id, po_number,status){
+        $('#status_change_modal').modal('show');
+        let getorder_id = $('#order_id');
+        let getpo_number = $('#po_number');
+        getorder_id.val(order_id);
+        getpo_number.val(po_number);
+        $('.status_select').val(status);
+    }
+</script>
 @endsection

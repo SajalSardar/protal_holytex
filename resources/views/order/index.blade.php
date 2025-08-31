@@ -76,7 +76,7 @@
                                                 Str::ucfirst($item->status) }}</span>
                                         </td>
                                         <td>
-                                            <div class="dropdown">
+                                            <div class="dropdown text-end">
                                                 <a class="btn btn-primary dropdown-toggle" href="#" role="button"
                                                     data-bs-toggle="dropdown" aria-expanded="false">
                                                     Action
@@ -163,7 +163,12 @@
 @section('script')
 <script>
     function showStatusModal(order_id, po_number,status){
-        $('#status_change_modal').modal('show');
+        const modalEl = document.getElementById('status_change_modal');
+        const myModal = new bootstrap.Modal(modalEl, {
+            keyboard: false
+        });
+        myModal.show();
+
         let getorder_id = $('#order_id');
         let getpo_number = $('#po_number');
         getorder_id.val(order_id);

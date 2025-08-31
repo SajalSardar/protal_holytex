@@ -65,20 +65,28 @@
 
                                         </td>
                                         <td>
-                                            <div class="d-flex align-items-center gap-1 justify-content-end">
-                                                <button
-                                                    class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
-                                                    <i
-                                                        class="material-symbols-outlined fs-16 text-primary">visibility</i>
-                                                </button>
-                                                <button
-                                                    class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
-                                                    <i class="material-symbols-outlined fs-16 text-body">edit</i>
-                                                </button>
-                                                <button
-                                                    class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
-                                                    <i class="material-symbols-outlined fs-16 text-danger">delete</i>
-                                                </button>
+                                            <div class="dropdown text-end">
+                                                <a class="btn btn-primary dropdown-toggle" href="#" role="button"
+                                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                                    Action
+                                                </a>
+
+                                                <ul class="dropdown-menu dropdown-menu-end table_action_btn">
+                                                    <li><a class="dropdown-item py-2" href="#"
+                                                            onclick="showStatusModal('{{ $item->style }}', '{{ $item->po_number }}','{{ $item->status }}')">
+                                                            <i
+                                                                class="material-symbols-outlined fs-16 text-primary">contact_page</i>
+                                                            Update Status</a></li>
+                                                    <li><a class="dropdown-item py-2" href="#"> <i
+                                                                class="material-symbols-outlined fs-16 text-primary">visibility</i>
+                                                            View</a></li>
+                                                    <li><a class="dropdown-item py-2" href="#"><i
+                                                                class="material-symbols-outlined fs-16 text-body">edit</i>
+                                                            Edit</a></li>
+                                                    <li><a class="dropdown-item py-2" href="#"><i
+                                                                class="material-symbols-outlined fs-16 text-danger">delete</i>
+                                                            Delete</a></li>
+                                                </ul>
                                             </div>
                                         </td>
                                     </tr>
@@ -98,4 +106,60 @@
 </div>
 
 <div class="flex-grow-1"></div>
+
+<!-- Modal -->
+<div class="modal fade" id="status_change_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="{{ route('dyeing.qty.update.status') }}" method="POST">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Change Netting Quotation Status</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="style" id="style_nu">
+                    <div class="form-group mb-2">
+                        <label for="">PO Number</label>
+                        <input type="text" class="form-control" name="po_number" id="po_number" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Select Status</label>
+                        <select name="status" class="form-select form-control status_select">
+                            <option value="" disabled selected>Select Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="finished">Finished</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger text-white" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary text-white"
+                        onclick="this.disabled=true; this.innerHTML='Saving…'; this.form.submit();">Update</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection
+
+@section('script')
+<script>
+    function showStatusModal(style, po_number,status){
+        const modalEl = document.getElementById('status_change_modal');
+        const myModal = new bootstrap.Modal(modalEl, {
+            keyboard: false
+        });
+        myModal.show();
+
+        let styleN = $('#style_nu');
+        let getpo_number = $('#po_number');
+        styleN.val(style);
+        getpo_number.val(po_number);
+        $('.status_select').val(status);
+    }
+</script>
 @endsection

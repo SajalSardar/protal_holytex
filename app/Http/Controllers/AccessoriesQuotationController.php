@@ -21,7 +21,7 @@ class AccessoriesQuotationController extends Controller {
      * Show the form for creating a new resource.
      */
     public function create() {
-        $ordersPo = Order::pluck('po_number', 'id');
+        $ordersPo = Order::where('status', 'approved')->pluck('po_number', 'id');
         return view('accessories_quotation.create', compact('ordersPo'));
     }
 
@@ -70,6 +70,17 @@ class AccessoriesQuotationController extends Controller {
         //
     }
 
+    public function accQtyStatusUpdate(Request $request, ) {
+        if (!$request->id) {
+            toastr('Id not found!', 'error');
+            return back();
+        }
+        AccessoriesQuotation::where('id', $request->id)->update([
+            'status' => $request->status,
+        ]);
+        toastr('Accessories quotation Status Updated!');
+        return back();
+    }
     /**
      * Update the specified resource in storage.
      */

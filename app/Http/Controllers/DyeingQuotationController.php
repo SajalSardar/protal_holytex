@@ -15,14 +15,15 @@ class DyeingQuotationController extends Controller {
 
         $nettings = NettingQuotation::with('dyeingFactory', 'nettingFactory')
             ->where('po_number', $po_number)
+            ->where('status', 'approved')
             ->where('delivery_factory_type', 'dyeing')
             ->whereNotIn('style', $dyeing)
             ->get();
 
-        if ($nettings) {
+        if ($nettings->isNotEmpty()) {
             return $nettings;
         } else {
-            return 'Netting not found!';
+            return response()->json(['message' => 'New Netting Quotation not found!']);
         }
     }
 
@@ -30,7 +31,7 @@ class DyeingQuotationController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        $dyeings = DyeingQuotation::with('dyeingFactory')->get();
+        $dyeings = DyeingQuotation::with('dyeingFactory')->orderBy('id', 'desc')->get();
         return view('dyeing_quotation.index', compact('dyeings'));
     }
 
@@ -38,7 +39,11 @@ class DyeingQuotationController extends Controller {
      * Show the form for creating a new resource.
      */
     public function create() {
-        $nettings = NettingQuotation::where('delivery_factory_type', 'dyeing')->select('po_number')->groupby('po_number')->get();
+        $nettings = NettingQuotation::where('delivery_factory_type', 'dyeing')
+            ->where('status', 'approved')
+            ->select('po_number')
+            ->groupby('po_number')
+            ->get();
 
         $delivery_point = GarmentsFactroy::where('status', 'active')->get();
         return view('dyeing_quotation.create', compact('nettings', 'delivery_point'));
@@ -89,6 +94,17 @@ class DyeingQuotationController extends Controller {
         //
     }
 
+    public function dyeingQtyStatusUpdate(Request $request) {
+        if (!$request->style && !$request->po_number) {
+            toastr('PO number and style not found!', 'error');
+            return back();
+        }
+        DyeingQuotation::where('po_number', $request->po_number)->where('style', $request->style)->update([
+            'status' => $request->status,
+        ]);
+        toastr('Dyeing quotation Status Updated!');
+        return back();
+    }
     /**
      * Update the specified resource in storage.
      */

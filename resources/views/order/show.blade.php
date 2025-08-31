@@ -311,7 +311,7 @@
                         <div class="tab-pane fade" id="yarn_quot_details">
                             @forelse ($order->yarnQuotations->groupBy('style') as $key => $items)
 
-                            <div class="accordion mt-5">
+                            <div class="accordion mb-5">
                                 <div class="accordion-item">
 
                                     <h2 class="accordion-header">

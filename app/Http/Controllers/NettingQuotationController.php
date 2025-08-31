@@ -13,12 +13,13 @@ class NettingQuotationController extends Controller {
         $nettings = NettingQuotation::where('po_number', $po_number)->pluck('style');
         $yearns   = YarnQuotation::with('yarnFactory', 'nettingFactory')
             ->where('po_number', $po_number)
+            ->where('status', 'approved')
             ->whereNotIn('style', $nettings)
             ->get()->groupBy(['style', 'netting_factory_id']);
-        if ($yearns) {
+        if ($yearns->isNotEmpty()) {
             return $yearns;
         } else {
-            return 'Yarn not found!';
+            return response()->json(['message' => 'New Yarn Quotation not found!']);
         }
     }
 
@@ -26,7 +27,7 @@ class NettingQuotationController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        $nettings = NettingQuotation::with('nettingFactory:id,name,address')->get();
+        $nettings = NettingQuotation::with('nettingFactory:id,name,address')->orderBy('id', 'desc')->get();
         return view('netting_quotation.index', compact('nettings'));
     }
 
@@ -35,7 +36,7 @@ class NettingQuotationController extends Controller {
      */
     public function create() {
 
-        $yearns = YarnQuotation::select('po_number')->groupby('po_number')->get();
+        $yearns = YarnQuotation::select('po_number')->where('status', 'approved')->groupby('po_number')->get();
         return view('netting_quotation.create', compact('yearns'));
     }
 
@@ -89,6 +90,17 @@ class NettingQuotationController extends Controller {
         //
     }
 
+    public function nettingQtyStatusUpdate(Request $request) {
+        if (!$request->style && !$request->po_number) {
+            toastr('PO number and style not found!', 'error');
+            return back();
+        }
+        NettingQuotation::where('po_number', $request->po_number)->where('style', $request->style)->update([
+            'status' => $request->status,
+        ]);
+        toastr('Netting quotation Status Updated!');
+        return back();
+    }
     /**
      * Update the specified resource in storage.
      */

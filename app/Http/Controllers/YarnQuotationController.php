@@ -31,7 +31,7 @@ class YarnQuotationController extends Controller {
      * Show the form for creating a new resource.
      */
     public function create() {
-        $orders         = Order::pluck('po_number', 'id');
+        $orders         = Order::where('status', 'approved')->pluck('po_number', 'id');
         $yarnFactory    = YarnFactroy::where('status', 'active')->get();
         $nettingFactory = NettingFactroy::where('status', 'active')->get();
         return view('yarn_quotation.create', compact('orders', 'yarnFactory', 'nettingFactory'));
@@ -100,6 +100,19 @@ class YarnQuotationController extends Controller {
      */
     public function edit(YarnQuotation $buyYarn) {
         //
+    }
+
+    public function yarnQtyStatusUpdate(Request $request) {
+        // return $request;
+        if (!$request->style && !$request->po_number) {
+            toastr('PO number and style not found!', 'error');
+            return back();
+        }
+        YarnQuotation::where('po_number', $request->po_number)->where('style', $request->style)->update([
+            'status' => $request->status,
+        ]);
+        toastr('Yarn quotation Status Updated!');
+        return back();
     }
 
     /**

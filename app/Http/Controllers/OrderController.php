@@ -14,7 +14,7 @@ class OrderController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        $orders = Order::all();
+        $orders = Order::orderBy('id', 'desc')->get();
         return view('order.index', compact('orders'));
     }
 

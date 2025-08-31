@@ -87,6 +87,7 @@
                             <div class="col-lg-12 mt-5">
                                 <div class="d-flex flex-wrap gap-3">
                                     <button type="submit" id="submit_button"
+                                        onclick="this.disabled=true; this.innerHTML='Saving…'; this.form.submit();"
                                         class="btn btn-primary py-2 px-4 fw-medium fs-16"> <i
                                             class="ri-add-line text-white fw-medium"></i> Create</button>
                                 </div>
@@ -123,11 +124,22 @@
                     }
                     return response.json();
                 }).then(data => {
-                    console.log('API response:', data);
+                    // console.log('API response:', data);
                     let display_div = $('#show_all_yarn_item');
                     let order_id = null;
                     let order_number = null;
                     let singleItem = '';
+
+                    if(data.message){
+                        singleItem += `
+                            <div class="alert alert-info">
+                                <p>${data.message}</p>
+                            </div>
+                        `;
+                        display_div.html(singleItem);
+                        return;
+                    }
+
                     // Append new options
                     Object.entries(data).forEach(([key, style]) => {
                     Object.entries(style).forEach(([keyFa, factoryId]) => {
@@ -150,7 +162,7 @@
                             order_number = item.order_number;
                             order_id = item.order_id;
                             netting_factory_id =item.netting_factory.id;
-                        singleItem += `
+                            singleItem += `
                             
                                 <tr>
                                     <td>${item.description}</td>
@@ -162,7 +174,7 @@
                          
                         });
                                            
-                        singleItem +=`<tr>
+                            singleItem +=`<tr>
                                     <td><strong>Total Quantity (KG)</strong></td>
                                     <td><strong>${total_quantity.toFixed(2)}</strong></td>
                                 </tr></table>
@@ -180,7 +192,7 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group mb-4">
                                                     <label class="label text-secondary">Rate(TK)</label>
-                                                    <input type="number" class="form-control" oninput="attachRateCalculation('${key}','${keyFa}')" name="items[${key}][${keyFa}][rate]"  id="rate_${key}_${keyFa}">
+                                                    <input type="number" class="form-control" oninput="attachRateCalculation('${key}','${keyFa}')" name="items[${key}][${keyFa}][rate]"  id="rate_${key}_${keyFa}" min="1">
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
@@ -220,7 +232,7 @@
                                     </div>
                                 </div>
                             `;
-                    });
+                        });
                      });
                     
                      display_div.html(singleItem);

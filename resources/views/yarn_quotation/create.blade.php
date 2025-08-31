@@ -188,7 +188,6 @@
                             <hr>
                             <div class="col-lg-12 mt-5">
                                 <div class="d-flex flex-wrap gap-3">
-                                    <button class="btn btn-danger py-2 px-4 fw-medium fs-16 text-white">Cancel</button>
                                     <button type="button" id="submit_button"
                                         class="btn btn-primary py-2 px-4 fw-medium fs-16"> <i
                                             class="ri-add-line text-white fw-medium"></i> Create</button>
@@ -263,10 +262,13 @@
             const tableBodyData = document.getElementById("item_price_table").getElementsByTagName("tbody")[0];
             const rowCount = tableBodyData.rows.length;
             if(rowCount=== 0){
+                $(this).prop('disabled', false); 
                 alert('Add Yarn Description,quantity,price, etc.');
                 
             }else{
                 $('#yarn_form').submit();
+                $(this).prop('disabled', true); 
+                $(this).html('Saving…');
             }
         });
 
@@ -451,7 +453,7 @@
     }
 
     function resetSelect(id) {
-        $('#'+id).val(null).trigger('change');
+        $('#'+id).val('').trigger('change');
     }
 </script>
 @endsection

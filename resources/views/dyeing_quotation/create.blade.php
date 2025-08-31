@@ -87,6 +87,7 @@
                             <div class="col-lg-12 mt-5">
                                 <div class="d-flex flex-wrap gap-3">
                                     <button type="submit" id="submit_button"
+                                        onclick="this.disabled=true; this.innerHTML='Saving…'; this.form.submit();"
                                         class="btn btn-primary py-2 px-4 fw-medium fs-16"> <i
                                             class="ri-add-line text-white fw-medium"></i> Create</button>
                                 </div>
@@ -128,6 +129,15 @@
                     let order_id = null;
                     let order_number = null;
                     let singleItem = '';
+                    if(data.message){
+                        singleItem += `
+                            <div class="alert alert-info">
+                                <p>${data.message}</p>
+                            </div>
+                        `;
+                        display_div.html(singleItem);
+                        return;
+                    }
                     // Append new options
                     data.forEach(item => {
                         order_number = item.order_number;
@@ -157,7 +167,7 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group mb-4">
                                                     <label class="label text-secondary">Rate(TK)</label>
-                                                    <input type="number" class="form-control" oninput="attachRateCalculation('${item.style}')" name="items[${item.style}][rate]"  id="rate_${item.style}">
+                                                    <input type="number" class="form-control" oninput="attachRateCalculation('${item.style}')" name="items[${item.style}][rate]"  id="rate_${item.style}" min="1">
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">

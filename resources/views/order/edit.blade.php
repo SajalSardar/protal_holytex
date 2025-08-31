@@ -24,12 +24,13 @@
     </div>
 
     <div class="row">
+
         <div class=" col-lg-12">
             <div class="card bg-white border-0 rounded-3 mb-4">
                 <div class="card-body p-4">
 
-                    <form action="{{ route('order.update', $order->id) }}" method="POST" enctype="multipart/form-data"
-                        id="order_submit_form">
+                    <form action="{{ $order->status != 'approved' ? route('order.update', $order->id) : '#' }}"
+                        method="POST" enctype="multipart/form-data" id="order_submit_form">
                         @csrf
                         @method('PUT')
                         <div class="row">
@@ -114,7 +115,7 @@
                                 </div>
                                 @else
                                 <div class="mb-3">
-                                    <p class="text-danger">PO File not found!</p>
+                                    <p class="alert alert-info">PDF PO file not found!</p>
                                 </div>
                                 @endif
                             </div>
@@ -164,6 +165,7 @@
                                 </div>
                             </div>
 
+                            @if ($order->status != 'approved')
                             <div class="col-md-2 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Style</label>
@@ -219,6 +221,7 @@
                                             class="ri-add-line text-white fw-medium"></i> Update Order</button>
                                 </div>
                             </div>
+                            @endif
                         </div>
                     </form>
                 </div>

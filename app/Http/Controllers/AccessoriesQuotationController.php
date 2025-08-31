@@ -12,7 +12,7 @@ class AccessoriesQuotationController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        $accessoriesQuotation = AccessoriesQuotation::get();
+        $accessoriesQuotation = AccessoriesQuotation::orderBy('id', 'desc')->get();
         // return $accessoriesQuotation;
         return view('accessories_quotation.index', compact('accessoriesQuotation'));
     }

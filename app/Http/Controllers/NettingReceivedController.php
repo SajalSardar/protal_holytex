@@ -7,7 +7,6 @@ use App\Models\NettingQuotation;
 use App\Models\NettingReceived;
 use App\Models\NettingReceivedGarments;
 use App\Models\YarnQuotation;
-use App\Models\YarnReceived;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -67,7 +66,7 @@ class NettingReceivedController extends Controller {
      */
     public function create() {
 
-        $yarnreceived = YarnReceived::groupby('po_number')
+        $yarnreceived = YarnQuotation::where('status', 'recevied')->groupby('po_number')
             ->pluck('po_number');
 
         $requestPo = request()->po_number;
@@ -78,15 +77,33 @@ class NettingReceivedController extends Controller {
             }
         }
 
-        // $nettingQut = NettingQuotation::select('po_number')
-        //     ->groupby('po_number')
-        //     ->whereIn('po_number', $yarnreceived)
-        //     ->get();
-        $receviedYarn = YarnQuotation::get()
+        // $yearns = NettingQuotation::where('po_number', $requestPo)
+        //     ->whereIn('style', $receivedStyles->toArray())
+        //     ->where('status', 'approved')
+        //     ->pluck('po_number');
+
+        // return $yearns;
+
+        // $receviedYarn = YarnQuotation::get()
+        //     ->groupBy(['po_number', 'style'])
+        //     ->map(fn($styles) => $styles->map(fn($items) => $items->every(fn($i) => $i->status === 'recevied')))
+        //     ->filter(fn($styles) => $styles->contains(true))
+        //     ->keys();
+
+        $receivedStyles = YarnQuotation::get()
             ->groupBy(['po_number', 'style'])
-            ->map(fn($styles) => $styles->map(fn($items) => $items->every(fn($i) => $i->status === 'recevied')))
-            ->filter(fn($styles) => $styles->contains(true))
-            ->keys();
+            ->map(fn($styles) =>
+                $styles->map(fn($items) =>
+                    $items->every(fn($i) => $i->status === 'recevied')
+                )->filter() // remove false values
+            )
+            ->filter(fn($styles) => $styles->isNotEmpty())
+            ->map(fn($styles) => $styles->keys());
+
+        $receviedYarn = NettingQuotation::whereIn('po_number', $receivedStyles->keys()->toArray())
+            ->where('status', 'approved')
+            ->groupBy('po_number')
+            ->pluck('po_number');
 
         // return $receviedYarn;
 

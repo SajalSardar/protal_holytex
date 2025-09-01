@@ -101,6 +101,13 @@ $po_number = request()->po_number ?? '';
                     let order_number = null;
                     // console.log('API response:', data);
                     let display_div = $('#show_all_yarn_item');
+                    if(data.length === 0){
+                        display_div.html(`
+                            <div class="col-lg-12"><div class="alert alert-success">No data Found!</div></div>
+                        `);
+                        return;
+                    }
+                    
                     let singleItem = `<div class="col-lg-12">
                                     <div class="card bg-white border-0 rounded-3 mb-4">
                                         <div class="card-body p-4">

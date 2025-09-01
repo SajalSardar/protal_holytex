@@ -57,11 +57,16 @@ class DyeingReceivedController extends Controller {
         $nettingQut = NettingQuotation::select('po_number')
             ->where('status', 'recevied')
             ->groupby('po_number')
-            ->get();
+            ->pluck('po_number');
 
-        // return $nettingQut;
+        $dyeingQut = DyeingQuotation::whereIn('po_number', $nettingQut->toArray())
+            ->where('status', 'approved')
+            ->groupBy('po_number')
+            ->pluck('po_number');
 
-        return view('dyeing_received.create', compact('nettingQut'));
+        // return $dyeingQut;
+
+        return view('dyeing_received.create', compact('dyeingQut'));
     }
 
     /**

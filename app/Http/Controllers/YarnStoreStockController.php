@@ -29,6 +29,7 @@ class YarnStoreStockController extends Controller {
      * Store a newly created resource in storage.
      */
     public function store(Request $request) {
+
         $request->validate([
             'challan_file' => "nullable|max:512|image",
         ]);
@@ -70,7 +71,16 @@ class YarnStoreStockController extends Controller {
                 ]);
             }
 
+            if ((float) $yearnQut->quantity === (float) $total) {
+                $yearnQut->update([
+                    'status'        => 'recevied',
+                    'delivery_date' => $request->received_date,
+                    'updated_by'    => Auth::id(),
+                ]);
+            }
+
         }
+
         if ($successMessageStatus === 1) {
             toastr('Data Successfully Created!');
             return back();

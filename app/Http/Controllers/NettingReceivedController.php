@@ -6,26 +6,52 @@ use App\Models\NettingLoss;
 use App\Models\NettingQuotation;
 use App\Models\NettingReceived;
 use App\Models\NettingReceivedGarments;
+use App\Models\YarnQuotation;
 use App\Models\YarnReceived;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class NettingReceivedController extends Controller {
     public function getNettingStyleByPo($po_number) {
+        $receivedStyles = YarnQuotation::where('po_number', $po_number)
+            ->get()
+            ->groupBy('style')
+            ->map(fn($items) => $items->every(fn($i) => $i->status === 'recevied'))
+            ->filter()
+            ->keys();
+
         $yearns = NettingQuotation::with('dyeingFactory', 'nettingFactory', 'garmentsFactory')
             ->withSum('nettingReceived', 'quantity')
             ->withSum('nettingLoss', 'quantity')
             ->withSum('storeStock', 'quantity')
             ->withSum('nettingReceiveGarments', 'quantity')
-        // ->where('delivery_factory_type', 'dyeing')
             ->where('po_number', $po_number)
+            ->whereIn('style', $receivedStyles->toArray())
+            ->where('status', 'approved')
             ->get()
             ->groupBy('style');
+
         if ($yearns) {
             return $yearns;
         } else {
             return 'Yarn not found!';
         }
+    }
+
+    public function getReceviedTotalNettingByStyle(Request $request) {
+        $po_number = $request->query('po_number');
+        $style     = $request->query('style');
+
+        $totalReceived = NettingReceived::where('po_number', $po_number)
+            ->where('style', $style)
+            ->sum('quantity');
+
+        // Always return JSON
+        return response()->json([
+            'po_number'      => $po_number,
+            'style'          => $style,
+            'total_received' => $totalReceived,
+        ]);
     }
 
     /**
@@ -40,6 +66,7 @@ class NettingReceivedController extends Controller {
      * Show the form for creating a new resource.
      */
     public function create() {
+
         $yarnreceived = YarnReceived::groupby('po_number')
             ->pluck('po_number');
 
@@ -51,11 +78,19 @@ class NettingReceivedController extends Controller {
             }
         }
 
-        $nettingQut = NettingQuotation::select('po_number')
-            ->groupby('po_number')
-            ->whereIn('po_number', $yarnreceived)
-            ->get();
-        return view('netting_received.create', compact('nettingQut'));
+        // $nettingQut = NettingQuotation::select('po_number')
+        //     ->groupby('po_number')
+        //     ->whereIn('po_number', $yarnreceived)
+        //     ->get();
+        $receviedYarn = YarnQuotation::get()
+            ->groupBy(['po_number', 'style'])
+            ->map(fn($styles) => $styles->map(fn($items) => $items->every(fn($i) => $i->status === 'recevied')))
+            ->filter(fn($styles) => $styles->contains(true))
+            ->keys();
+
+        // return $receviedYarn;
+
+        return view('netting_received.create', compact('receviedYarn'));
     }
 
     /**
@@ -74,6 +109,7 @@ class NettingReceivedController extends Controller {
         }
         $successMessageStatus = 0;
         foreach ($request->items as $item) {
+
             $nettingQut = NettingQuotation::withSum('nettingReceived', 'quantity')
                 ->withSum('nettingLoss', 'quantity')
                 ->withSum('storeStock', 'quantity')
@@ -81,8 +117,10 @@ class NettingReceivedController extends Controller {
                 ->where('id', $item['netting_id'])
                 ->first();
 
-            $nettingReceivedTotal = $nettingQut->yarn_received_sum_quantity + $nettingQut->yarn_loss_sum_quantity + $nettingQut->store_stock_sum_quantity + $nettingQut->netting_receive_garments_sum_quantity;
-            $newReceived          = (array_key_exists('netting', $item) ? $item['netting'] : 0) + array_key_exists('loss', $item) ? $item['loss'] : 0;
+            $nettingReceivedTotal = $nettingQut->netting_received_sum_quantity + $nettingQut->netting_loss_sum_quantity + $nettingQut->store_stock_sum_quantity + $nettingQut->netting_receive_garments_sum_quantity;
+            $nettingReceived      = array_key_exists('netting', $item) ? $item['netting'] : 0;
+            $lossReceived         = array_key_exists('loss', $item) ? $item['loss'] : 0;
+            $newReceived          = $nettingReceived + $lossReceived;
             $total                = $newReceived + $nettingReceivedTotal;
 
             if (array_key_exists('netting', $item) && $item['netting'] > 0 && $nettingQut->quantity > $nettingReceivedTotal && $nettingQut->quantity >= $total) {
@@ -136,7 +174,22 @@ class NettingReceivedController extends Controller {
                 ]);
             }
 
+            if ((float) $item['yarn_recevied'] === (float) $total) {
+                $nettingQut->update([
+                    'status'        => 'recevied',
+                    'delivery_date' => $request->received_date,
+                    'updated_by'    => Auth::id(),
+                ]);
+            }
+            if (!$nettingQut->yarn_recevied) {
+                $nettingQut->update([
+                    'yarn_recevied' => $item['yarn_recevied'],
+                    'updated_by'    => Auth::id(),
+                ]);
+            }
+
         }
+
         if ($successMessageStatus === 1) {
             toastr('Data Successfully Created!');
             return back();

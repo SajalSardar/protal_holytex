@@ -85,19 +85,19 @@
                     <li class="menu-item">
                         <a href="{{ route('yarnreceived.index') }}"
                             class="menu-link {{ request()->routeIs('yarnreceived.*') ? 'active' : '' }}">
-                            Yarn Received
+                            Yarn Rec. Netting Fac.
                         </a>
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('nettingreceived.index') }}"
                             class="menu-link {{ request()->routeIs('nettingreceived.*') ? 'active' : '' }}">
-                            Netting Received
+                            Netting. Rec. Dyeing Fac.
                         </a>
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('dyeingreceived.index') }}"
                             class="menu-link {{ request()->routeIs('dyeingreceived.*') ? 'active' : '' }}">
-                            Dyeing Received
+                            Dyeing Rec. Garments Fac.
                         </a>
                     </li>
                     <li class="menu-item">

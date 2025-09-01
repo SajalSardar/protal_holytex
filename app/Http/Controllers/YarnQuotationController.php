@@ -109,7 +109,9 @@ class YarnQuotationController extends Controller {
             return back();
         }
         YarnQuotation::where('po_number', $request->po_number)->where('style', $request->style)->update([
-            'status' => $request->status,
+            'status'      => $request->status,
+            'updated_by'  => Auth::id(),
+            'approved_by' => Auth::id(),
         ]);
         toastr('Yarn quotation Status Updated!');
         return back();

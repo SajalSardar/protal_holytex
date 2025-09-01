@@ -85,146 +85,140 @@ $po_number = request()->po_number ?? '';
         });
 
 
-        function loadYarnData(po_number){
-             if (po_number) {
+    async function loadYarnData(po_number){
+            if (!po_number) return;
+            try{
+                const response = await fetch(`/get-dyeing-quotation-by-po/${encodeURIComponent(po_number)}`);
+                if (!response.ok) throw new Error('Network response was not ok');
 
-                fetch(`/get-dyeing-quotation-by-po/${encodeURIComponent(po_number)}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    // console.log('API response:', response);
-                    return response.json();
-                })
-                .then(data => {
-                    let order_id = null;
-                    let order_number = null;
-                    console.log('API response:', data);
-                    let display_div = $('#show_all_yarn_item');
-                    let singleItem = `<div class="col-lg-12">
-                                    <div class="card bg-white border-0 rounded-3 mb-4">
-                                        <div class="card-body p-4">
-                                            <div class="row">
-                                                <div class="col-12 mb-3">
-                                                    <h3>CHALLAN INFO</h3>
+                const data = await response.json();
+
+                let order_id = null;
+                let order_number = null;
+                // console.log('API response:', data);
+                let display_div = $('#show_all_yarn_item');
+                let singleItem = `<div class="col-lg-12">
+                                <div class="card bg-white border-0 rounded-3 mb-4">
+                                    <div class="card-body p-4">
+                                        <div class="row">
+                                            <div class="col-12 mb-3">
+                                                <h3>CHALLAN INFO</h3>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-4">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Challan No.</label>
+                                                    <input type="text" name="challan_number" class="form-control">
                                                 </div>
-                                                <div class="col-lg-3 col-sm-4">
-                                                    <div class="form-group mb-4">
-                                                        <label class="label text-secondary">Challan No.</label>
-                                                        <input type="text" name="challan_number" class="form-control">
-                                                    </div>
+                                            </div>
+                                            <div class="col-lg-2 col-sm-4">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Vehicle Number</label>
+                                                    <input type="text" name="vehicle_number" class="form-control">
                                                 </div>
-                                                <div class="col-lg-2 col-sm-4">
-                                                    <div class="form-group mb-4">
-                                                        <label class="label text-secondary">Vehicle Number</label>
-                                                        <input type="text" name="vehicle_number" class="form-control">
-                                                    </div>
+                                            </div>
+                                            <div class="col-lg-2 col-sm-4">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Challan Date</label>
+                                                    <input type="date" name="challan_date" class="form-control">
                                                 </div>
-                                                <div class="col-lg-2 col-sm-4">
-                                                    <div class="form-group mb-4">
-                                                        <label class="label text-secondary">Challan Date</label>
-                                                        <input type="date" name="challan_date" class="form-control">
-                                                    </div>
+                                            </div>
+                                            <div class="col-lg-2 col-sm-4">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Received Date</label>
+                                                    <input type="date" name="received_date" class="form-control">
                                                 </div>
-                                                <div class="col-lg-2 col-sm-4">
-                                                    <div class="form-group mb-4">
-                                                        <label class="label text-secondary">Received Date</label>
-                                                        <input type="date" name="received_date" class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-3 col-sm-4">
-                                                    <div class="form-group mb-4">
-                                                        <label class="label text-secondary">Upload Challan</label>
-                                                        <input type="file" name="challan_file" class="form-control">
-                                                        <p class="fs-12">Uploaded file size 512kb & File type jpg,png </p>
-                                                        @error('challan_file')
-                                                            <p class="text-danger">{{ $message }}</p>
-                                                        @enderror
-                                                    </div>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-4">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Upload Challan</label>
+                                                    <input type="file" name="challan_file" class="form-control">
+                                                    <p class="fs-12">Uploaded file size 512kb & File type jpg,png </p>
+                                                    @error('challan_file')
+                                                        <p class="text-danger">{{ $message }}</p>
+                                                    @enderror
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>`;
-                    // Append new options
-                    Object.entries(data).forEach(([key, items]) => {
-                        singleItem +=`<div class="col-lg-12">
-                            <div class="accordion mb-5" style="border-bottom:5px solid #605dff;">
-                        <div class="accordion-item">
-                                <h2 class="accordion-header mb-3">
-                                    <button style="background: #605dff;" class="accordion-button text-uppercase text-white"
-                                        type="button" data-bs-toggle="collapse" data-bs-target="#collapse${key}">
-                                        <strong>Style: ${key}</strong>
-                                    </button>
-                                </h2>
-                            <div id="collapse${key}" class="accordion-collapse collapse show">
-                                <div class="accordion-body p-0 px-2">`;
-                         items.forEach(item => {
-                            order_id = item.order_id;
-                            order_number = item.order_number;
-                            let quotation = parseFloat(item.quantity);
-                            let allTotalRecevied =
-                                                (Number(item.dyeing_receive_garments_sum_quantity) || 0) +
-                                                (Number(item.dyeing_store_stock_sum_quantity) || 0);
-                            let noreceived = parseFloat(quotation - allTotalRecevied).toFixed(2);
-                           
-                            singleItem +=`
-                                    <div class="row my-4">
-                                        <input type="hidden" name="items[${item.id}][dyeing_qty_id]" value="${item.id}">
-                                        <input type="hidden" name="items[${item.id}][delivery_point_id]" value="${item.delivery_point_id}">
-                                        <input type="hidden" name="items[${item.id}][dyeing_factory_id]" value="${item.dyeing_factory_id}">
-                                        <input type="hidden" name="items[${item.id}][style]" value="${item.style}">                          
-                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Quotation(KG)</label><input type="text" class="form-control" readonly value="${item.quantity}"></div>
-                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.dyeing_receive_garments_sum_quantity || 0}"></div>
-                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store In Stock</label><input type="text" class="form-control" readonly value="${item.dyeing_store_stock_sum_quantity || 0}"></div>
-                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">No Received</label><input type="text" class="form-control" readonly value="${noreceived}"></div>
-                                        <div class="col-md-2 mb-3"><label class="label text-secondary">Dyeing Factory</label><input class="form-control" readonly value="${item.dyeing_factory.name}"></div>
-                                        <div class="col-md-2 pe-0 mb-3"><label class="label text-secondary">Netting Factory</label><input class="form-control" readonly value="${item.garments_factory.name}"></div>
-                                    `;
-                                    
-                                    
-                                    if(allTotalRecevied >= quotation){ 
-                                        singleItem +=`<div class="col-12">
-                                                        <div class="alert alert-success mb-3">Total Received Done!</div>
-                                                    </div> <hr class="m-0">`;
-                                    }else{
-                                        singleItem +=`<div class="col-12">
-                                                <div class="row">
-                                                    <div class="col-12 mb-2 mt-3">
-                                                        <h4 class="fs-16 text-primary">Receive Quantity(Netting, Loss, Store In Stock):</h4>
-                                                    </div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Lot No.</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][loat_no]"></div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Bags</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][bag_count]"></div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Netting(KG)</label><input type="text" max="${noreceived}" id="netting_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][netting]"></div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store In Stock</label><input type="text" max="${noreceived}" id="store_stokc_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][store_stock]"></div>
-                                                    <div class="col-lg-2 mb-3"><label class="label text-secondary">Store Address</label><textarea rows="1" class="form-control" name="items[${item.id}][store_address]"></textarea></div>
-                                                    <div class="col-lg-2 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="items[${item.id}][remarks]"></textarea></div>
-                                                    
-                                                </div>
-                                            </div>
-                                        </div> <hr class="m-0">`;
-                                    }
-                        });
-                       singleItem +=`</div></div></div>
-                                    </div></div></div>`;
-                    });
-                   
-                    singleItem +=`<div class="col-lg-12 my-3">
-                                    <div class="d-flex flex-wrap gap-3">
-                                        <button type="submit" class="btn btn-primary py-2 px-4 fw-medium fs-16"> <i
-                                                class="ri-add-line text-white fw-medium"></i> Create</button>
-                                    </div>
-                                </div>`;
-                    display_div.html(singleItem);
-                    $('#order_id').val(order_id);
-                     $('#order_number').val(order_number);
+                                </div>
+                            </div>`;
+                // Append new options
+                for (const [key, items] of Object.entries(data)){
+                    singleItem +=`<div class="col-lg-12">
+                        <div class="accordion mb-5" style="border-bottom:5px solid #605dff;">
+                    <div class="accordion-item">
+                            <h2 class="accordion-header mb-3">
+                                <button style="background: #605dff;" class="accordion-button text-uppercase text-white"
+                                    type="button" data-bs-toggle="collapse" data-bs-target="#collapse${key}">
+                                    <strong>Style: ${key}</strong>
+                                </button>
+                            </h2>
+                        <div id="collapse${key}" class="accordion-collapse collapse show">
+                            <div class="accordion-body p-0 px-2">`;
+                    for (const item of items) {
+                         const totalReceviedNettCa = await fetchReceivedNetting(po_number, key);
+                        const totalReceviedNettData = totalReceviedNettCa.total_received || 0;
 
-                })
-                .catch(error => {
-                     console.error('Fetch error:', error);
-                });
+                        order_id = item.order_id;
+                        order_number = item.order_number;
+                        let quotation = parseFloat(item.quantity);
+                        let allTotalRecevied =
+                                            (Number(item.dyeing_receive_garments_sum_quantity) || 0) +
+                                            (Number(item.dyeing_store_stock_sum_quantity) || 0);
+                        // let noreceived = parseFloat(quotation - allTotalRecevied).toFixed(2);
+                        let noreceived = parseFloat(totalReceviedNettData - allTotalRecevied).toFixed(2);
+                        
+                        singleItem +=`<div class="row my-4">
+                                    <input type="hidden" name="items[${item.id}][dyeing_qty_id]" value="${item.id}">
+                                    <input type="hidden" name="items[${item.id}][delivery_point_id]" value="${item.delivery_point_id}">
+                                    <input type="hidden" name="items[${item.id}][dyeing_factory_id]" value="${item.dyeing_factory_id}">
+                                    <input type="hidden" name="items[${item.id}][style]" value="${item.style}">                          
+                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Quotation(KG)</label><input type="text" class="form-control" readonly value="${item.quantity}"></div>
+                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Netting Recv.</label><input type="text" class="form-control" readonly  name="items[${item.id}][netting_received]" value="${totalReceviedNettData}"></div>
+                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.dyeing_receive_garments_sum_quantity || 0}"></div>
+                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store In Stock</label><input type="text" class="form-control" readonly value="${item.dyeing_store_stock_sum_quantity || 0}"></div>
+                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">No Received</label><input type="text" class="form-control" readonly value="${noreceived}"></div>
+                                    <div class="col-md-2 mb-3"><label class="label text-secondary">Dyeing Factory</label><input class="form-control" readonly value="${item.dyeing_factory.name}"></div>
+                                    <div class="col-md-2 pe-0 mb-3"><label class="label text-secondary">Netting Factory</label><input class="form-control" readonly value="${item.garments_factory.name}"></div>`;
+                        if(allTotalRecevied >= quotation){ 
+                            singleItem +=`<div class="col-12">
+                                            <div class="alert alert-success mb-3">Total Received Done!</div>
+                                        </div> <hr class="m-0">`;
+                        }else{
+                            singleItem +=`<div class="col-12">
+                                    <div class="row">
+                                        <div class="col-12 mb-2 mt-3">
+                                            <h4 class="fs-16 text-primary">Receive Quantity(Netting, Loss, Store In Stock):</h4>
+                                        </div>
+                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Lot No.</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][loat_no]"></div>
+                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Bags</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][bag_count]"></div>
+                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Netting(KG)</label><input type="text" max="${noreceived}" id="netting_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][netting]"></div>
+                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store In Stock</label><input type="text" max="${noreceived}" id="store_stokc_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][store_stock]"></div>
+                                        <div class="col-lg-2 mb-3"><label class="label text-secondary">Store Address</label><textarea rows="1" class="form-control" name="items[${item.id}][store_address]"></textarea></div>
+                                        <div class="col-lg-2 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="items[${item.id}][remarks]"></textarea></div>
+                                        
+                                    </div>
+                                </div>
+                            </div> <hr class="m-0">`;
+                        }
+                    };
+                    singleItem +=`</div></div></div>
+                                </div></div></div>`;
+                };
+                
+                singleItem +=`<div class="col-lg-12 my-3">
+                                <div class="d-flex flex-wrap gap-3">
+                                    <button type="submit" class="btn btn-primary py-2 px-4 fw-medium fs-16"> <i
+                                            class="ri-add-line text-white fw-medium"></i> Create</button>
+                                </div>
+                            </div>`;
+                display_div.html(singleItem);
+                $('#order_id').val(order_id);
+                $('#order_number').val(order_number);
+
+            }catch (error) {
+                console.error('Fetch error:', error);
             }
-            
             
         };
 
@@ -250,6 +244,22 @@ $po_number = request()->po_number ?? '';
 
     function resetSelect(id) {
         $('#'+id).val(null).trigger('change');
+    }
+
+
+    async function fetchReceivedNetting(po_number, style) {
+        try {
+            const response = await fetch(`/get-recevied-total-netting-by-style?po_number=${encodeURIComponent(po_number)}&style=${encodeURIComponent(style)}`);
+
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.status}`);
+            }
+
+            const totalReceived = await response.json();
+            return totalReceived;
+        } catch (error) {
+            console.error('Error fetching received yarn:', error);
+        }
     }
 </script>
 @endsection

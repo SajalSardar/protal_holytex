@@ -100,7 +100,9 @@ class DyeingQuotationController extends Controller {
             return back();
         }
         DyeingQuotation::where('po_number', $request->po_number)->where('style', $request->style)->update([
-            'status' => $request->status,
+            'status'      => $request->status,
+            'updated_by'  => Auth::id(),
+            'approved_by' => Auth::id(),
         ]);
         toastr('Dyeing quotation Status Updated!');
         return back();

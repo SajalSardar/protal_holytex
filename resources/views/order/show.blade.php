@@ -348,7 +348,7 @@
                                                             @foreach ($items as $item)
                                                             @php
                                                             $totalDelevary = $item->yarn_received_sum_quantity +
-                                                            $item->yarn_loss_sum_quantit +
+                                                            $item->yarn_loss_sum_quantity +
                                                             $item->store_stock_sum_quantity;
                                                             $noReceivedTotal += $item->quantity - $totalDelevary;
                                                             @endphp
@@ -477,7 +477,7 @@
                                 @forelse ($order->nettingQuotations as $item)
                                 @php
                                 $totalNeetingRecevied = $item->netting_received_sum_quantity
-                                +$item->netting_loss_sum_quantit+$item->store_stock_sum_quantity;
+                                +$item->netting_loss_sum_quantity+$item->store_stock_sum_quantity;
                                 @endphp
 
                                 <div class="accordion-item mt-5">
@@ -505,6 +505,7 @@
                                                             <tr>
                                                                 <th>Style</th>
                                                                 <th>Qty(KG)</th>
+                                                                <th>Yarn Recv.(KG)</th>
                                                                 <th>Price</th>
                                                                 <th>Total Price</th>
                                                                 <th>Status</th>
@@ -518,10 +519,12 @@
                                                             <tr>
                                                                 <td>{{ $item->style }}</td>
                                                                 <td>{{ $item->quantity }}</td>
+                                                                <td>{{ $item->yarn_recevied ?? '--' }}</td>
                                                                 <td>{{ $item->price }}</td>
                                                                 <td>{{ $item->total_price }}</td>
                                                                 <td>{{ $item->status }}</td>
-                                                                <td>{{ number_format($item->quantity -
+                                                                <td>{{ number_format(($item->yarn_recevied ??
+                                                                    $item->quantity) -
                                                                     $totalNeetingRecevied, 2) }}</td>
                                                                 @if ($item->delivery_factory_type === 'garments')
                                                                 <td>{{ $item->netting_receive_garments_sum_quantity ??
@@ -635,6 +638,7 @@
                                                             <tr>
                                                                 <th>Style</th>
                                                                 <th>Qty(KG)</th>
+                                                                <th>Nett. Recv.(KG)</th>
                                                                 <th>Price</th>
                                                                 <th>Total Price</th>
                                                                 <th>Status</th>
@@ -648,10 +652,12 @@
                                                             <tr>
                                                                 <td>{{ $item->style }}</td>
                                                                 <td>{{ $item->quantity }}</td>
+                                                                <td>{{ $item->netting_received ?? '--' }}</td>
                                                                 <td>{{ $item->price }}</td>
                                                                 <td>{{ $item->total_price }}</td>
                                                                 <td>{{ $item->status }}</td>
-                                                                <td>{{ number_format($item->quantity -
+                                                                <td>{{ number_format(($item->netting_received ??
+                                                                    $item->quantity) -
                                                                     $totalNeetingRecevied, 2) }}</td>
                                                                 <td>{{ $item->dyeing_receive_garments_sum_quantity ?? 0
                                                                     }}

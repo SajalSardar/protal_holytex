@@ -41,9 +41,9 @@ $po_number = request()->po_number ?? '';
                                     <select name="po_number" id="po_number"
                                         class="form-control select2  @error('po_number') is-invalid @enderror">
                                         <option value="" selected disabled>Select PO Number</option>
-                                        @foreach ($nettingQut as $item)
-                                        <option value="{{ $item->po_number }}" {{ $po_number==$item->po_number ?
-                                            "selected" : '' }}>{{ $item->po_number }}</option>
+                                        @foreach ($receviedYarn as $item)
+                                        <option value="{{ $item }}" {{ $po_number==$item ? "selected" : '' }}>{{ $item
+                                            }}</option>
                                         @endforeach
                                     </select>
                                     @error('po_number')
@@ -85,81 +85,81 @@ $po_number = request()->po_number ?? '';
         });
 
 
-        function loadYarnData(po_number){
-             if (po_number) {
+        async function loadYarnData(po_number){
+            if (!po_number) return;
 
-                fetch(`/get-netting-quotation-by-po/${encodeURIComponent(po_number)}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    // console.log('API response:', response);
-                    return response.json();
-                })
-                .then(data => {
-                    let order_id = null;
-                    let order_number = null;
-                    console.log('API response:', data);
-                    let display_div = $('#show_all_yarn_item');
-                    let singleItem = `<div class="col-lg-12">
-                                    <div class="card bg-white border-0 rounded-3 mb-4">
-                                        <div class="card-body p-4">
-                                            <div class="row">
-                                                <div class="col-12 mb-3">
-                                                    <h3>CHALLAN INFO</h3>
+            try{
+                const response = await fetch(`/get-netting-quotation-by-po/${encodeURIComponent(po_number)}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const data = await response.json();
+                // console.log('API response:', data);
+
+                let order_id = null;
+                let order_number = null;
+                let display_div = $('#show_all_yarn_item');
+                let singleItem = `<div class="col-lg-12">
+                                <div class="card bg-white border-0 rounded-3 mb-4">
+                                    <div class="card-body p-4">
+                                        <div class="row">
+                                            <div class="col-12 mb-3">
+                                                <h3>CHALLAN INFO</h3>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-4">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Challan No.</label>
+                                                    <input type="text" name="challan_number" class="form-control">
                                                 </div>
-                                                <div class="col-lg-3 col-sm-4">
-                                                    <div class="form-group mb-4">
-                                                        <label class="label text-secondary">Challan No.</label>
-                                                        <input type="text" name="challan_number" class="form-control">
-                                                    </div>
+                                            </div>
+                                            <div class="col-lg-2 col-sm-4">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Vehicle Number</label>
+                                                    <input type="text" name="vehicle_number" class="form-control">
                                                 </div>
-                                                <div class="col-lg-2 col-sm-4">
-                                                    <div class="form-group mb-4">
-                                                        <label class="label text-secondary">Vehicle Number</label>
-                                                        <input type="text" name="vehicle_number" class="form-control">
-                                                    </div>
+                                            </div>
+                                            <div class="col-lg-2 col-sm-4">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Challan Date</label>
+                                                    <input type="date" name="challan_date" class="form-control">
                                                 </div>
-                                                <div class="col-lg-2 col-sm-4">
-                                                    <div class="form-group mb-4">
-                                                        <label class="label text-secondary">Challan Date</label>
-                                                        <input type="date" name="challan_date" class="form-control">
-                                                    </div>
+                                            </div>
+                                            <div class="col-lg-2 col-sm-4">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Received Date</label>
+                                                    <input type="date" name="received_date" class="form-control">
                                                 </div>
-                                                <div class="col-lg-2 col-sm-4">
-                                                    <div class="form-group mb-4">
-                                                        <label class="label text-secondary">Received Date</label>
-                                                        <input type="date" name="received_date" class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-3 col-sm-4">
-                                                    <div class="form-group mb-4">
-                                                        <label class="label text-secondary">Upload Challan</label>
-                                                        <input type="file" name="challan_file" class="form-control">
-                                                        <p class="fs-12">Uploaded file size 512kb & File type jpg,png </p>
-                                                        @error('challan_file')
-                                                            <p class="text-danger">{{ $message }}</p>
-                                                        @enderror
-                                                    </div>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-4">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Upload Challan</label>
+                                                    <input type="file" name="challan_file" class="form-control">
+                                                    <p class="fs-12">Uploaded file size 512kb & File type jpg,png </p>
+                                                    @error('challan_file')
+                                                        <p class="text-danger">{{ $message }}</p>
+                                                    @enderror
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>`;
-                    // Append new options
-                    Object.entries(data).forEach(([key, items]) => {
-                        singleItem +=`<div class="col-lg-12">
-                            <div class="accordion mb-5" style="border-bottom:5px solid #605dff;">
-                        <div class="accordion-item">
-                                <h2 class="accordion-header mb-3">
-                                    <button style="background: #605dff;" class="accordion-button text-uppercase text-white"
-                                        type="button" data-bs-toggle="collapse" data-bs-target="#collapse${key}">
-                                        <strong>Style: ${key}</strong>
-                                    </button>
-                                </h2>
-                            <div id="collapse${key}" class="accordion-collapse collapse show">
-                                <div class="accordion-body p-0 px-2">`;
-                         items.forEach(item => {
+                                </div>
+                            </div>`;
+                // Append new options
+                for (const [key, items] of Object.entries(data)) {
+                    singleItem +=`<div class="col-lg-12">
+                        <div class="accordion mb-5" style="border-bottom:5px solid #605dff;">
+                    <div class="accordion-item">
+                            <h2 class="accordion-header mb-3">
+                                <button style="background: #605dff;" class="accordion-button text-uppercase text-white"
+                                    type="button" data-bs-toggle="collapse" data-bs-target="#collapse${key}">
+                                    <strong>Style: ${key}</strong>
+                                </button>
+                            </h2>
+                        <div id="collapse${key}" class="accordion-collapse collapse show">
+                            <div class="accordion-body p-0 px-2">`;
+                        for (const item of items) {
+                            const totalReceviedYarnCa = await fetchReceivedYarn(po_number, key);
+                            const totalReceviedYarnData = totalReceviedYarnCa.total_received || 0;
+
                             order_id = item.order_id;
                             order_number = item.order_number;
                             let quotation = parseFloat(item.quantity);
@@ -168,79 +168,80 @@ $po_number = request()->po_number ?? '';
                                                 (Number(item.netting_loss_sum_quantity) || 0) +
                                                 (Number(item.netting_receive_garments_sum_quantity) || 0) +
                                                 (Number(item.store_stock_sum_quantity) || 0);
-                            let noreceived = parseFloat(quotation - allTotalRecevied).toFixed(2);
+                            // let noreceived = parseFloat(quotation - allTotalRecevied).toFixed(2);
+                            let noreceived = parseFloat(totalReceviedYarnData - allTotalRecevied).toFixed(2);
+                            
                             if(item.delivery_factory_type === "garments"){
-                               singleItem +=` <input type="hidden" name="items[${item.id}][receving_factory_type]" value="${item.delivery_factory_type}">`;
+                                singleItem +=` <input type="hidden" name="items[${item.id}][receving_factory_type]" value="${item.delivery_factory_type}">`;
                             }else{
-                               singleItem +=` <input type="hidden" name="items[${item.id}][receving_factory_type]" value="${item.delivery_factory_type}">`;
+                                singleItem +=` <input type="hidden" name="items[${item.id}][receving_factory_type]" value="${item.delivery_factory_type}">`;
                             }
                             singleItem +=`
-                                    <div class="row my-4">
-                                        <input type="hidden" name="items[${item.id}][netting_id]" value="${item.id}">
-                                        <input type="hidden" name="items[${item.id}][dyeing_factory_id]" value="${item.delivery_point_id}">
-                                        <input type="hidden" name="items[${item.id}][netting_factory_id]" value="${item.netting_factory_id}">
-                                        <input type="hidden" name="items[${item.id}][style]" value="${item.style}">
-                                        
-                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Quotation(KG)</label><input type="text" class="form-control" readonly value="${item.quantity}"></div>`;
-                                        if(item.delivery_factory_type === "garments"){
-                                        singleItem +=`<div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.netting_receive_garments_sum_quantity || 0}"></div>
-                                        `;
-                                        }else{
-                                            singleItem +=`<div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.netting_received_sum_quantity || 0}"></div>
-                                        `;
-                                        }
-                                       singleItem +=`<div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store In Stock</label><input type="text" class="form-control" readonly value="${item.store_stock_sum_quantity || 0}"></div>
-                                        <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Loss</label><input type="text" class="form-control" readonly  value="${item.netting_loss_sum_quantity || 0}"></div>
-                                        <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">No Received</label><input type="text" class="form-control" readonly value="${noreceived}"></div>
-                                        <div class="col-md-2 pe-0 mb-3"><label class="label text-secondary">Netting Factory</label><input class="form-control" readonly value="${item.netting_factory.name}"></div>
-                                    `;
-                                    if(item.delivery_factory_type === "garments"){
-                                        singleItem +=`  <div class="col-md-2 mb-3"><label class="label text-secondary">Garments Factory</label><input class="form-control" readonly value="${item.garments_factory.name}"></div>
-                                    `;
-                                    }else{
-                                        singleItem +=`  <div class="col-md-2 mb-3"><label class="label text-secondary">Dyeing Factory</label><input class="form-control" readonly value="${item.dyeing_factory.name}"></div>
-                                    `;
-                                    }
+                                <div class="row my-4">
+                                    <input type="hidden" name="items[${item.id}][netting_id]" value="${item.id}">
+                                    <input type="hidden" name="items[${item.id}][dyeing_factory_id]" value="${item.delivery_point_id}">
+                                    <input type="hidden" name="items[${item.id}][netting_factory_id]" value="${item.netting_factory_id}">
+                                    <input type="hidden" name="items[${item.id}][style]" value="${item.style}">
                                     
-                                    if(allTotalRecevied >= quotation){ 
-                                        singleItem +=`<div class="col-12">
-                                                        <div class="alert alert-success mb-3">Total Received Done!</div>
-                                                    </div> <hr class="m-0">`;
+                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Quotation(KG)</label><input type="text" class="form-control" readonly value="${item.quantity}"></div>
+                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Yarn Recevied(KG)</label><input type="text" class="form-control" readonly name="items[${item.id}][yarn_recevied]" value="${totalReceviedYarnData || 0}"></div>`;
+                                    if(item.delivery_factory_type === "garments"){
+                                    singleItem +=`<div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.netting_receive_garments_sum_quantity || 0}"></div>
+                                    `;
                                     }else{
-                                        singleItem +=`<div class="col-12">
-                                                <div class="row">
-                                                    <div class="col-12 mb-2 mt-3">
-                                                        <h4 class="fs-16 text-primary">Receive Quantity(Netting, Loss, Store In Stock):</h4>
-                                                    </div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Lot No.</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][loat_no]"></div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Bags</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][bag_count]"></div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Netting(KG)</label><input type="text" max="${noreceived}" id="netting_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][netting]"></div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Loss(KG)</label><input type="text" class="form-control" max="${noreceived}" id="loss_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][loss]"></div>
-                                                    <div class="col-lg-4 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="items[${item.id}][remarks]"></textarea></div>
-                                                    
-                                                </div>
-                                            </div>
-                                        </div> <hr class="m-0">`;
+                                        singleItem +=`<div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.netting_received_sum_quantity || 0}"></div>
+                                    `;
                                     }
-                        });
-                       singleItem +=`</div></div></div>
-                                    </div></div></div>`;
-                    });
-                   
-                    singleItem +=`<div class="col-lg-12 my-3">
-                                    <div class="d-flex flex-wrap gap-3">
-                                        <button type="submit" class="btn btn-primary py-2 px-4 fw-medium fs-16"> <i
-                                                class="ri-add-line text-white fw-medium"></i> Create</button>
-                                    </div>
-                                </div>`;
-                    display_div.html(singleItem);
-                    $('#order_id').val(order_id);
-                     $('#order_number').val(order_number);
+                                    singleItem +=`<div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">In Stock</label><input type="text" class="form-control" readonly value="${item.store_stock_sum_quantity || 0}"></div>
+                                    <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Loss</label><input type="text" class="form-control" readonly  value="${item.netting_loss_sum_quantity || 0}"></div>
+                                    <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">No Received</label><input type="text" class="form-control" readonly value="${noreceived}"></div>
+                                    <div class="col-md-2 pe-0 mb-3"><label class="label text-secondary">Netting Factory</label><input class="form-control" readonly value="${item.netting_factory.name}"></div>
+                                `;
+                                if(item.delivery_factory_type === "garments"){
+                                    singleItem +=`  <div class="col-md-2 mb-3"><label class="label text-secondary">Garments Factory</label><input class="form-control" readonly value="${item.garments_factory.name}"></div>
+                                `;
+                                }else{
+                                    singleItem +=`  <div class="col-md-2 mb-3"><label class="label text-secondary">Dyeing Factory</label><input class="form-control" readonly value="${item.dyeing_factory.name}"></div>
+                                `;
+                                }
+                                
+                                if(allTotalRecevied >= quotation){ 
+                                    singleItem +=`<div class="col-12">
+                                                    <div class="alert alert-success mb-3">Total Received Done!</div>
+                                                </div> <hr class="m-0">`;
+                                }else{
+                                    singleItem +=`<div class="col-12">
+                                            <div class="row">
+                                                <div class="col-12 mb-2 mt-3">
+                                                    <h4 class="fs-16 text-primary">Receive Quantity(Netting, Loss, Store In Stock):</h4>
+                                                </div>
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Lot No.</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][loat_no]"></div>
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Bags</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][bag_count]"></div>
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Netting(KG)</label><input type="text" max="${noreceived}" id="netting_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][netting]"></div>
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Loss(KG)</label><input type="text" class="form-control" max="${noreceived}" id="loss_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][loss]"></div>
+                                                <div class="col-lg-4 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="items[${item.id}][remarks]"></textarea></div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div> <hr class="m-0">`;
+                                }
+                    };
+                    singleItem +=`</div></div></div>
+                                </div></div></div>`;
+                };
+                
+                singleItem +=`<div class="col-lg-12 my-3">
+                                <div class="d-flex flex-wrap gap-3">
+                                    <button type="submit" class="btn btn-primary py-2 px-4 fw-medium fs-16"> <i
+                                            class="ri-add-line text-white fw-medium"></i> Create</button>
+                                </div>
+                            </div>`;
+                display_div.html(singleItem);
+                $('#order_id').val(order_id);
+                    $('#order_number').val(order_number);
 
-                })
-                .catch(error => {
-                     console.error('Fetch error:', error);
-                });
+            }catch (error) {
+                console.error('Fetch error:', error);
             }
             
             
@@ -269,5 +270,21 @@ $po_number = request()->po_number ?? '';
     function resetSelect(id) {
         $('#'+id).val(null).trigger('change');
     }
+
+    async function fetchReceivedYarn(po_number, style) {
+        try {
+            const response = await fetch(`/get-recevied-total-yarn-by-style?po_number=${encodeURIComponent(po_number)}&style=${encodeURIComponent(style)}`);
+
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.status}`);
+            }
+
+            const totalReceived = await response.json();
+            return totalReceived;
+        } catch (error) {
+            console.error('Error fetching received yarn:', error);
+        }
+    }
+
 </script>
 @endsection

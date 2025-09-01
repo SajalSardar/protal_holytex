@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DyeingQuotation;
+use App\Models\NettingQuotation;
 use App\Models\NettingReceived;
 use App\Models\NettingReceivedGarments;
 use App\Models\NettingStoreStock;
@@ -15,6 +16,7 @@ class DyeingReceivedController extends Controller {
             ->withSum('dyeingReceiveGarments', 'quantity')
             ->withSum('dyeingStoreStock', 'quantity')
             ->where('po_number', $po_number)
+            ->where('status', 'approved')
             ->get()
             ->groupBy('style');
         if ($dyeing) {
@@ -47,10 +49,18 @@ class DyeingReceivedController extends Controller {
             }
         }
 
-        $nettingQut = DyeingQuotation::select('po_number')
+        // $nettingQut = DyeingQuotation::select('po_number')
+        //     ->groupby('po_number')
+        //     ->whereIn('po_number', $nettingReceived)
+        //     ->get();
+
+        $nettingQut = NettingQuotation::select('po_number')
+            ->where('status', 'recevied')
             ->groupby('po_number')
-            ->whereIn('po_number', $nettingReceived)
             ->get();
+
+        // return $nettingQut;
+
         return view('dyeing_received.create', compact('nettingQut'));
     }
 
@@ -70,16 +80,16 @@ class DyeingReceivedController extends Controller {
         }
         $successMessageStatus = 0;
         foreach ($request->items as $item) {
-            $nettingQut = DyeingQuotation::withSum('dyeingReceiveGarments', 'quantity')
+            $dyeingQut = DyeingQuotation::withSum('dyeingReceiveGarments', 'quantity')
                 ->withSum('dyeingStoreStock', 'quantity')
                 ->where('id', $item['dyeing_qty_id'])
                 ->first();
 
-            $nettingReceivedTotal = $nettingQut->dyeing_receive_garments_sum_quantity + $nettingQut->dyeing_store_stock_sum_quantity;
+            $nettingReceivedTotal = $dyeingQut->dyeing_receive_garments_sum_quantity + $dyeingQut->dyeing_store_stock_sum_quantity;
             $newReceived          = (array_key_exists('netting', $item) ? $item['netting'] : 0);
             $total                = $newReceived + $nettingReceivedTotal;
 
-            if (array_key_exists('netting', $item) && $item['netting'] > 0 && $nettingQut->quantity > $nettingReceivedTotal && $nettingQut->quantity >= $total) {
+            if (array_key_exists('netting', $item) && $item['netting'] > 0 && $dyeingQut->quantity > $nettingReceivedTotal && $dyeingQut->quantity >= $total) {
                 $successMessageStatus = 1;
 
                 NettingReceivedGarments::create([
@@ -100,7 +110,7 @@ class DyeingReceivedController extends Controller {
                 ]);
 
             }
-            if (array_key_exists('store_stock', $item) && $item['store_stock'] > 0 && $nettingQut->quantity > $nettingReceivedTotal && $nettingQut->quantity >= $total) {
+            if (array_key_exists('store_stock', $item) && $item['store_stock'] > 0 && $dyeingQut->quantity > $nettingReceivedTotal && $dyeingQut->quantity >= $total) {
                 $successMessageStatus = 1;
                 NettingStoreStock::create([
                     'dyeing_quotation_id'  => $item['dyeing_qty_id'],
@@ -121,7 +131,22 @@ class DyeingReceivedController extends Controller {
                 ]);
             }
 
+            if ((float) $item['netting_received'] === (float) $total) {
+                $dyeingQut->update([
+                    'status'        => 'recevied',
+                    'delivery_date' => $request->received_date,
+                    'updated_by'    => Auth::id(),
+                ]);
+            }
+            if (!$dyeingQut->netting_received) {
+                $dyeingQut->update([
+                    'netting_received' => $item['netting_received'],
+                    'updated_by'       => Auth::id(),
+                ]);
+            }
+
         }
+
         if ($successMessageStatus === 1) {
             toastr('Data Successfully Created!');
             return back();

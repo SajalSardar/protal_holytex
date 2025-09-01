@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('po_number')->nullable()->index();
             $table->string('style')->nullable()->index();
             $table->decimal('quantity', 10)->nullable();
+            $table->decimal('yarn_recevied', 10)->nullable()->comment('total recevied yarn');
             $table->decimal('price', 10)->nullable();
             $table->decimal('total_price', 10)->nullable();
             $table->string('delivery_factory_type')->nullable();

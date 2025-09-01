@@ -15,6 +15,7 @@ class YarnReceivedController extends Controller {
             ->withSum('yarnLoss', 'quantity')
             ->withSum('storeStock', 'quantity')
             ->where('po_number', $po_number)
+            ->where('status', 'approved')
             ->get()
             ->groupBy('style');
         if ($yearns) {
@@ -22,6 +23,21 @@ class YarnReceivedController extends Controller {
         } else {
             return 'Yarn not found!';
         }
+    }
+    public function getReceviedTotalYarnByStyle(Request $request) {
+        $po_number = $request->query('po_number');
+        $style     = $request->query('style');
+
+        $totalReceived = YarnReceived::where('po_number', $po_number)
+            ->where('style', $style)
+            ->sum('quantity');
+
+        // Always return JSON
+        return response()->json([
+            'po_number'      => $po_number,
+            'style'          => $style,
+            'total_received' => $totalReceived,
+        ]);
     }
 
     /**
@@ -37,7 +53,7 @@ class YarnReceivedController extends Controller {
      */
     public function create(Request $request) {
 
-        $yearns = YarnQuotation::select('po_number')->groupby('po_number')->get();
+        $yearns = YarnQuotation::select('po_number')->where('status', 'approved')->groupby('po_number')->get();
 
         return view('yarn_received.create', compact('yearns'));
     }
@@ -55,7 +71,7 @@ class YarnReceivedController extends Controller {
         if ($request->hasFile('challan_file')) {
             $path = $request->file('challan_file')->store('yarn_received_challan', 'public');
         }
-        $successMessageStatus = 0;
+        $successMessageStatus = false;
         foreach ($request->items as $item) {
             $yearnQut = YarnQuotation::withSum('yarnReceived', 'quantity')
                 ->withSum('yarnLoss', 'quantity')
@@ -64,11 +80,15 @@ class YarnReceivedController extends Controller {
                 ->first();
 
             $yearnReceivedTotal = $yearnQut->yarn_received_sum_quantity + $yearnQut->yarn_loss_sum_quantity + $yearnQut->store_stock_sum_quantity;
-            $newReceived        = (array_key_exists('netting', $item) ? $item['netting'] : 0) + array_key_exists('loss', $item) ? $item['loss'] : 0;
+            $yarnRec            = array_key_exists('netting', $item) ? $item['netting'] : 0;
+            $yarnLossRec        = array_key_exists('loss', $item) ? $item['loss'] : 0;
+            $newReceived        = $yarnRec + $yarnLossRec;
             $total              = $newReceived + $yearnReceivedTotal;
 
+            $onlyRecSum = $yearnQut->yarn_received_sum_quantity + $yarnRec;
+
             if (array_key_exists('netting', $item) && $item['netting'] > 0 && $yearnQut->quantity > $yearnReceivedTotal && $yearnQut->quantity >= $total) {
-                $successMessageStatus = 1;
+                $successMessageStatus = true;
                 YarnReceived::create([
                     'yarn_quotation_id'  => $item['yarn_id'],
                     'po_number'          => $request->po_number,
@@ -89,7 +109,7 @@ class YarnReceivedController extends Controller {
             }
 
             if (array_key_exists('loss', $item) && $item['loss'] > 0 && $yearnQut->quantity > $yearnReceivedTotal && $yearnQut->quantity >= $total) {
-                $successMessageStatus = 1;
+                $successMessageStatus = true;
                 YarnLoss::create([
                     'yarn_quotation_id' => $item['yarn_id'],
                     'quantity'          => $item['loss'],
@@ -97,8 +117,17 @@ class YarnReceivedController extends Controller {
                 ]);
             }
 
+            if ((float) $yearnQut->quantity === (float) $total) {
+                $yearnQut->update([
+                    'status'        => 'recevied',
+                    'delivery_date' => $request->received_date,
+                    'updated_by'    => Auth::id(),
+                ]);
+            }
+
         }
-        if ($successMessageStatus === 1) {
+
+        if ($successMessageStatus) {
             toastr('Data Successfully Created!');
             return back();
         } else {

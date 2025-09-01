@@ -87,7 +87,16 @@ class NettingStoreStockController extends Controller {
 
             }
 
+            if ((float) $nettingQut->quantity === (float) $total) {
+                $nettingQut->update([
+                    'status'        => 'recevied',
+                    'delivery_date' => $request->received_date,
+                    'updated_by'    => Auth::id(),
+                ]);
+            }
+
         }
+
         if ($successMessageStatus === 1) {
             toastr('Data Successfully Created!');
             return back();

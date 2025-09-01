@@ -71,6 +71,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('get-dyeing-quotation-by-po/{po_number}', [DyeingReceivedController::class, 'getDyeingStyleByPo']);
     Route::get('get-accessories-quotation-by-po/{po_number}', [AccessoriesReceivedController::class, 'getAccessoriesStyleByPo']);
 
+    Route::get('get-recevied-total-yarn-by-style', [YarnReceivedController::class, 'getReceviedTotalYarnByStyle']);
+    Route::get('get-recevied-total-netting-by-style', [NettingReceivedController::class, 'getReceviedTotalNettingByStyle']);
+
 });
 
 Route::middleware('auth')->group(function () {

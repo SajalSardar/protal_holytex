@@ -76,7 +76,9 @@ class AccessoriesQuotationController extends Controller {
             return back();
         }
         AccessoriesQuotation::where('id', $request->id)->update([
-            'status' => $request->status,
+            'status'      => $request->status,
+            'updated_by'  => Auth::id(),
+            'approved_by' => Auth::id(),
         ]);
         toastr('Accessories quotation Status Updated!');
         return back();

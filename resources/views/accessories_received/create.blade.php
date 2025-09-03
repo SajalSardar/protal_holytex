@@ -99,7 +99,7 @@ $po_number = request()->po_number ?? '';
                 .then(data => {
                     let order_id = null;
                     let order_number = null;
-                    console.log('API response:', data);
+                    // console.log('API response:', data);
                     let display_div = $('#show_all_yarn_item');
                     let singleItem = `<div class="col-lg-12">
                                     <div class="card bg-white border-0 rounded-3 mb-4">
@@ -197,9 +197,9 @@ $po_number = request()->po_number ?? '';
                                                     <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Lot No.</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][loat_no]"></div>
                                                     <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Bags</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][bag_count]"></div>
                                                     <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Accessories</label><input type="text" max="${noreceived}" id="accessories_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][accessories]"></div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Loss</label><input type="text" class="form-control" max="${noreceived}" id="stock_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][stock]"></div>
+                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Loss</label><input type="text" class="form-control" max="${noreceived}" id="loss_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][loss]"></div>
                                                     <div class="col-lg-4 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="items[${item.id}][remarks]"></textarea></div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store Stock</label><input type="text" class="form-control" max="${noreceived}" id="loss_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][loss]"></div>
+                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store Stock</label><input type="text" class="form-control" max="${noreceived}" id="stock_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][stock]"></div>
                                                     <div class="col-lg-4 mb-3"><label class="label text-secondary">Store Address</label><textarea rows="1" class="form-control" name="items[${item.id}][store_address]"></textarea></div>
                                                     
                                                 </div>

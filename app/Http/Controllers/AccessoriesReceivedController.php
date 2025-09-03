@@ -62,7 +62,7 @@ class AccessoriesReceivedController extends Controller {
                 ->first();
 
             $receivedTotal = $accessoriesQut->accessories_received_sum_quantity + $accessoriesQut->accessories_loss_sum_quantity + $accessoriesQut->accessories_store_stock_sum_quantity;
-            $newReceived   = (array_key_exists('netting', $item) ? $item['netting'] : 0) + array_key_exists('loss', $item) ? $item['loss'] : 0;
+            $newReceived   = (array_key_exists('netting', $item) ? $item['netting'] : 0) + (array_key_exists('loss', $item) ? $item['loss'] : 0) + (array_key_exists('stock', $item) ? $item['stock'] : 0);
             $total         = $newReceived + $receivedTotal;
 
             if (array_key_exists('accessories', $item) && $item['accessories'] > 0 && $accessoriesQut->quantity > $receivedTotal && $accessoriesQut->quantity >= $total) {
@@ -116,6 +116,14 @@ class AccessoriesReceivedController extends Controller {
                     'challan_file'             => $path,
                 ]);
 
+            }
+
+            if ((float) $accessoriesQut->quantity === (float) $total) {
+                $accessoriesQut->update([
+                    'status'        => 'recevied',
+                    'delivery_date' => $request->received_date,
+                    'updated_by'    => Auth::id(),
+                ]);
             }
 
         }

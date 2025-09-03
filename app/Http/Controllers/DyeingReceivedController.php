@@ -64,7 +64,7 @@ class DyeingReceivedController extends Controller {
             ->groupBy('po_number')
             ->pluck('po_number');
 
-        // return $dyeingQut;
+        // return $nettingQut;
 
         return view('dyeing_received.create', compact('dyeingQut'));
     }
@@ -91,7 +91,7 @@ class DyeingReceivedController extends Controller {
                 ->first();
 
             $nettingReceivedTotal = $dyeingQut->dyeing_receive_garments_sum_quantity + $dyeingQut->dyeing_store_stock_sum_quantity;
-            $newReceived          = (array_key_exists('netting', $item) ? $item['netting'] : 0);
+            $newReceived          = (array_key_exists('netting', $item) ? $item['netting'] : 0) + (array_key_exists('store_stock', $item) ? $item['store_stock'] : 0);
             $total                = $newReceived + $nettingReceivedTotal;
 
             if (array_key_exists('netting', $item) && $item['netting'] > 0 && $dyeingQut->quantity > $nettingReceivedTotal && $dyeingQut->quantity >= $total) {

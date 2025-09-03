@@ -103,9 +103,8 @@ $po_number = request()->po_number ?? '';
                     let display_div = $('#show_all_yarn_item');
                     if(data.length === 0){
                         display_div.html(`
-                            <div class="col-lg-12"><div class="alert alert-success">No data Found!</div></div>
+                            <div class="col-lg-12"><div class="alert alert-success">Total Received Done!</div></div>
                         `);
-                        return;
                     }
                     
                     let singleItem = `<div class="col-lg-12">
@@ -207,6 +206,8 @@ $po_number = request()->po_number ?? '';
                                                     <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Yarn(KG)</label><input type="text" max="${noreceived}" id="netting_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][netting]"></div>
                                                     <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Loss(KG)</label><input type="text" class="form-control" max="${noreceived}" id="loss_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][loss]"></div>
                                                     <div class="col-lg-4 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="items[${item.id}][remarks]"></textarea></div>
+                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store Stock</label><input type="text" class="form-control" max="${noreceived}" id="store_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][stock]"></div>
+                                                    <div class="col-lg-4 mb-3"><label class="label text-secondary">Store Address</label><textarea rows="1" class="form-control" name="items[${item.id}][store_address]"></textarea></div>
                                                     
                                                 </div>
                                             </div>
@@ -245,13 +246,14 @@ $po_number = request()->po_number ?? '';
         
         let netting_= document.getElementById('netting_'+id).value;
         let loss_= document.getElementById('loss_'+id).value;
+        let store_= document.getElementById('store_'+id).value;
 
         let maxVal = parseFloat(input.max);
         let val = parseFloat(input.value);
-        let totalVal = (Number(netting_) || 0) + (Number(loss_) || 0);
+        let totalVal = (Number(netting_) || 0) + (Number(loss_) || 0)+ (Number(store_) || 0);
         // console.log(totalVal);
         if (totalVal > maxVal) {
-            alert(`Max allowed is ${maxVal}Kg (Netting + Loss)`);
+            alert(`Max allowed is ${maxVal}Kg (Netting + Loss + Store)`);
             input.value = 0;
         }
     }

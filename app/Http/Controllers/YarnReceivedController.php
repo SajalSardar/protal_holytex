@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\YarnLoss;
 use App\Models\YarnQuotation;
 use App\Models\YarnReceived;
+use App\Models\YarnStoreStock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -82,7 +83,8 @@ class YarnReceivedController extends Controller {
             $yearnReceivedTotal = $yearnQut->yarn_received_sum_quantity + $yearnQut->yarn_loss_sum_quantity + $yearnQut->store_stock_sum_quantity;
             $yarnRec            = array_key_exists('netting', $item) ? $item['netting'] : 0;
             $yarnLossRec        = array_key_exists('loss', $item) ? $item['loss'] : 0;
-            $newReceived        = $yarnRec + $yarnLossRec;
+            $stockLossRec       = array_key_exists('stock', $item) ? $item['stock'] : 0;
+            $newReceived        = $yarnRec + $yarnLossRec + $stockLossRec;
             $total              = $newReceived + $yearnReceivedTotal;
 
             $onlyRecSum = $yearnQut->yarn_received_sum_quantity + $yarnRec;
@@ -113,6 +115,27 @@ class YarnReceivedController extends Controller {
                 YarnLoss::create([
                     'yarn_quotation_id' => $item['yarn_id'],
                     'quantity'          => $item['loss'],
+                    'created_by'        => Auth::id(),
+                ]);
+            }
+
+            if (array_key_exists('stock', $item) && $item['stock'] > 0 && $yearnQut->quantity > $yearnReceivedTotal && $yearnQut->quantity >= $total) {
+                $successMessageStatus = 1;
+                YarnStoreStock::create([
+                    'yarn_quotation_id' => $item['yarn_id'],
+                    'po_number'         => $request->po_number,
+                    'style'             => $item['style'],
+                    'quantity'          => $item['stock'],
+                    'lot_number'        => $item['loat_no'],
+                    'bag_count'         => $item['bag_count'],
+                    'store_address'     => $item['store_address'],
+                    'challan_date'      => $request->challan_date,
+                    'challan_number'    => $request->challan_number,
+                    'vehicle_number'    => $request->vehicle_number,
+                    'received_date'     => $request->received_date,
+                    'remarks'           => $item['remarks'],
+                    'yarn_factory_id'   => $item['yarn_factory_id'],
+                    'challan_file'      => $path,
                     'created_by'        => Auth::id(),
                 ]);
             }

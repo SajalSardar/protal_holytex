@@ -6,6 +6,7 @@ use App\Models\NettingLoss;
 use App\Models\NettingQuotation;
 use App\Models\NettingReceived;
 use App\Models\NettingReceivedGarments;
+use App\Models\NettingStoreStock;
 use App\Models\YarnQuotation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -137,7 +138,8 @@ class NettingReceivedController extends Controller {
             $nettingReceivedTotal = $nettingQut->netting_received_sum_quantity + $nettingQut->netting_loss_sum_quantity + $nettingQut->store_stock_sum_quantity + $nettingQut->netting_receive_garments_sum_quantity;
             $nettingReceived      = array_key_exists('netting', $item) ? $item['netting'] : 0;
             $lossReceived         = array_key_exists('loss', $item) ? $item['loss'] : 0;
-            $newReceived          = $nettingReceived + $lossReceived;
+            $stockReceived        = array_key_exists('stock', $item) ? $item['stock'] : 0;
+            $newReceived          = $nettingReceived + $lossReceived + $stockReceived;
             $total                = $newReceived + $nettingReceivedTotal;
 
             if (array_key_exists('netting', $item) && $item['netting'] > 0 && $nettingQut->quantity > $nettingReceivedTotal && $nettingQut->quantity >= $total) {
@@ -189,6 +191,28 @@ class NettingReceivedController extends Controller {
                     'quantity'             => $item['loss'],
                     'created_by'           => Auth::id(),
                 ]);
+            }
+
+            if (array_key_exists('stock', $item) && $item['stock'] > 0 && $nettingQut->quantity > $nettingReceivedTotal && $nettingQut->quantity >= $total) {
+                $successMessageStatus = 1;
+                NettingStoreStock::create([
+                    'netting_quotation_id' => $item['netting_id'],
+                    'delived_factory_type' => 'netting',
+                    'po_number'            => $request->po_number,
+                    'style'                => $item['style'],
+                    'quantity'             => $item['stock'],
+                    'lot_number'           => $item['loat_no'],
+                    'bag_count'            => $item['bag_count'],
+                    'store_address'        => $item['store_address'],
+                    'challan_date'         => $request->challan_date,
+                    'challan_number'       => $request->challan_number,
+                    'vehicle_number'       => $request->vehicle_number,
+                    'received_date'        => $request->received_date,
+                    'created_by'           => Auth::id(),
+                    'remarks'              => $item['remarks'],
+                    'challan_file'         => $path,
+                ]);
+
             }
 
             if ((float) $item['yarn_recevied'] === (float) $total) {

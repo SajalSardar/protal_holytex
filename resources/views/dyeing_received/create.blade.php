@@ -100,7 +100,7 @@ $po_number = request()->po_number ?? '';
 
                 if(data.length === 0){
                     display_div.html(`
-                        <div class="col-lg-12"><div class="alert alert-success">No data Found!</div></div>
+                        <div class="col-lg-12"><div class="alert alert-success">Total Received Done!</div></div>
                     `);
                     return;
                 }

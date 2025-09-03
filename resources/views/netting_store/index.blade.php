@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div class="d-flex">
             <h2 class="mb-0">Netting Store</h2>
-            <a href="{{ route('nettingstorestock.create') }}" class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
+            <a href="{{ route('nettingreceived.create') }}" class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
                 Create Store</a>
         </div>
 

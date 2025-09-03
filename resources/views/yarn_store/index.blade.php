@@ -37,6 +37,7 @@
                                     <tr>
                                         <th>Chalan</th>
                                         <th>PO</th>
+                                        <th>Description</th>
                                         <th>Style</th>
                                         <th>Quantity(kg)</th>
                                         <th>Unit</th>
@@ -53,6 +54,7 @@
                                             <img src="{{ asset('storage/'.$item->challan_file) }}" alt="" width="50">
                                         </td>
                                         <td>{{ $item->po_number }}</td>
+                                        <td>{{ $item->yarnQty->description }}</td>
                                         <td>{{ $item->style }}</td>
                                         <td>{{ $item->quantity }}</td>
                                         <td>{{ $item->unit }}</td>

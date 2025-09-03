@@ -108,7 +108,8 @@
                     </li>
                 </ul>
             </li>
-            <li class="menu-item {{ request()->routeIs(['yarnstorestock.*','nettingstorestock.*']) ? 'open' : '' }}">
+            <li
+                class="menu-item {{ request()->routeIs(['yarnstorestock.*','nettingstorestock.*', 'accessoriesstock.*']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
                     <span class="title">Goods Stock</span>
@@ -124,6 +125,12 @@
                         <a href="{{ route('nettingstorestock.index') }}"
                             class="menu-link {{ request()->routeIs('nettingstorestock.*') ? 'active' : '' }}">
                             Netting Stock
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('accessoriesstock.index') }}"
+                            class="menu-link {{ request()->routeIs('accessoriesstock.*') ? 'active' : '' }}">
+                            Accessories Stock
                         </a>
                     </li>
                 </ul>

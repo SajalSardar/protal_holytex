@@ -10,7 +10,8 @@ class YarnStoreStockController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        $yarnStocks = YarnStoreStock::get();
+        $yarnStocks = YarnStoreStock::with('yarnQty')->orderBy('id', 'desc')->get();
+        // return $yarnStocks;
         return view('yarn_store.index', compact('yarnStocks'));
     }
 

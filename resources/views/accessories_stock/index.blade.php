@@ -26,85 +26,7 @@
             </ol>
         </nav>
     </div>
-    <div class="row">
-        <div class=" col-lg-12">
-            <div class="card bg-white border-0 rounded-3 mb-4">
-                <div class="card-header">
-                    <h4 class="card-title">Row Netting</h4>
-                </div>
-                <div class="card-body p-4">
-                    <div class="default-table-area style-two default-table-width">
-                        <div class="table-responsive">
-                            <table class="table align-middle">
-                                <thead>
-                                    <tr>
-                                        <th>Chalan</th>
-                                        <th>Description</th>
-                                        <th>PO</th>
-                                        <th>Style</th>
-                                        <th>Quantity(kg)</th>
-                                        <th>Unit</th>
-                                        <th>Received Date</th>
-                                        <th>Status</th>
-                                        <th>Store Address</th>
-                                        <th class="text-end">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($rowNettingstock as $item)
-                                    <tr>
-                                        <td>
-                                            @if ($item->challan_file)
-                                            <img src="{{ asset('storage/'.$item->challan_file) }}" alt="" width="50">
-                                            @else
-                                            --
-                                            @endif
-                                        </td>
-                                        <td width="200">
-                                            <div readonly rows="2" class="overflow-x-auto border rounded-3 p-2"
-                                                style="height:60px;">
-                                                {{ $item->yarnQuotations->pluck('description')->map(fn($d) =>
-                                                trim($d))->join(", ") }}
-                                            </div>
-                                        </td>
-                                        <td>{{ $item->po_number }}</td>
-                                        <td>{{ $item->style }}</td>
-                                        <td>{{ $item->quantity }}</td>
-                                        <td>{{ $item->unit }}</td>
-                                        <td>{{ $item->received_date }}</td>
-                                        <td>{{ Str::ucfirst($item->status) }}</td>
-                                        <td>{{ $item->store_address }}</td>
-                                        <td>
-                                            <div class="d-flex align-items-center gap-1 justify-content-end">
-                                                <button
-                                                    class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
-                                                    <i
-                                                        class="material-symbols-outlined fs-16 text-primary">visibility</i>
-                                                </button>
-                                                <button
-                                                    class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
-                                                    <i class="material-symbols-outlined fs-16 text-body">edit</i>
-                                                </button>
-                                                <button
-                                                    class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
-                                                    <i class="material-symbols-outlined fs-16 text-danger">delete</i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="5">No Data Found!</td>
-                                    </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <div class="row">
         <div class=" col-lg-12">
             <div class="card bg-white border-0 rounded-3 mb-4">
@@ -130,7 +52,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($dyeingNettingstock as $item)
+                                    @forelse ($accStock as $item)
                                     <tr>
                                         <td>
                                             @if ($item->challan_file)
@@ -139,13 +61,7 @@
                                             --
                                             @endif
                                         </td>
-                                        <td width="200">
-                                            <div readonly rows="2" class="overflow-x-auto border rounded-3 p-2"
-                                                style="height:60px;">
-                                                {{ $item->yarnQuotations->pluck('description')->map(fn($d) =>
-                                                trim($d))->join(", ") }}
-                                            </div>
-                                        </td>
+                                        <td>{{ $item->accessoriesQty->description }}</td>
                                         <td>{{ $item->po_number }}</td>
                                         <td>{{ $item->style }}</td>
                                         <td>{{ $item->quantity }}</td>

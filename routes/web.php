@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccessoriesQuotationController;
 use App\Http\Controllers\AccessoriesReceivedController;
+use App\Http\Controllers\AccessoriesStockController;
 use App\Http\Controllers\DyeingFactroyController;
 use App\Http\Controllers\DyeingQuotationController;
 use App\Http\Controllers\DyeingReceivedController;
@@ -35,25 +36,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('order', OrderController::class);
     Route::post('order-update-status', [OrderController::class, 'updateStatus'])->name('order.update.status');
-    Route::resource('yarnquotation', YarnQuotationController::class);
-    Route::post('yarn-qty-status-update', [YarnQuotationController::class, 'yarnQtyStatusUpdate'])->name('yarn.qty.update.status');
-    Route::resource('nettingquotation', NettingQuotationController::class);
-    Route::post('netting-qty-status-update', [NettingQuotationController::class, 'nettingQtyStatusUpdate'])->name('netting.qty.update.status');
-    Route::resource('dyeingquotation', DyeingQuotationController::class);
-    Route::post('dyeing-qty-status-update', [DyeingQuotationController::class, 'dyeingQtyStatusUpdate'])->name('dyeing.qty.update.status');
-    Route::resource('accessoriesquotation', AccessoriesQuotationController::class);
-    Route::post('acc-qty-status-update', [AccessoriesQuotationController::class, 'accQtyStatusUpdate'])->name('acc.qty.update.status');
-    Route::resource('yarnreceived', YarnReceivedController::class);
-    Route::resource('nettingreceived', NettingReceivedController::class);
-    Route::resource('yarnstorestock', YarnStoreStockController::class);
-    Route::resource('nettingstorestock', NettingStoreStockController::class);
-    Route::resource('dyeingreceived', DyeingReceivedController::class);
-    Route::resource('accessoriesreceived', AccessoriesReceivedController::class);
-
     Route::name('order.details')->controller(OrderDetailController::class)->group(function () {
 
         Route::get('get-style-by-po-order-detail/{po_number}', 'getStyleByPo');
     });
+
+    Route::resource('yarnquotation', YarnQuotationController::class);
+    Route::post('yarn-qty-status-update', [YarnQuotationController::class, 'yarnQtyStatusUpdate'])->name('yarn.qty.update.status');
+    Route::resource('yarnreceived', YarnReceivedController::class);
+    Route::resource('yarnstorestock', YarnStoreStockController::class);
+
+    Route::resource('nettingquotation', NettingQuotationController::class);
+    Route::post('netting-qty-status-update', [NettingQuotationController::class, 'nettingQtyStatusUpdate'])->name('netting.qty.update.status');
+    Route::resource('nettingreceived', NettingReceivedController::class);
+    Route::resource('nettingstorestock', NettingStoreStockController::class);
+
+    Route::resource('dyeingquotation', DyeingQuotationController::class);
+    Route::post('dyeing-qty-status-update', [DyeingQuotationController::class, 'dyeingQtyStatusUpdate'])->name('dyeing.qty.update.status');
+    Route::resource('dyeingreceived', DyeingReceivedController::class);
+
+    Route::resource('accessoriesquotation', AccessoriesQuotationController::class);
+    Route::post('acc-qty-status-update', [AccessoriesQuotationController::class, 'accQtyStatusUpdate'])->name('acc.qty.update.status');
+    Route::resource('accessoriesreceived', AccessoriesReceivedController::class);
+    Route::resource('accessoriesstock', AccessoriesStockController::class);
 
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::resource('style', StyleController::class)->only(['index', 'edit', 'update', 'store']);

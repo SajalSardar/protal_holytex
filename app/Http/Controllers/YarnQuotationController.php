@@ -61,6 +61,7 @@ class YarnQuotationController extends Controller {
                 'order_id'                  => $request->order_id,
                 'style'                     => $item,
                 'description'               => $request->description[$key],
+                'from_stock_quantity'       => $request->from_stock[$key],
                 'quantity'                  => $request->unit_quantity[$key],
                 'price'                     => $request->unit_price[$key],
                 'total_price'               => $request->total_unit_price[$key],

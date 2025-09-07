@@ -324,15 +324,17 @@
 
                                     <div id="collapse{{ $key }}" class="accordion-collapse collapse show">
                                         <div class="accordion-body p-0">
-                                            <div class="default-table-area style-two default-table-width">
+                                            <div class="default-table-area style-two">
                                                 <div class="table-responsive">
-                                                    <table class="table align-middle">
+                                                    <table class="table align-middle" style="width: 1800px">
                                                         <thead>
                                                             <tr>
                                                                 <th>Description</th>
+                                                                <th>From Strock</th>
                                                                 <th>Qty(KG)</th>
                                                                 <th>Price</th>
                                                                 <th>Total Price</th>
+                                                                <th>Total Qty.</th>
                                                                 <th>Status</th>
                                                                 <th>No Received</th>
                                                                 <th>Received</th>
@@ -344,21 +346,27 @@
                                                         <tbody>
                                                             @php
                                                             $noReceivedTotal = 0.00;
+                                                            $allTotalQty = 0.00;
                                                             @endphp
                                                             @foreach ($items as $item)
                                                             @php
                                                             $totalDelevary = $item->yarn_received_sum_quantity +
                                                             $item->yarn_loss_sum_quantity +
                                                             $item->store_stock_sum_quantity;
-                                                            $noReceivedTotal += $item->quantity - $totalDelevary;
+                                                            $totalQty = $item->quantity + $item->from_stock_quantity;
+                                                            $noReceivedTotal +=$totalQty - $totalDelevary;
+                                                            $allTotalQty +=$totalQty;
                                                             @endphp
                                                             <tr>
                                                                 <td>{{ $item->description }}</td>
+                                                                <td>{{ $item->from_stock_quantity ?? '--' }}</td>
                                                                 <td>{{ $item->quantity }}</td>
                                                                 <td>{{ $item->price }}</td>
                                                                 <td>{{ $item->total_price }}</td>
-                                                                <td>{{ $item->status }}</td>
-                                                                <td>{{ number_format($item->quantity - $totalDelevary,2)
+                                                                <td>{{ number_format($totalQty, 2) }}
+                                                                </td>
+                                                                <td>{{ Str::ucfirst($item->status) }}</td>
+                                                                <td>{{ number_format($totalQty - $totalDelevary,2)
                                                                     ?? '--' }}
                                                                 </td>
                                                                 <td>{{ $item->yarn_received_sum_quantity ?? '--' }}</td>
@@ -371,17 +379,28 @@
                                                             <tr>
                                                                 <td class="text-center"><strong
                                                                         class="text-primary">Total:</strong></td>
+                                                                <td>
+                                                                    <strong class="text-primary">{{
+                                                                        number_format($items->sum('from_stock_quantity'),
+                                                                        2)
+                                                                        }}KG</strong>
+                                                                </td>
                                                                 <td colspan="2">
                                                                     <strong class="text-primary">{{
                                                                         number_format($items->sum('quantity'),
                                                                         2)
                                                                         }}KG</strong>
                                                                 </td>
-                                                                <td colspan="2">
+                                                                <td>
                                                                     <strong class="text-primary">{{
                                                                         number_format($items->sum('total_price'),
                                                                         2)
                                                                         }}TK</strong>
+                                                                </td>
+                                                                <td colspan="2">
+                                                                    <strong class="text-primary">{{
+                                                                        number_format($allTotalQty,2)
+                                                                        }}KG</strong>
                                                                 </td>
                                                                 <td><strong class="text-primary">{{
                                                                         number_format($noReceivedTotal, 2)

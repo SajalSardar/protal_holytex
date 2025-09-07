@@ -88,6 +88,7 @@
                                             <tr>
                                                 <th>Style</th>
                                                 <th>Description</th>
+                                                <th>From Stock(KG)</th>
                                                 <th>Quantity(KG)</th>
                                                 <th>Unit Price(TK)</th>
                                                 <th>Total Price(TK)</th>
@@ -101,13 +102,18 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colspan="2"><strong class="fs-18">Total</strong></td>
-                                                <td><input class="fs-18" name="total_quantity" id="total_quantity"
-                                                        value="0.0" readonly style="width: 150px;">KG
+                                                <td colspan="2" valign="top"><strong class="fs-18"
+                                                        style="color: #2f2bf2">Total</strong></td>
+                                                <td colspan="2"><input class="fs-18 font-bold" name="total_quantity"
+                                                        id="total_quantity" value="0.0" readonly
+                                                        style="width: 150px; height:40px; border:1px solid #2f2bf2; color:#2f2bf2; border-radius: 3px;">
+                                                    <p style="font-size: 12px; color:#787878">From Stock + Quantity</p>
                                                 </td>
                                                 <td></td>
                                                 <td><input class=" fs-18" name="grand_total" id="grand_total"
-                                                        value="0.0" readonly style="width: 180px">TK
+                                                        value="0.0" readonly
+                                                        style="width: 160px; height:40px; border:1px solid #2f2bf2; color:#2f2bf2; border-radius: 3px;">
+                                                    <p style="font-size: 12px; color:#787878">Quantity * Unit Price</p>
                                                 </td>
                                                 <td></td>
                                                 <td></td>
@@ -177,6 +183,13 @@
                                         <option value="{{ $item->id }}">{{ $item->name }}</option>
                                         @endforeach
                                     </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">From Stock(KG)</label>
+                                    <input type="text" class="form-control " placeholder="Fill Up from stock"
+                                        id="from_stock">
                                 </div>
                             </div>
                             <div class="col-lg-1 col-sm-6 align-self-center">
@@ -297,6 +310,7 @@
     function addToTable() {
         const style = document.getElementById("style_select");
         const description = document.getElementById("description");
+        const from_stock = document.getElementById("from_stock");
         const yarn_factory = document.getElementById("yarn_factory");
         const delivery_point = document.getElementById("delivery_point");
         const tableBody = document.getElementById("item_price_table").getElementsByTagName("tbody")[0];
@@ -359,11 +373,12 @@
         // Update existing row
             editingRow.cells[0].innerHTML = `${style.value} <input type="hidden" value="${style.value}" name="style[]">`;
             editingRow.cells[1].innerHTML = `${description.value} <input type="hidden" value="${description.value}" name="description[]">`;
-            editingRow.cells[2].innerHTML = `${unit_quantity.value} <input type="hidden" value="${unit_quantity.value}" name="unit_quantity[]">`;
-            editingRow.cells[3].innerHTML = `${unit_price.value} <input type="hidden" value="${unit_price.value}" name="unit_price[]">`;
-            editingRow.cells[4].innerHTML = `${totalVal} <input type="hidden" value="${totalVal}" name="total_unit_price[]">`;
-            editingRow.cells[5].innerHTML = `${yarn_factory.options[yarn_factory.selectedIndex].text} <input type="hidden" value="${yarn_factory.value}" name="yarn_factory[]">`;
-            editingRow.cells[6].innerHTML = `${delivery_point.options[delivery_point.selectedIndex].text} <input type="hidden" value="${delivery_point.value}" name="delivery_point[]">`;
+            editingRow.cells[2].innerHTML = `${from_stock.value} <input type="hidden" value="${from_stock.value}" name="from_stock[]">`;
+            editingRow.cells[3].innerHTML = `${unit_quantity.value} <input type="hidden" value="${unit_quantity.value}" name="unit_quantity[]">`;
+            editingRow.cells[4].innerHTML = `${unit_price.value} <input type="hidden" value="${unit_price.value}" name="unit_price[]">`;
+            editingRow.cells[5].innerHTML = `${totalVal} <input type="hidden" value="${totalVal}" name="total_unit_price[]">`;
+            editingRow.cells[6].innerHTML = `${yarn_factory.options[yarn_factory.selectedIndex].text} <input type="hidden" value="${yarn_factory.value}" name="yarn_factory[]">`;
+            editingRow.cells[7].innerHTML = `${delivery_point.options[delivery_point.selectedIndex].text} <input type="hidden" value="${delivery_point.value}" name="delivery_point[]">`;
             editingRow = null;
             add_item_btn.textContent = 'Add +';
         } else {
@@ -372,6 +387,7 @@
             row.innerHTML = `
                 <td>${style.value} <input type="hidden" value="${style.value}" name="style[]"></td>
                 <td>${description.value} <input type="hidden" value="${description.value}" name="description[]"></td>
+                <td>${from_stock.value} <input type="hidden" value="${from_stock.value}" name="from_stock[]"></td>
                 <td>${unit_quantity.value} <input type="hidden" value="${unit_quantity.value}" name="unit_quantity[]"></td>
                 <td>${unit_price.value} <input type="hidden" value="${unit_price.value}" name="unit_price[]"></td>
                 <td>${totalVal} <input type="hidden" value="${totalVal}" name="total_unit_price[]"></td>
@@ -393,6 +409,7 @@
         unit_quantity.value = "";
         unit_price.value = "";
         total_unit_price.value = "";
+        from_stock.value = "";
         resetSelect('yarn_factory');
         resetSelect('delivery_point');
     }
@@ -414,16 +431,18 @@
             const total_unit_price = document.getElementById("total_unit_price");
             const yarn_factory = document.getElementById("yarn_factory");
             const delivery_point = document.getElementById("delivery_point");
+            const from_stock = document.getElementById("from_stock");
 
             // ✅ Get text from text node only (exclude input elements)
             let selectedValue = row.cells[0].childNodes[0].textContent.trim();
             $('#style_select').val(selectedValue).trigger('change');
             description.value = row.cells[1].childNodes[0].textContent.trim();
-            unit_quantity.value = row.cells[2].childNodes[0].textContent.trim();
-            unit_price.value = row.cells[3].childNodes[0].textContent.trim();
-            total_unit_price.value = row.cells[4].childNodes[0].textContent.trim();
-            let yarn_factory_value = row.cells[5].childNodes[1].value.trim();
-            let netting_factory_value = row.cells[6].childNodes[1].value.trim();
+            from_stock.value = row.cells[2].childNodes[0].textContent.trim();
+            unit_quantity.value = row.cells[3].childNodes[0].textContent.trim();
+            unit_price.value = row.cells[4].childNodes[0].textContent.trim();
+            total_unit_price.value = row.cells[5].childNodes[0].textContent.trim();
+            let yarn_factory_value = row.cells[6].childNodes[1].value.trim();
+            let netting_factory_value = row.cells[7].childNodes[1].value.trim();
             $('#yarn_factory').val(yarn_factory_value).trigger('change');
             $('#delivery_point').val(netting_factory_value).trigger('change');
 
@@ -441,10 +460,11 @@
         let totalQuantity = 0;
 
         rows.forEach(row => {
-            const qty = parseFloat(row.cells[2].textContent) || 0;         // Quantity column (3rd)
-            const total = parseFloat(row.cells[4].textContent) || 0;       // Total column (5th)
+            const qty = parseFloat(row.cells[3].textContent) || 0;        
+            const total = parseFloat(row.cells[5].textContent) || 0;      
+            const formStock = parseFloat(row.cells[2].textContent) || 0; 
 
-            totalQuantity += qty;
+            totalQuantity += qty+formStock;
             totalPrice += total;
         });
 

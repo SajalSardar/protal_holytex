@@ -16,9 +16,11 @@ return new class extends Migration {
             $table->string('po_number')->nullable()->index();
             $table->string('style')->nullable()->index();
             $table->string('description')->nullable();
+            $table->decimal('from_stock_quantity', 10)->nullable();
             $table->decimal('quantity', 10)->nullable();
             $table->decimal('price', 10)->nullable();
             $table->decimal('total_price', 10)->nullable();
+            $table->string('unit')->default('kg');
             $table->integer('yarn_factory_id')->nullable();
             $table->integer('netting_factory_id')->nullable();
             $table->string('status')->default('pending');

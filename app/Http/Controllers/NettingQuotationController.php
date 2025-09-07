@@ -51,24 +51,45 @@ class NettingQuotationController extends Controller {
             'po_number' => 'required',
         ]);
 
-        foreach ($request->items as $key => $items) {
+        foreach ($request->items as $style => $items) {
             foreach ($items as $item) {
-                NettingQuotation::create([
+                // Common data
+                $baseData = [
                     'order_id'                  => $request->order_id,
                     'order_number'              => $request->order_number,
-                    'style'                     => $key,
+                    'style'                     => $style,
                     'po_number'                 => $request->po_number,
                     'purchase_date'             => $request->order_date,
                     'approximate_delivery_date' => $request->approximate_delivery_date,
-                    'quantity'                  => $item['quantity'],
-                    'price'                     => $item['rate'],
-                    'total_price'               => $item['total'],
-                    'delivery_factory_type'     => $item['delevary_poin_check'],
-                    'delivery_point_id'         => $item['delivery_point'],
-                    'netting_factory_id'        => $item['netting_factory_id'],
                     'remarks'                   => $request->remarks,
                     'created_by'                => Auth::id(),
-                ]);
+                ];
+
+                // Main item
+                NettingQuotation::create(array_merge($baseData, [
+                    'quantity'              => $item['quantity'],
+                    'price'                 => $item['rate'],
+                    'total_price'           => $item['total'],
+                    'delivery_factory_type' => $item['delevary_poin_check'],
+                    'delivery_point_id'     => $item['delivery_point'],
+                    'netting_factory_id'    => $item['netting_factory_id'],
+                ]));
+
+                // Inner items (if any)
+                if (!empty($item['inner_items']) && is_array($item['inner_items'])) {
+                    foreach ($item['inner_items'] as $inners) {
+                        foreach ($inners as $inner) {
+                            NettingQuotation::create(array_merge($baseData, [
+                                'quantity'              => $inner['quantity'],
+                                'price'                 => $inner['rate'],
+                                'total_price'           => $inner['total'],
+                                'delivery_factory_type' => $item['delevary_poin_check'],
+                                'delivery_point_id'     => $inner['delivery_point'],
+                                'netting_factory_id'    => $item['netting_factory_id'],
+                            ]));
+                        }
+                    }
+                }
             }
         }
 

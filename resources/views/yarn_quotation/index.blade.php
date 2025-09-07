@@ -39,8 +39,10 @@
                                         <th>Order Number</th>
                                         <th>PO</th>
                                         <th>Style</th>
+                                        <th>From Stock(kg)</th>
                                         <th>Quantity(kg)</th>
                                         <th>Total(TK)</th>
+                                        <th>Total Qty.</th>
                                         <th>Status</th>
                                         <th class="text-end">Action</th>
                                     </tr>
@@ -55,8 +57,11 @@
                                         <td>{{ $item->order_number }}</td>
                                         <td>{{ $item->po_number }}</td>
                                         <td>{{ $item->style }}</td>
+                                        <td>{{ number_format($items->sum('from_stock_quantity'), 2) }}</td>
                                         <td>{{ number_format($items->sum('quantity'), 2) }}</td>
                                         <td>{{ number_format($items->sum('total_price'), 2) }}</td>
+                                        <td>{{ number_format(($items->sum('from_stock_quantity') +
+                                            $items->sum('quantity')), 2) }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
                                         <td>
                                             <div class="dropdown text-end">

@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\NettingQuotation;
-use App\Models\YarnQuotation;
 use Illuminate\Http\Request;
+use App\Models\YarnQuotation;
+use App\Models\NettingQuotation;
+use App\Models\NettingQuotationItem;
 use Illuminate\Support\Facades\Auth;
 
 class NettingQuotationController extends Controller {
@@ -50,50 +51,54 @@ class NettingQuotationController extends Controller {
         $request->validate([
             'po_number' => 'required',
         ]);
+        $successMessageStatus = 0;
 
         foreach ($request->items as $style => $items) {
             foreach ($items as $item) {
-                // Common data
-                $baseData = [
-                    'order_id'                  => $request->order_id,
-                    'order_number'              => $request->order_number,
-                    'style'                     => $style,
-                    'po_number'                 => $request->po_number,
-                    'purchase_date'             => $request->order_date,
-                    'approximate_delivery_date' => $request->approximate_delivery_date,
-                    'remarks'                   => $request->remarks,
-                    'created_by'                => Auth::id(),
-                ];
-
                 // Main item
-                NettingQuotation::create(array_merge($baseData, [
-                    'quantity'              => $item['quantity'],
-                    'price'                 => $item['rate'],
-                    'total_price'           => $item['total'],
-                    'delivery_factory_type' => $item['delevary_poin_check'],
-                    'delivery_point_id'     => $item['delivery_point'],
-                    'netting_factory_id'    => $item['netting_factory_id'],
-                ]));
+                $totalInnerQty = collect($item['inner_items'])->sum('quantity');
 
-                // Inner items (if any)
-                if (!empty($item['inner_items']) && is_array($item['inner_items'])) {
-                    foreach ($item['inner_items'] as $inners) {
-                        foreach ($inners as $inner) {
-                            NettingQuotation::create(array_merge($baseData, [
-                                'quantity'              => $inner['quantity'],
-                                'price'                 => $inner['rate'],
-                                'total_price'           => $inner['total'],
-                                'delivery_factory_type' => $item['delevary_poin_check'],
-                                'delivery_point_id'     => $inner['delivery_point'],
-                                'netting_factory_id'    => $item['netting_factory_id'],
-                            ]));
+                if ($item['knit_quantity'] > 0 && $item['knit_quantity'] == $totalInnerQty) {
+                    $successMessageStatus = 1;
+
+                    $knitQty = NettingQuotation::create([
+                        'order_id'                  => $request->order_id,
+                        'order_number'              => $request->order_number,
+                        'style'                     => $style,
+                        'po_number'                 => $request->po_number,
+                        'purchase_date'             => $request->order_date,
+                        'approximate_delivery_date' => $request->approximate_delivery_date,
+                        'remarks'                   => $request->remarks,
+                        'delivery_factory_type'     => $item['delevary_poin_check'] ?? null,
+                        'netting_factory_id'        => $item['netting_factory_id'] ?? null,
+                        'from_stock_quantity'       => $item['from_stock_quantity'] ?? null,
+                        'quantity'                  => $item['knit_quantity'],
+                        'created_by'                => Auth::id(),
+                    ]);
+
+                    if ($knitQty && !empty($item['inner_items']) && is_array($item['inner_items'])) {
+                        foreach ($item['inner_items'] as $inner) {
+                            NettingQuotationItem::create([
+                                'netting_quotation_id' => $knitQty->id,
+                                'quantity'             => $inner['quantity'] ?? null,
+                                'price'                => $inner['rate'] ?? null,
+                                'total_price'          => $inner['total'] ?? null,
+                                'delivery_point_id'    => $inner['delivery_point'] ?? null,
+                                'created_by'           => Auth::id(),
+                            ]);
                         }
                     }
+
+                } else {
+                    toastr("Enter Total Quantity in {$style}!", 'error');
                 }
             }
         }
 
-        toastr('Netting Successfully Created!');
+        if ($successMessageStatus === 1) {
+            toastr("Style {$style} Netting Successfully Created!");
+        }
+
         return back();
     }
 

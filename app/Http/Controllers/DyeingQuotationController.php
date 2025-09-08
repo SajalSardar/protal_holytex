@@ -13,7 +13,14 @@ class DyeingQuotationController extends Controller {
     public function getNetting($po_number) {
         $dyeing = DyeingQuotation::where('po_number', $po_number)->pluck('style');
 
-        $nettings = NettingQuotation::with('dyeingFactory', 'nettingFactory')
+        // $nettings = NettingQuotation::with('dyeingFactory', 'nettingFactory')
+        //     ->where('po_number', $po_number)
+        //     ->where('status', 'approved')
+        //     ->where('delivery_factory_type', 'dyeing')
+        //     ->whereNotIn('style', $dyeing)
+        //     ->get();
+
+        $nettings = NettingQuotation::with('nettingQuotationItems.dyeingFactory', 'nettingFactory')
             ->where('po_number', $po_number)
             ->where('status', 'approved')
             ->where('delivery_factory_type', 'dyeing')

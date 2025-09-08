@@ -493,10 +493,15 @@
                         </div>
                         <div class="tab-pane fade" id="netting_quot_details">
                             <div class="accordion ">
+                                @php
+                                $knit_total_price = 0;
+                                @endphp
                                 @forelse ($order->nettingQuotations as $item)
                                 @php
                                 $totalNeetingRecevied = $item->netting_received_sum_quantity
                                 +$item->netting_loss_sum_quantity+$item->store_stock_sum_quantity;
+
+                                $total_knit_qty = $item->quantity + ($item->from_stock_quantity ?? 0);
                                 @endphp
 
                                 <div class="accordion-item mt-5">
@@ -517,33 +522,35 @@
 
                                     <div id="collapse{{ $item->id }}" class="accordion-collapse collapse show">
                                         <div class="accordion-body p-0">
-                                            <div class="default-table-area style-two default-table-width">
+                                            <div class="">
                                                 <div class="table-responsive">
                                                     <table class="table align-middle">
                                                         <thead>
                                                             <tr>
                                                                 <th>Style</th>
+                                                                <th>From Stock(KG)</th>
                                                                 <th>Qty(KG)</th>
+                                                                <th>Total Qty(KG)</th>
                                                                 <th>Yarn Recv.(KG)</th>
-                                                                <th>Price</th>
-                                                                <th>Total Price</th>
                                                                 <th>Status</th>
                                                                 <th>No Received</th>
                                                                 <th>Received</th>
                                                                 <th>Loss</th>
                                                                 <th>Store In Stock</th>
+                                                                <th>Action</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             <tr>
                                                                 <td>{{ $item->style }}</td>
+                                                                <td>{{ $item->from_stock_quantity ?? '--' }}</td>
                                                                 <td>{{ $item->quantity }}</td>
+                                                                <td>{{ number_format( $total_knit_qty, 2) }}
+                                                                </td>
                                                                 <td>{{ $item->yarn_recevied ?? '--' }}</td>
-                                                                <td>{{ $item->price }}</td>
-                                                                <td>{{ $item->total_price }}</td>
                                                                 <td>{{ $item->status }}</td>
                                                                 <td>{{ number_format(($item->yarn_recevied ??
-                                                                    $item->quantity) -
+                                                                    $total_knit_qty) -
                                                                     $totalNeetingRecevied, 2) }}</td>
                                                                 @if ($item->delivery_factory_type === 'garments')
                                                                 <td>{{ $item->netting_receive_garments_sum_quantity ??
@@ -557,9 +564,57 @@
 
                                                                 <td>{{ $item->netting_loss_sum_quantity ?? '--'}}</td>
                                                                 <td>{{ $item->store_stock_sum_quantity ?? '--'}}</td>
+                                                                <td>
+                                                                    <button class="btn btn-sm btn-primary"
+                                                                        onclick="showMoreItems({{ $item->id }})">Details</button>
+                                                                </td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
+
+                                                    <div style="background: #fff; display: none"
+                                                        id="display_items_{{ $item->id }}">
+                                                        <table class="table align-middle">
+                                                            <thead class="table-warning">
+                                                                <tr>
+                                                                    <th>Quantity</th>
+                                                                    <th>Rate</th>
+                                                                    <th>Total</th>
+                                                                    @if ($item->delivery_factory_type === 'garments')
+                                                                    <th>Garments Fac.</th>
+                                                                    @else
+                                                                    <th>Dyeing Fac.</th>
+                                                                    @endif
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach ( $item->nettingQuotationItems as $singleItem)
+                                                                @php
+                                                                $knit_total_price += $singleItem->total_price;
+                                                                @endphp
+                                                                <tr>
+                                                                    <td>{{ $singleItem->quantity }}</td>
+                                                                    <td>{{ $singleItem->price }}</td>
+                                                                    <td>{{ $singleItem->total_price }}</td>
+                                                                    @if ($item->delivery_factory_type === 'garments')
+                                                                    <td>Name: {{
+                                                                        $singleItem->garmentsFactory->name}}
+                                                                        <br> Address: {{
+                                                                        $singleItem->garmentsFactory->address}}
+                                                                    </td>
+                                                                    @else
+                                                                    <td>Name: {{
+                                                                        $singleItem->dyeingFactory->name}}
+                                                                        <br>
+                                                                        Address: {{
+                                                                        $singleItem->dyeingFactory->address}}
+                                                                    </td>
+                                                                    @endif
+                                                                </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="table-responsive  mt-4">
@@ -575,11 +630,7 @@
                                                             <th>Last Up. By</th>
                                                             <th>Last Up. At</th>
                                                             <th>Netting Fac.</th>
-                                                            @if ($item->delivery_factory_type === 'garments')
-                                                            <th>Garments Fac.</th>
-                                                            @else
-                                                            <th>Dyeing Fac.</th>
-                                                            @endif
+
                                                         </tr>
                                                     </thead>
 
@@ -593,17 +644,10 @@
                                                             <td>{{ $item->created_at->format('d M Y')}}</td>
                                                             <td>{{ $item->lastUpdateBy->name ?? '--'}}</td>
                                                             <td>{{ $item->updated_at->format('d M Y')}}</td>
-                                                            <td>Name: {{ $item->nettingFactory->name}} <br> Address:
+                                                            <td>Name: {{ $item->nettingFactory->name}} <br>
+                                                                Address:
                                                                 {{
                                                                 $item->nettingFactory->address}}</td>
-                                                            @if ($item->delivery_factory_type === 'garments')
-                                                            <td>Name: {{ $item->garmentsFactory->name}} <br> Address: {{
-                                                                $item->garmentsFactory->address}}</td>
-                                                            @else
-                                                            <td>Name: {{ $item->dyeingFactory->name}} <br> Address: {{
-                                                                $item->dyeingFactory->address}}</td>
-                                                            @endif
-
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -624,7 +668,7 @@
                                             }}KG</h3>
 
                                         <h3 class="ms-5 text-primary">Total TK: {{
-                                            number_format($order->nettingQuotations->sum('total_price'),
+                                            number_format($knit_total_price,
                                             2)
                                             }}TK</h3>
                                     </div>
@@ -938,4 +982,13 @@
         </form>
     </div>
 </div>
+@endsection
+
+@section('script')
+<script>
+    function showMoreItems(id){
+        let item_section = $('#display_items_'+id);
+        item_section.toggle();
+    }
+</script>
 @endsection

@@ -124,7 +124,7 @@
                     }
                     return response.json();
                 }).then(data => {
-                    // console.log('API response:', data);
+                    console.log('API response:', data);
                     let display_div = $('#show_all_netting_item');
                     let order_id = null;
                     let order_number = null;
@@ -142,7 +142,8 @@
                     data.forEach(item => {
                         order_number = item.order_number;
                         order_id = item.order_id;
-                        singleItem +=`<div class="card border-0 rounded-3 mb-3">
+                        item.netting_quotation_items.forEach(sitem =>{
+                            singleItem +=`<div class="card border-0 rounded-3 mb-3">
                                         <div class="card-header">
                                             <div class="row">
                                                 <div class="col-3">
@@ -152,16 +153,16 @@
                                                     <p>Netting Factory: ${item.netting_factory.name}</p>
                                                 </div>
                                                 <div class="col-3">
-                                                    <p>Dyeing Factory: ${item.dyeing_factory.name}</p>
+                                                    <p>Dyeing Factory: ${sitem.dyeing_factory.name}</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="card-body"><div class="row">
-                                            <input type="hidden" value=" ${item.dyeing_factory.id}" name="items[${item.style}][dyeing_factory_id]"> 
+                                            <input type="hidden" value=" ${sitem.dyeing_factory.id}" name="items[${item.style}][dyeing_factory_id]"> 
                                             <div class="col-sm-3">
                                                 <div class="form-group mb-4">
                                                     <label class="label text-secondary">Total Quantity (KG)</label>
-                                                    <input type="text" class="form-control" id="quantity_${item.style}" name="items[${item.style}][quantity]" value="${item.quantity}" readonly>
+                                                    <input type="text" class="form-control" id="quantity_${item.style}" name="items[${item.style}][quantity]" value="${sitem.quantity}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
@@ -191,6 +192,8 @@
                                 </div>
                                 </div>
                             `;
+                        });
+                        
                     });
                     
                      display_div.html(singleItem);

@@ -16,12 +16,11 @@ return new class extends Migration {
             $table->bigInteger('netting_factory_id')->nullable();
             $table->string('po_number')->nullable()->index();
             $table->string('style')->nullable()->index();
+            $table->decimal('from_stock_quantity', 10)->nullable();
             $table->decimal('quantity', 10)->nullable();
             $table->decimal('yarn_recevied', 10)->nullable()->comment('total recevied yarn');
-            $table->decimal('price', 10)->nullable();
-            $table->decimal('total_price', 10)->nullable();
+            $table->string('unit')->default('kg');
             $table->string('delivery_factory_type')->nullable();
-            $table->integer('delivery_point_id')->nullable();
             $table->string('status')->default('pending');
             $table->date('approximate_delivery_date')->nullable();
             $table->date('delivery_date')->nullable();

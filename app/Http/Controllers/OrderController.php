@@ -101,12 +101,13 @@ class OrderController extends Controller {
             'yarnQuotations.lastUpdateBy:id,name',
             'yarnQuotations.approvedBy:id,name',
             'nettingQuotations',
+            'nettingQuotations.nettingQuotationItems',
             'nettingQuotations.creator:id,name',
             'nettingQuotations.lastUpdateBy:id,name',
             'nettingQuotations.approvedBy:id,name',
             'nettingQuotations.nettingFactory:id,name,address',
-            'nettingQuotations.dyeingFactory:id,name,address',
-            'nettingQuotations.garmentsFactory:id,name,address',
+            'nettingQuotations.nettingQuotationItems.dyeingFactory:id,name,address',
+            'nettingQuotations.nettingQuotationItems.garmentsFactory:id,name,address',
             'nettingQuotations'     => function ($q) {
                 $q->withSum('nettingReceived', 'quantity')
                     ->withSum('nettingReceiveGarments', 'quantity')

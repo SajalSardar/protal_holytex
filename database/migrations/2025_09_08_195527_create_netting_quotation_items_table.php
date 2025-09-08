@@ -13,8 +13,6 @@ return new class extends Migration {
             $table->id();
             $table->bigInteger('netting_quotation_id')->nullable();
             $table->decimal('quantity', 10)->nullable();
-            $table->decimal('price', 10)->nullable();
-            $table->decimal('total_price', 10)->nullable();
             $table->integer('delivery_point_id')->nullable();
             $table->date('delivery_date')->nullable();
             $table->integer('created_by')->nullable();

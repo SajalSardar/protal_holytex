@@ -18,6 +18,8 @@ return new class extends Migration {
             $table->string('style')->nullable()->index();
             $table->decimal('from_stock_quantity', 10)->nullable();
             $table->decimal('quantity', 10)->nullable();
+            $table->decimal('price', 10)->nullable();
+            $table->decimal('total_price', 10)->nullable();
             $table->decimal('yarn_recevied', 10)->nullable()->comment('total recevied yarn');
             $table->string('unit')->default('kg');
             $table->string('delivery_factory_type')->nullable();

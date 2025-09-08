@@ -493,9 +493,7 @@
                         </div>
                         <div class="tab-pane fade" id="netting_quot_details">
                             <div class="accordion ">
-                                @php
-                                $knit_total_price = 0;
-                                @endphp
+
                                 @forelse ($order->nettingQuotations as $item)
                                 @php
                                 $totalNeetingRecevied = $item->netting_received_sum_quantity
@@ -531,6 +529,8 @@
                                                                 <th>From Stock(KG)</th>
                                                                 <th>Qty(KG)</th>
                                                                 <th>Total Qty(KG)</th>
+                                                                <th>Rate(TK)</th>
+                                                                <th>Total(TK)</th>
                                                                 <th>Yarn Recv.(KG)</th>
                                                                 <th>Status</th>
                                                                 <th>No Received</th>
@@ -545,8 +545,10 @@
                                                                 <td>{{ $item->style }}</td>
                                                                 <td>{{ $item->from_stock_quantity ?? '--' }}</td>
                                                                 <td>{{ $item->quantity }}</td>
-                                                                <td>{{ number_format( $total_knit_qty, 2) }}
-                                                                </td>
+                                                                <td>{{ number_format( $item->quantity +
+                                                                    $item->from_stock_quantity, 2) }}</td>
+                                                                <td>{{ number_format( $item->price, 2) }}</td>
+                                                                <td>{{ number_format( $item->total_price, 2) }}</td>
                                                                 <td>{{ $item->yarn_recevied ?? '--' }}</td>
                                                                 <td>{{ $item->status }}</td>
                                                                 <td>{{ number_format(($item->yarn_recevied ??
@@ -578,8 +580,6 @@
                                                             <thead class="table-warning">
                                                                 <tr>
                                                                     <th>Quantity</th>
-                                                                    <th>Rate</th>
-                                                                    <th>Total</th>
                                                                     @if ($item->delivery_factory_type === 'garments')
                                                                     <th>Garments Fac.</th>
                                                                     @else
@@ -589,13 +589,9 @@
                                                             </thead>
                                                             <tbody>
                                                                 @foreach ( $item->nettingQuotationItems as $singleItem)
-                                                                @php
-                                                                $knit_total_price += $singleItem->total_price;
-                                                                @endphp
+
                                                                 <tr>
                                                                     <td>{{ $singleItem->quantity }}</td>
-                                                                    <td>{{ $singleItem->price }}</td>
-                                                                    <td>{{ $singleItem->total_price }}</td>
                                                                     @if ($item->delivery_factory_type === 'garments')
                                                                     <td>Name: {{
                                                                         $singleItem->garmentsFactory->name}}
@@ -668,7 +664,7 @@
                                             }}KG</h3>
 
                                         <h3 class="ms-5 text-primary">Total TK: {{
-                                            number_format($knit_total_price,
+                                            number_format($order->nettingQuotations->sum('total_price'),
                                             2)
                                             }}TK</h3>
                                     </div>

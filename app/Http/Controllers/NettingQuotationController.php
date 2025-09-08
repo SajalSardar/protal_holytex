@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\YarnQuotation;
 use App\Models\NettingQuotation;
 use App\Models\NettingQuotationItem;
+use App\Models\YarnQuotation;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class NettingQuotationController extends Controller {
@@ -73,6 +73,8 @@ class NettingQuotationController extends Controller {
                         'netting_factory_id'        => $item['netting_factory_id'] ?? null,
                         'from_stock_quantity'       => $item['from_stock_quantity'] ?? null,
                         'quantity'                  => $item['knit_quantity'],
+                        'price'                     => $item['rate'] ?? null,
+                        'total_price'               => $item['total'] ?? null,
                         'created_by'                => Auth::id(),
                     ]);
 
@@ -81,8 +83,6 @@ class NettingQuotationController extends Controller {
                             NettingQuotationItem::create([
                                 'netting_quotation_id' => $knitQty->id,
                                 'quantity'             => $inner['quantity'] ?? null,
-                                'price'                => $inner['rate'] ?? null,
-                                'total_price'          => $inner['total'] ?? null,
                                 'delivery_point_id'    => $inner['delivery_point'] ?? null,
                                 'created_by'           => Auth::id(),
                             ]);

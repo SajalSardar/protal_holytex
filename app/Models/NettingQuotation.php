@@ -29,6 +29,10 @@ class NettingQuotation extends Model {
         return $this->hasMany(NettingStoreStock::class, 'netting_quotation_id');
     }
 
+    public function yarenReceivedNettingFactory() {
+        return $this->hasMany(YarnReceived::class, 'netting_factory_id', 'netting_factory_id');
+    }
+
     public function approvedBy() {
         return $this->hasOne(User::class, 'id', 'approved_by');
     }

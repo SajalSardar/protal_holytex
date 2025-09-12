@@ -158,29 +158,41 @@
                                             </div>
                                         </div>
                                         <div class="card-body"><div class="row">
-                                            <input type="hidden" value=" ${sitem.dyeing_factory.id}" name="items[${item.style}][dyeing_factory_id]"> 
-                                            <div class="col-sm-3">
+                                            <input type="hidden" value=" ${sitem.dyeing_factory.id}" name="items[${item.style}][${sitem.id}][dyeing_factory_id]"> 
+                                            <div class="col-sm-2">
                                                 <div class="form-group mb-4">
                                                     <label class="label text-secondary">Total Quantity (KG)</label>
-                                                    <input type="text" class="form-control" id="quantity_${item.style}" name="items[${item.style}][quantity]" value="${sitem.quantity}" readonly>
+                                                    <input type="text" class="form-control" id="quantity_${item.style}_${sitem.id}" name="items[${item.style}][${sitem.id}][quantity]" value="${sitem.quantity}" readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-2">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">From Stock(KG)</label>
+                                                    <input type="text" class="form-control" id="from_stock_${item.style}_${sitem.id}" name="items[${item.style}][${sitem.id}][from_stock]" oninput="knitFromQtyCal(this,'${item.style}_${sitem.id}')">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Quot Quantity(KG)</label>
+                                                    <input type="text" class="form-control" id="quot_quantity_${item.style}_${sitem.id}" value="${sitem.quantity}" name="items[${item.style}][${sitem.id}][quot_quantity]" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">
                                                 <div class="form-group mb-4">
                                                     <label class="label text-secondary">Rate(TK)</label>
-                                                    <input type="number" class="form-control" oninput="attachRateCalculation('${item.style}')" name="items[${item.style}][rate]"  id="rate_${item.style}" min="1">
+                                                    <input type="number" class="form-control" oninput="attachRateCalculation(this,'${item.style}_${sitem.id}')" name="items[${item.style}][${sitem.id}][rate]"  id="rate_${item.style}_${sitem.id}" min="1">
                                                 </div>
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-2">
                                                 <div class="form-group mb-4">
                                                     <label class="label text-secondary">Total</label>
-                                                    <input type="number" class="form-control" id="total_amount_${item.style}" name="items[${item.style}][total]" readonly>
+                                                    <input type="number" class="form-control" id="total_amount_${item.style}_${sitem.id}" name="items[${item.style}][${sitem.id}][total]" readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-3 col-sm-6" id="deying_select_section_${item.style}">
+                                            <div class="col-lg-2 col-sm-6" id="deying_select_section_${item.style}_${sitem.id}">
                                                 <div class="form-group mb-4">
                                                     <label class="label text-secondary">Delivery Point</label>
-                                                    <select name="items[${item.style}][delivery_point]" id="deying_point_${item.style}" class="form-control select2_innter">
+                                                    <select name="items[${item.style}][${sitem.id}][delivery_point]" id="deying_point_${item.style}_${sitem.id}" class="form-control select2_innter">
                                                         <option value="" selected disabled>Select Germents Factory</option>
                                                         @foreach ($delivery_point as $item)
                                                             <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -196,10 +208,10 @@
                         
                     });
                     
-                     display_div.html(singleItem);
-                    $('.select2_innter').select2();
+                    display_div.html(singleItem);
                     $('#order_id').val(order_id);
                     $('#order_number').val(order_number);
+                    $('.select2_innter').select2();
 
                 }).catch(error => {
                      console.error('Fetch error:', error);
@@ -211,16 +223,39 @@
 
     });
 
-    function attachRateCalculation(style) {
-        let qtyInput = document.getElementById(`quantity_${style}`);
-        let rateInput = document.getElementById(`rate_${style}`);
-        let totalInput = document.getElementById(`total_amount_${style}`);
+   function attachRateCalculation(element,classPrefx) {
+        let quantityIdIn = document.getElementById('quot_quantity_'+classPrefx);
+        let totalInput = document.getElementById('total_amount_'+classPrefx);
+        let rate_ = document.getElementById('rate_'+classPrefx);
+        // console.log(classPrefx);
+        
+        let qty = parseFloat(quantityIdIn.value) || 0;
+        let rate = parseFloat(rate_.value) || 0;
+        
+        let totalValue = (qty * rate).toFixed(2);
+        totalInput.value = totalValue; 
 
-        let qty = parseFloat(qtyInput.value) || 0;
-        let rate = parseFloat(rateInput.value) || 0;
-
-        totalInput.value = (qty * rate).toFixed(2);
     }
+
+    function knitFromQtyCal(element,classPrefx){
+        let totalQuantity = $('#quantity_'+classPrefx).val();
+        let stockFromQuantity = $('#from_stock_'+classPrefx).val();
+        let totalQuantityVal = parseFloat(totalQuantity) || 0;
+        let stockFromQuantityVal = parseFloat(stockFromQuantity) || 0;
+
+        let netQty = totalQuantityVal - stockFromQuantityVal;
+        let knit_quantity = $('#quot_quantity_'+classPrefx);
+        knit_quantity.val(netQty || 0);
+
+        if(totalQuantityVal < stockFromQuantityVal){
+            $(element).val('');
+             knit_quantity.val(totalQuantityVal || 0);
+            alert(`Max allowed is ${totalQuantityVal}Kg (Total Quantity - From Stock)`);
+        }
+        attachRateCalculation(element,classPrefx);
+        // console.log(classPrefx);
+    }
+
 
 
     function resetSelect(id) {

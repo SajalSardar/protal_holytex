@@ -71,8 +71,9 @@ $po_number = request()->po_number ?? '';
 
         $('#po_number').on('change',function(){
             let selected_po_number = $(this).val();
-            let currentUrl = window.location.origin + window.location.pathname;
-            window.location.href = currentUrl + "?po_number=" + selected_po_number;
+            let url = new URL(window.location.href);
+            url.searchParams.set("po_number", selected_po_number);
+            window.location.href = url.toString();
 
            loadYarnData(selected_po_number);
         });
@@ -93,7 +94,7 @@ $po_number = request()->po_number ?? '';
                 if (!response.ok) throw new Error('Network response was not ok');
 
                 const data = await response.json();
-                // console.log('API response:', data);
+                console.log('API response:', data);
 
                 let order_id = null;
                 let order_number = null;
@@ -163,8 +164,8 @@ $po_number = request()->po_number ?? '';
                         <div id="collapse${key}" class="accordion-collapse collapse show">
                             <div class="accordion-body p-0 px-2">`;
                         for (const item of items) {
-                            const totalReceviedYarnCa = await fetchReceivedYarn(po_number, key);
-                            const totalReceviedYarnData = totalReceviedYarnCa.total_received || 0;
+                            // const totalReceviedYarnCa = await fetchReceivedYarn(po_number, key);
+                            const totalReceviedYarnData = item.yaren_received_netting_factory_sum_quantity || 0;
 
                             order_id = item.order_id;
                             order_number = item.order_number;
@@ -183,32 +184,40 @@ $po_number = request()->po_number ?? '';
                                 singleItem +=` <input type="hidden" name="items[${item.id}][receving_factory_type]" value="${item.delivery_factory_type}">`;
                             }
                             singleItem +=`
-                                <div class="row my-4">
+                                <div class="row mt-4">
                                     <input type="hidden" name="items[${item.id}][netting_id]" value="${item.id}">
                                     <input type="hidden" name="items[${item.id}][dyeing_factory_id]" value="${item.delivery_point_id}">
                                     <input type="hidden" name="items[${item.id}][netting_factory_id]" value="${item.netting_factory_id}">
                                     <input type="hidden" name="items[${item.id}][style]" value="${item.style}">
                                     
+                                    <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">From Stock</label><input type="text" class="form-control" readonly value="${item.from_stock_quantity}"></div>
                                     <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Quotation(KG)</label><input type="text" class="form-control" readonly value="${item.quantity}"></div>
                                     <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Yarn Recevied(KG)</label><input type="text" class="form-control" readonly name="items[${item.id}][yarn_recevied]" value="${totalReceviedYarnData || 0}"></div>`;
                                     if(item.delivery_factory_type === "garments"){
-                                    singleItem +=`<div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.netting_receive_garments_sum_quantity || 0}"></div>
+                                    singleItem +=`<div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.netting_receive_garments_sum_quantity || 0}"></div>
                                     `;
                                     }else{
-                                        singleItem +=`<div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.netting_received_sum_quantity || 0}"></div>
+                                        singleItem +=`<div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.netting_received_sum_quantity || 0}"></div>
                                     `;
                                     }
                                     singleItem +=`<div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">In Stock</label><input type="text" class="form-control" readonly value="${item.store_stock_sum_quantity || 0}"></div>
                                     <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Loss</label><input type="text" class="form-control" readonly  value="${item.netting_loss_sum_quantity || 0}"></div>
                                     <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">No Received</label><input type="text" class="form-control" readonly value="${noreceived}"></div>
-                                    <div class="col-md-2 pe-0 mb-3"><label class="label text-secondary">Netting Factory</label><input class="form-control" readonly value="${item.netting_factory.name}"></div>
-                                `;
+                                    <div class="col-md-2 mb-3"><label class="label text-secondary">Netting Factory</label><input class="form-control" readonly value="${item.netting_factory.name}"></div>
+                                </div>`;
                                 if(item.delivery_factory_type === "garments"){
-                                    singleItem +=`  <div class="col-md-2 mb-3"><label class="label text-secondary">Garments Factory</label><input class="form-control" readonly value="${item.garments_factory.name}"></div>
-                                `;
+                                    singleItem +=`<div class="col-md-12 mb-3">`;
+                                        for (const nitem of item.netting_quotation_items){
+                                            singleItem +=`<strong>${nitem.garments_factory.name} - ${nitem.quantity} </strong> `;
+                                        }
+                                    singleItem +=`</div>`;
+                                
                                 }else{
-                                    singleItem +=`  <div class="col-md-2 mb-3"><label class="label text-secondary">Dyeing Factory</label><input class="form-control" readonly value="${item.dyeing_factory.name}"></div>
-                                `;
+                                    singleItem +=`<div class="col-md-12 mb-3"><p><strong>Dyeing Factory:</strong> `;
+                                        for (const nitem of item.netting_quotation_items){
+                                            singleItem +=`${nitem.dyeing_factory.name} - ${nitem.quantity}kg, `;
+                                        }
+                                    singleItem +=`</p></div>`;
                                 }
                                 
                                 if(allTotalRecevied >= quotation){ 
@@ -279,20 +288,20 @@ $po_number = request()->po_number ?? '';
         $('#'+id).val(null).trigger('change');
     }
 
-    async function fetchReceivedYarn(po_number, style) {
-        try {
-            const response = await fetch(`/get-recevied-total-yarn-by-style?po_number=${encodeURIComponent(po_number)}&style=${encodeURIComponent(style)}`);
+    // async function fetchReceivedYarn(po_number, style) {
+    //     try {
+    //         const response = await fetch(`/get-recevied-total-yarn-by-style?po_number=${encodeURIComponent(po_number)}&style=${encodeURIComponent(style)}`);
 
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.status}`);
-            }
+    //         if (!response.ok) {
+    //             throw new Error(`Network response was not ok: ${response.status}`);
+    //         }
 
-            const totalReceived = await response.json();
-            return totalReceived;
-        } catch (error) {
-            console.error('Error fetching received yarn:', error);
-        }
-    }
+    //         const totalReceived = await response.json();
+    //         return totalReceived;
+    //     } catch (error) {
+    //         console.error('Error fetching received yarn:', error);
+    //     }
+    // }
 
 </script>
 @endsection

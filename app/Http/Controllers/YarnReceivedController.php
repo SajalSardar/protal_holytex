@@ -80,6 +80,8 @@ class YarnReceivedController extends Controller {
                 ->where('id', $item['yarn_id'])
                 ->first();
 
+            $totalYearnQut = $yearnQut->quantity + $yearnQut->from_stock_quantity;
+
             $yearnReceivedTotal = $yearnQut->yarn_received_sum_quantity + $yearnQut->yarn_loss_sum_quantity + $yearnQut->store_stock_sum_quantity;
             $yarnRec            = array_key_exists('netting', $item) ? $item['netting'] : 0;
             $yarnLossRec        = array_key_exists('loss', $item) ? $item['loss'] : 0;
@@ -89,7 +91,7 @@ class YarnReceivedController extends Controller {
 
             $onlyRecSum = $yearnQut->yarn_received_sum_quantity + $yarnRec;
 
-            if (array_key_exists('netting', $item) && $item['netting'] > 0 && $yearnQut->quantity > $yearnReceivedTotal && $yearnQut->quantity >= $total) {
+            if (array_key_exists('netting', $item) && $item['netting'] > 0 && $totalYearnQut > $yearnReceivedTotal && $totalYearnQut >= $total) {
                 $successMessageStatus = true;
                 YarnReceived::create([
                     'yarn_quotation_id'  => $item['yarn_id'],
@@ -110,7 +112,7 @@ class YarnReceivedController extends Controller {
                 ]);
             }
 
-            if (array_key_exists('loss', $item) && $item['loss'] > 0 && $yearnQut->quantity > $yearnReceivedTotal && $yearnQut->quantity >= $total) {
+            if (array_key_exists('loss', $item) && $item['loss'] > 0 && $totalYearnQut > $yearnReceivedTotal && $totalYearnQut >= $total) {
                 $successMessageStatus = true;
                 YarnLoss::create([
                     'yarn_quotation_id' => $item['yarn_id'],
@@ -119,7 +121,7 @@ class YarnReceivedController extends Controller {
                 ]);
             }
 
-            if (array_key_exists('stock', $item) && $item['stock'] > 0 && $yearnQut->quantity > $yearnReceivedTotal && $yearnQut->quantity >= $total) {
+            if (array_key_exists('stock', $item) && $item['stock'] > 0 && $totalYearnQut > $yearnReceivedTotal && $totalYearnQut >= $total) {
                 $successMessageStatus = 1;
                 YarnStoreStock::create([
                     'yarn_quotation_id' => $item['yarn_id'],
@@ -140,7 +142,7 @@ class YarnReceivedController extends Controller {
                 ]);
             }
 
-            if ((float) $yearnQut->quantity === (float) $total) {
+            if ((float) $totalYearnQut === (float) $total) {
                 $yearnQut->update([
                     'status'        => 'recevied',
                     'delivery_date' => $request->received_date,

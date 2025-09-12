@@ -696,10 +696,12 @@
                                                         <thead>
                                                             <tr>
                                                                 <th>Style</th>
+                                                                <th>From Stock(KG)</th>
                                                                 <th>Qty(KG)</th>
-                                                                <th>Nett. Recv.(KG)</th>
                                                                 <th>Price</th>
                                                                 <th>Total Price</th>
+                                                                <th>Total Qty</th>
+                                                                <th>Knit. Recv.(KG)</th>
                                                                 <th>Status</th>
                                                                 <th>No Received</th>
                                                                 <th>Received</th>
@@ -710,11 +712,14 @@
                                                         <tbody>
                                                             <tr>
                                                                 <td>{{ $item->style }}</td>
+                                                                <td>{{ $item->from_stock_quantity }}</td>
                                                                 <td>{{ $item->quantity }}</td>
-                                                                <td>{{ $item->netting_received ?? '--' }}</td>
                                                                 <td>{{ $item->price }}</td>
                                                                 <td>{{ $item->total_price }}</td>
-                                                                <td>{{ $item->status }}</td>
+                                                                <td>{{ number_format($item->quantity +
+                                                                    $item->from_stock_quantity,2) }}</td>
+                                                                <td>{{ $item->netting_received ?? '0' }}</td>
+                                                                <td>{{ Str::ucfirst($item->status) }}</td>
                                                                 <td>{{ number_format(($item->netting_received ??
                                                                     $item->quantity) -
                                                                     $totalNeetingRecevied, 2) }}</td>
@@ -747,7 +752,7 @@
 
                                                     <tbody>
                                                         <tr>
-                                                            <td>{{ $item->approximate_delivery_date }}</td>
+                                                            <td>{{ $item->approximate_delivery_date ?? '--' }}</td>
                                                             <td>{{ $item->delivery_date ?? '--' }}</td>
                                                             <td>{{ $item->remarks }}</td>
                                                             <td>{{ $item->approvedBy->name ?? '--' }}</td>

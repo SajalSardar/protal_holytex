@@ -183,17 +183,18 @@ $po_number = request()->po_number ?? '';
                                         <input type="hidden" name="items[${item.id}][style]" value="${item.style}">
                                         
                                         <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Description</label><input class="form-control" value="${item.description}" readonly></div>
+                                        <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">From Stock</label><input type="text" class="form-control" readonly value="${item.from_stock_quantity}"></div>
                                         <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Quotation(KG)</label><input type="text" class="form-control" readonly value="${item.quantity}"></div>
                                         <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.yarn_received_sum_quantity??0}"></div>
                                         <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Loss</label><input type="text" class="form-control" readonly  value="${item.yarn_loss_sum_quantity ?? 0}"></div>
                                         <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store In Stock</label><input type="text" class="form-control" readonly value="${item.store_stock_sum_quantity ?? 0}"></div>
                                         <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">No Received</label><input type="text" class="form-control" readonly value="${noreceived}"></div>
-                                        <div class="col-md-2 pe-0 mb-3"><label class="label text-secondary">Yarn Factory</label><input class="form-control" readonly value="${item.yarn_factory.name}"></div>
-                                        <div class="col-md-2 mb-3"><label class="label text-secondary">Netting Factory</label><input class="form-control" readonly value="${item.netting_factory.name}"></div>
-                                    `;
+                                        <div class="col-md-1 pe-0 mb-3"><label class="label text-secondary">Yarn Factory</label><input class="form-control" readonly value="${item.yarn_factory.name}"></div>
+                                        <div class="col-md-2 mb-3"><label class="label text-secondary">Knit Factory</label><input class="form-control" readonly value="${item.netting_factory.name}"></div>
+                                    </div>`;
                                     if(allTotalRecevied >= quotation){ 
                                         singleItem +=`<div class="col-12">
-                                                        <div class="alert alert-success mb-3">Total Received Done!</div>
+                                                        <div class="alert alert-success mb-3">Total Quotation Received Done!</div>
                                                     </div> <hr class="m-0">`;
                                     }else{
                                         singleItem +=`<div class="col-12">

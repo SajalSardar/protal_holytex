@@ -16,15 +16,15 @@ class NettingReceivedController extends Controller {
         $receivedStyles = YarnQuotation::where('po_number', $po_number)
             ->get()
             ->groupBy('style')
-            ->map(fn($items) => $items->every(fn($i) => $i->status === 'recevied'))
+            ->map(fn($items) => $items->every(fn($i) => $i->status === 'received'))
             ->filter()
             ->keys();
-
-        $yearns = NettingQuotation::with('dyeingFactory', 'nettingFactory', 'garmentsFactory')
+        $yearns = NettingQuotation::with('nettingQuotationItems.dyeingFactory', 'nettingFactory', 'nettingQuotationItems.garmentsFactory')
             ->withSum('nettingReceived', 'quantity')
             ->withSum('nettingLoss', 'quantity')
             ->withSum('storeStock', 'quantity')
             ->withSum('nettingReceiveGarments', 'quantity')
+            ->withSum('yarenReceivedNettingFactory', 'quantity')
             ->where('po_number', $po_number)
             ->whereIn('style', $receivedStyles->toArray())
             ->where('status', 'approved')
@@ -67,7 +67,7 @@ class NettingReceivedController extends Controller {
      */
     public function create() {
 
-        $yarnreceived = YarnQuotation::where('status', 'recevied')->groupby('po_number')
+        $yarnreceived = YarnQuotation::where('status', 'received')->groupby('po_number')
             ->pluck('po_number');
 
         $requestPo = request()->po_number;
@@ -95,7 +95,7 @@ class NettingReceivedController extends Controller {
             ->groupBy(['po_number', 'style'])
             ->map(fn($styles) =>
                 $styles->map(fn($items) =>
-                    $items->every(fn($i) => $i->status === 'recevied')
+                    $items->every(fn($i) => $i->status === 'received')
                 )->filter() // remove false values
             )
             ->filter(fn($styles) => $styles->isNotEmpty())

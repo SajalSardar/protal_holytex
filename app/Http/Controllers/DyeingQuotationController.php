@@ -13,19 +13,13 @@ class DyeingQuotationController extends Controller {
     public function getNetting($po_number) {
         $dyeing = DyeingQuotation::where('po_number', $po_number)->pluck('style');
 
-        // $nettings = NettingQuotation::with('dyeingFactory', 'nettingFactory')
-        //     ->where('po_number', $po_number)
-        //     ->where('status', 'approved')
-        //     ->where('delivery_factory_type', 'dyeing')
-        //     ->whereNotIn('style', $dyeing)
-        //     ->get();
-
         $nettings = NettingQuotation::with('nettingQuotationItems.dyeingFactory', 'nettingFactory')
             ->where('po_number', $po_number)
             ->where('status', 'approved')
             ->where('delivery_factory_type', 'dyeing')
             ->whereNotIn('style', $dyeing)
             ->get();
+        // ->groupBy(['style']);
 
         if ($nettings->isNotEmpty()) {
             return $nettings;
@@ -60,27 +54,30 @@ class DyeingQuotationController extends Controller {
      * Store a newly created resource in storage.
      */
     public function store(Request $request) {
-        // return $request;
+        //return $request;
         $request->validate([
             'po_number' => 'required',
         ]);
 
-        foreach ($request->items as $key => $item) {
-            DyeingQuotation::create([
-                'order_id'                  => $request->order_id,
-                'order_number'              => $request->order_number,
-                'style'                     => $key,
-                'po_number'                 => $request->po_number,
-                'purchase_date'             => $request->order_date,
-                'approximate_delivery_date' => $request->approximate_delivery_date,
-                'quantity'                  => $item['quantity'],
-                'price'                     => $item['rate'],
-                'total_price'               => $item['total'],
-                'delivery_point_id'         => $item['delivery_point'],
-                'dyeing_factory_id'         => $item['dyeing_factory_id'],
-                'remarks'                   => $request->remarks,
-                'created_by'                => Auth::id(),
-            ]);
+        foreach ($request->items as $style => $items) {
+            foreach ($items as $index => $item) {
+                DyeingQuotation::create([
+                    'order_id'                  => $request->order_id,
+                    'order_number'              => $request->order_number,
+                    'style'                     => $style,
+                    'po_number'                 => $request->po_number,
+                    'purchase_date'             => $request->order_date,
+                    'approximate_delivery_date' => $request->approximate_delivery_date,
+                    'from_stock_quantity'       => $item['from_stock'],
+                    'quantity'                  => $item['quot_quantity'],
+                    'price'                     => $item['rate'],
+                    'total_price'               => $item['total'],
+                    'delivery_point_id'         => $item['delivery_point'],
+                    'dyeing_factory_id'         => $item['dyeing_factory_id'],
+                    'remarks'                   => $request->remarks,
+                    'created_by'                => Auth::id(),
+                ]);
+            }
         }
 
         toastr('Dyeing Successfully Created!');

@@ -154,26 +154,30 @@ $po_number = request()->po_number ?? '';
                                 </div>`;
                     // Append new options
                     Object.entries(data).forEach(([key, items]) => {
-                        singleItem +=`<div class="col-lg-12">
+                        singleItem +=`
                             <div class="accordion mb-5" style="border-bottom:5px solid #605dff;">
-                        <div class="accordion-item">
-                                <h2 class="accordion-header mb-3">
-                                    <button style="background: #605dff;" class="accordion-button text-uppercase text-white"
-                                        type="button" data-bs-toggle="collapse" data-bs-target="#collapse${key}">
-                                        <strong>Style: ${key}</strong>
-                                    </button>
-                                </h2>
-                            <div id="collapse${key}" class="accordion-collapse collapse show">
-                                <div class="accordion-body p-0 px-2">`;
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header mb-3">
+                                        <button style="background: #605dff;" class="accordion-button text-uppercase text-white"
+                                            type="button" data-bs-toggle="collapse" data-bs-target="#collapse${key}">
+                                            <strong>Style: ${key}</strong>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse${key}" class="accordion-collapse collapse show">
+                                        <div class="accordion-body p-0 px-2">`;
                          items.forEach(item => {
                             order_id = item.order_id;
                             order_number = item.order_number;
                             let quotation = parseFloat(item.quantity);
+                            let stock_quantity = parseFloat(item.from_stock_quantity);
                             let allTotalRecevied =
-                                                (Number(item.yarn_received_sum_quantity) || 0) +
+                                                (Number(item.yarn_received_only_qot_sum_quantity) || 0) +
                                                 (Number(item.yarn_loss_sum_quantity) || 0) +
                                                 (Number(item.store_stock_sum_quantity) || 0);
                             let noreceived = parseFloat(quotation - allTotalRecevied).toFixed(2);
+                            let totalQot = stock_quantity
+
+                            let noreceivedstock = stock_quantity - (Number(item.yarn_received_from_stock_sum_quantity) || 0).toFixed(2)
                             singleItem +=`
                                     <div class="row my-4">
                                         <input type="hidden" name="items[${item.id}][yarn_id]" value="${item.id}">
@@ -183,48 +187,51 @@ $po_number = request()->po_number ?? '';
                                         <input type="hidden" name="items[${item.id}][style]" value="${item.style}">
                                         
                                         <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Description</label><input class="form-control" value="${item.description}" readonly></div>
-                                        <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">From Stock</label><input type="text" class="form-control" readonly value="${item.from_stock_quantity}"></div>
-                                        <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Quotation(KG)</label><input type="text" class="form-control" readonly value="${item.quantity}"></div>
-                                        <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.yarn_received_sum_quantity??0}"></div>
-                                        <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Loss</label><input type="text" class="form-control" readonly  value="${item.yarn_loss_sum_quantity ?? 0}"></div>
-                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store In Stock</label><input type="text" class="form-control" readonly value="${item.store_stock_sum_quantity ?? 0}"></div>
-                                        <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">No Received</label><input type="text" class="form-control" readonly value="${noreceived}"></div>
-                                        <div class="col-md-1 pe-0 mb-3"><label class="label text-secondary">Yarn Factory</label><input class="form-control" readonly value="${item.yarn_factory.name}"></div>
+                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Stock Quotation</label><input type="text" class="form-control" readonly value="${item.from_stock_quantity || 0}"></div>
+                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Quotation(KG)</label><input type="text" class="form-control" readonly value="${item.quantity}"></div>
+                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Total Quotation</label><input type="text" class="form-control" readonly value="${(quotation + stock_quantity).toFixed(2)}"></div>
+                                        
+                                        <div class="col-md-2 pe-0 mb-3"><label class="label text-secondary">Yarn Factory</label><input class="form-control" readonly value="${item.yarn_factory.name}"></div>
                                         <div class="col-md-2 mb-3"><label class="label text-secondary">Knit Factory</label><input class="form-control" readonly value="${item.netting_factory.name}"></div>
-                                    </div>`;
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 mb-3">
+                                            <h4 class="fs-18 text-primary">Receive Quantity(Yarn, Loss, Store In Stock)</h4>
+                                        </div>   
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-3 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.yarn_received_sum_quantity || 0}"></div>
+                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Quotation Loss</label><input type="text" class="form-control" readonly  value="${item.yarn_loss_sum_quantity || 0}"></div>
+                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store In Stock</label><input type="text" class="form-control" readonly value="${item.store_stock_sum_quantity || 0}"></div>
+                                        <div class="col-lg-3 pe-0 mb-3"><label class="label text-secondary">No Quot. Received</label><input type="text" class="form-control" readonly value="${noreceived}"></div>
+                                        <div class="col-lg-2 mb-3"><label class="label text-secondary">No Stock Received</label><input type="text" class="form-control" readonly value="${noreceivedstock}"></div>
+                                    </div>
+                                    `;
                                     if(allTotalRecevied >= quotation){ 
                                         singleItem +=`<div class="col-12">
                                                         <div class="alert alert-success mb-3">Total Quotation Received Done!</div>
-                                                    </div> <hr class="m-0">`;
+                                                    </div><div class="bg-warning w-100" style="height:3px"></div>`;
                                     }else{
-                                        singleItem +=`<div class="col-12">
-                                                <div class="row">
-                                                    <div class="col-12 mb-2 mt-3">
-                                                        <h4 class="fs-16 text-primary">Receive Quantity(Yarn, Loss, Store In Stock)</h4>
-                                                    </div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Lot No.</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][loat_no]"></div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Bags</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][bag_count]"></div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Yarn(KG)</label><input type="text" max="${noreceived}" id="netting_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][netting]"></div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Loss(KG)</label><input type="text" class="form-control" max="${noreceived}" id="loss_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][loss]"></div>
-                                                    <div class="col-lg-4 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="items[${item.id}][remarks]"></textarea></div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store Stock</label><input type="text" class="form-control" max="${noreceived}" id="store_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][stock]"></div>
-                                                    <div class="col-lg-4 mb-3"><label class="label text-secondary">Store Address</label><textarea rows="1" class="form-control" name="items[${item.id}][store_address]"></textarea></div>
-                                                    
-                                                </div>
+                                        singleItem +=`<div class="row">
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Lot No.</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][loat_no]"></div>
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Bags</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][bag_count]"></div>
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Yarn(KG)</label><input type="text" max="${noreceived}" id="netting_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][netting]"></div>
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Loss(KG)</label><input type="text" class="form-control" max="${noreceived}" id="loss_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][loss]"></div>
+                                                <div class="col-lg-4 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="items[${item.id}][remarks]"></textarea></div>
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store Stock</label><input type="text" class="form-control" max="${noreceived}" id="store_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][stock]"></div>
+                                                <div class="col-lg-4 mb-3"><label class="label text-secondary">Store Address</label><textarea rows="1" class="form-control" name="items[${item.id}][store_address]"></textarea></div> 
                                             </div>
-                                        </div> <hr class="m-0">`;
+                                        <div class="bg-warning w-100" style="height:3px"></div>`;
                                     }
                         });
-                       singleItem +=`</div></div></div>
-                                    </div></div></div>`;
+                       singleItem +=`</div></div></div></div></div>`;
                     });
                    
                     singleItem +=`<div class="col-lg-12 my-3">
                                     <div class="d-flex flex-wrap gap-3">
                                         <button type="submit" class="btn btn-primary py-2 px-4 fw-medium fs-16"> <i
                                                 class="ri-add-line text-white fw-medium"></i> Create</button>
-                                    </div>
-                                </div>`;
+                                    </div></div>`;
                     display_div.html(singleItem);
                     $('#order_id').val(order_id);
                      $('#order_number').val(order_number);

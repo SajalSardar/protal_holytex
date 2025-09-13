@@ -15,6 +15,8 @@ class YarnReceivedController extends Controller {
             ->withSum('yarnReceived', 'quantity')
             ->withSum('yarnLoss', 'quantity')
             ->withSum('storeStock', 'quantity')
+            ->withSum('yarnReceivedFromStock', 'quantity')
+            ->withSum('yarnReceivedOnlyQot', 'quantity')
             ->where('po_number', $po_number)
             ->where('status', 'approved')
             ->get()

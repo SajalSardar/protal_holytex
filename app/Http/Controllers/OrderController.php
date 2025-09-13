@@ -92,6 +92,8 @@ class OrderController extends Controller {
             'orderDetails.lastUpdateBy:id,name',
             'yarnQuotations'        => function ($q) {
                 $q->withSum('yarnReceived', 'quantity')
+                    ->withSum('yarnReceivedFromStock', 'quantity')
+                    ->withSum('yarnReceivedOnlyQot', 'quantity')
                     ->withSum('yarnLoss', 'quantity')
                     ->withSum('storeStock', 'quantity');
             },

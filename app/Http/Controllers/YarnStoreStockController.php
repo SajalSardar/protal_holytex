@@ -96,6 +96,7 @@ class YarnStoreStockController extends Controller {
         if ($request->input_loss > 0 && $totalYearnQut > $yearnReceivedTotal && $totalYearnQut >= $total) {
 
             YarnLoss::create([
+                'yarn_quotation_id' => $request->yarn_quotation_id,
                 'is_stock_received' => 'Yes',
                 'stock_id'          => $request->stock_id,
                 'quantity'          => $request->input_loss,

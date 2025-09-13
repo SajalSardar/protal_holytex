@@ -330,32 +330,42 @@
                                                         <thead>
                                                             <tr>
                                                                 <th>Description</th>
-                                                                <th>From Strock</th>
-                                                                <th>Qty(KG)</th>
-                                                                <th>Price</th>
-                                                                <th>Total Price</th>
+                                                                <th>Strock Qot</th>
+                                                                <th>Qot Qty(KG)</th>
+                                                                <th>Qot Unit Price</th>
+                                                                <th>Qot Total Price</th>
                                                                 <th>Total Qty.</th>
                                                                 <th>Status</th>
-                                                                <th>No Received</th>
+                                                                <th>No Qot. Rece.</th>
+                                                                <th>No Stock. Rece.</th>
                                                                 <th>Received</th>
                                                                 <th>Loss</th>
-                                                                <th>Store In Stock</th>
+                                                                <th>Store Stock</th>
                                                             </tr>
                                                         </thead>
 
                                                         <tbody>
                                                             @php
+                                                            $noReceivedStockTotal = 0.00;
                                                             $noReceivedTotal = 0.00;
                                                             $allTotalQty = 0.00;
                                                             @endphp
                                                             @foreach ($items as $item)
                                                             @php
-                                                            $totalDelevary = $item->yarn_received_sum_quantity +
+                                                            $totalQotDelevary =
+                                                            $item->yarn_received_only_qot_sum_quantity
+                                                            +
                                                             $item->yarn_loss_sum_quantity +
                                                             $item->store_stock_sum_quantity;
-                                                            $totalQty = $item->quantity + $item->from_stock_quantity;
-                                                            $noReceivedTotal +=$totalQty - $totalDelevary;
+
+                                                            // $totalQty = $item->quantity + $item->from_stock_quantity;
+                                                            $totalQty = $item->quantity;
+                                                            $noReceivedTotal +=$totalQty - $totalQotDelevary;
                                                             $allTotalQty +=$totalQty;
+
+                                                            $noReceivedStock = $item->from_stock_quantity -
+                                                            $item->yarn_received_from_stock_sum_quantity;
+                                                            $noReceivedStockTotal += $noReceivedStock;
                                                             @endphp
                                                             <tr>
                                                                 <td>{{ $item->description }}</td>
@@ -363,10 +373,14 @@
                                                                 <td>{{ $item->quantity }}</td>
                                                                 <td>{{ $item->price }}</td>
                                                                 <td>{{ $item->total_price }}</td>
-                                                                <td>{{ number_format($totalQty, 2) }}
+                                                                <td>{{ number_format($totalQty+
+                                                                    $item->from_stock_quantity, 2) }}
                                                                 </td>
                                                                 <td>{{ Str::ucfirst($item->status) }}</td>
-                                                                <td>{{ number_format($totalQty - $totalDelevary,2)
+                                                                <td>{{ number_format($totalQty - $totalQotDelevary,2)
+                                                                    ?? '--' }}
+                                                                </td>
+                                                                <td>{{ number_format($noReceivedStock,2)
                                                                     ?? '--' }}
                                                                 </td>
                                                                 <td>{{ $item->yarn_received_sum_quantity ?? '--' }}</td>
@@ -404,6 +418,9 @@
                                                                 </td>
                                                                 <td><strong class="text-primary">{{
                                                                         number_format($noReceivedTotal, 2)
+                                                                        }}KG</strong></td>
+                                                                <td><strong class="text-primary">{{
+                                                                        number_format($noReceivedStockTotal, 2)
                                                                         }}KG</strong></td>
                                                                 <td>
                                                                     <strong class="text-primary">{{

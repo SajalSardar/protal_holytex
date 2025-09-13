@@ -17,6 +17,9 @@ class YarnQuotation extends Model {
     public function yarnReceived() {
         return $this->hasMany(YarnReceived::class, 'yarn_quotation_id');
     }
+    public function yarnReceivedOnlyQot() {
+        return $this->hasMany(YarnReceived::class, 'yarn_quotation_id')->where('is_stock_received', 'No')->whereNull('stock_id');
+    }
     public function yarnReceivedFromStock() {
         return $this->hasMany(YarnReceived::class, 'yarn_quotation_id')->where('is_stock_received', 'Yes')->whereNotNull('stock_id');
     }
@@ -24,7 +27,7 @@ class YarnQuotation extends Model {
         return $this->hasMany(YarnLoss::class, 'yarn_quotation_id')->where('is_stock_received', 'Yes')->whereNotNull('stock_id');
     }
     public function yarnLoss() {
-        return $this->hasMany(YarnLoss::class, 'yarn_quotation_id');
+        return $this->hasMany(YarnLoss::class, 'yarn_quotation_id')->where('is_stock_received', 'No')->whereNull('stock_id');
     }
     public function storeStock() {
         return $this->hasMany(YarnStoreStock::class, 'yarn_quotation_id');

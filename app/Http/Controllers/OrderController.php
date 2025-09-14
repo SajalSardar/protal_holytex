@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderDelivered;
 use App\Models\OrderDetail;
 use App\Models\Style;
 use Illuminate\Http\Request;
@@ -85,11 +86,14 @@ class OrderController extends Controller {
 
         $order = $order->load([
             'orderDetails',
+            'orderDetails.creator:id,name',
+            'orderDetails.lastUpdateBy:id,name',
+            'orderDetails'          => function ($q) {
+                $q->withSum('orderDeliveryQty', 'quantity');
+            },
             'approvedBy',
             'creator',
             'lastUpdateBy',
-            'orderDetails.creator:id,name',
-            'orderDetails.lastUpdateBy:id,name',
             'yarnQuotations'        => function ($q) {
                 $q->withSum('yarnReceived', 'quantity')
                     ->withSum('yarnReceivedFromStock', 'quantity')
@@ -226,4 +230,89 @@ class OrderController extends Controller {
     public function destroy(Order $order) {
         //
     }
+
+    /**
+     * distribute Order.
+     */
+    public function distributeOrder(Order $order) {
+        $order->load([
+            'orderDetails.orderDeliveryQty.garmentsFactory',
+            'orderDetails' => function ($q) {
+                $q->withSum('orderDeliveryQty', 'quantity');
+            },
+        ]);
+
+        // return $order;
+        return view('order.distribute', compact('order'));
+    }
+
+    public function deliveredOrder(Request $request) {
+        // return $request;
+        if (!$request->items) {
+            toastr('Enter right quantity!', 'error');
+            return back();
+        }
+
+        $request->validate([
+            'challan_file' => "nullable|max:512|image",
+        ]);
+
+        $path = null;
+        if ($request->hasFile('challan_file')) {
+            $path = $request->file('challan_file')->store('order_delivary_challan', 'public');
+        }
+        $successMessageStatus = 0;
+
+        foreach ($request->items as $styls) {
+            $totalInputQut = collect($styls)->sum('quantity');
+            foreach ($styls as $item) {
+
+                $orderDetail = OrderDetail::withSum('orderDeliveryQty', 'quantity')->where('id', $item['order_details_id'])->first();
+
+                $nrq = $totalInputQut + $orderDetail->order_delivery_qty_sum_quantity;
+
+                if ($orderDetail->unit_quantity < $nrq) {
+                    toastr('Enter right quantity!', 'error');
+                }
+
+                if (array_key_exists('quantity', $item) && $item['quantity'] > 0 && $orderDetail->unit_quantity >= $nrq) {
+                    $successMessageStatus = 1;
+                    OrderDelivered::create([
+                        'order_id'            => $item['order_id'],
+                        'order_details_id'    => $item['order_details_id'],
+                        'quantity'            => $item['quantity'],
+                        'lot_number'          => $item['loat_no'],
+                        'bag_count'           => $item['bag_count'],
+                        'challan_date'        => $request->challan_date,
+                        'challan_number'      => $request->challan_number,
+                        'vehicle_number'      => $request->vehicle_number,
+                        'received_date'       => $request->received_date,
+                        'created_by'          => Auth::id(),
+                        'remarks'             => $item['remarks'],
+                        'garments_factory_id' => $item['garments_factory_id'],
+                        'challan_file'        => $path,
+                    ]);
+
+                }
+
+                if ((float) $orderDetail->unit_quantity === (float) $nrq) {
+                    $orderDetail->update([
+                        'status'     => 'received',
+                        'updated_by' => Auth::id(),
+                    ]);
+                }
+
+            }
+
+        }
+
+        if ($successMessageStatus === 1) {
+            toastr('Data Successfully Created!');
+            return back();
+        } else {
+            toastr('No Input data found!', 'error');
+            return back();
+        }
+    }
+
 }

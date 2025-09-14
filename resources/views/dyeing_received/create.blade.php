@@ -164,9 +164,9 @@ $po_number = request()->po_number ?? '';
                         <div id="collapse${key}" class="accordion-collapse collapse show">
                             <div class="accordion-body p-0 px-2">`;
                     for (const item of items) {
-                         const totalReceviedNettCa = await fetchReceivedNetting(po_number, key);
+                         const totalReceviedNettCa = await fetchReceivedNetting(po_number, key,item.dyeing_factory_id);
                         const totalReceviedNettData = totalReceviedNettCa.total_received || 0;
-
+                        // console.log(totalReceviedNettCa);
                         order_id = item.order_id;
                         order_number = item.order_number;
                         let quotation = parseFloat(item.quantity);
@@ -181,13 +181,13 @@ $po_number = request()->po_number ?? '';
                                     <input type="hidden" name="items[${item.id}][delivery_point_id]" value="${item.delivery_point_id}">
                                     <input type="hidden" name="items[${item.id}][dyeing_factory_id]" value="${item.dyeing_factory_id}">
                                     <input type="hidden" name="items[${item.id}][style]" value="${item.style}">                          
-                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Quotation(KG)</label><input type="text" class="form-control" readonly value="${item.quantity}"></div>
-                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Netting Recv.</label><input type="text" class="form-control" readonly  name="items[${item.id}][netting_received]" value="${totalReceviedNettData}"></div>
-                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.dyeing_receive_garments_sum_quantity || 0}"></div>
-                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store In Stock</label><input type="text" class="form-control" readonly value="${item.dyeing_store_stock_sum_quantity || 0}"></div>
-                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">No Received</label><input type="text" class="form-control" readonly value="${noreceived}"></div>
-                                    <div class="col-md-2 mb-3"><label class="label text-secondary">Dyeing Factory</label><input class="form-control" readonly value="${item.dyeing_factory.name}"></div>
-                                    <div class="col-md-2 pe-0 mb-3"><label class="label text-secondary">Netting Factory</label><input class="form-control" readonly value="${item.garments_factory.name}"></div>`;
+                                    <div class="col-lg pe-0 mb-3"><label class="label text-secondary">Quotation(KG)</label><input type="text" class="form-control" readonly value="${item.quantity}"></div>
+                                    <div class="col-lg pe-0 mb-3"><label class="label text-secondary">Netting Recv.</label><input type="text" class="form-control" readonly  name="items[${item.id}][netting_received]" value="${totalReceviedNettData}"></div>
+                                    <div class="col-lg pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.dyeing_receive_garments_sum_quantity || 0}"></div>
+                                    <div class="col-lg pe-0 mb-3"><label class="label text-secondary">Store In Stock</label><input type="text" class="form-control" readonly value="${item.dyeing_store_stock_sum_quantity || 0}"></div>
+                                    <div class="col-lg pe-0 mb-3"><label class="label text-secondary">No Received</label><input type="text" class="form-control" readonly value="${noreceived}"></div>
+                                    <div class="col-lg pe-0 mb-3"><label class="label text-secondary">Dyeing Factory</label><input class="form-control" readonly value="${item.dyeing_factory.name}"></div>
+                                    <div class="col-lg mb-3"><label class="label text-secondary">Garments Factory</label><input class="form-control" readonly value="${item.garments_factory.name}"></div>`;
                         if(allTotalRecevied >= quotation){ 
                             singleItem +=`<div class="col-12">
                                             <div class="alert alert-success mb-3">Total Received Done!</div>
@@ -202,7 +202,7 @@ $po_number = request()->po_number ?? '';
                                         <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Bags</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][bag_count]"></div>
                                         <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Netting(KG)</label><input type="text" max="${noreceived}" id="netting_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][netting]"></div>
                                         <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store In Stock</label><input type="text" max="${noreceived}" id="store_stokc_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][store_stock]"></div>
-                                        <div class="col-lg-2 mb-3"><label class="label text-secondary">Store Address</label><textarea rows="1" class="form-control" name="items[${item.id}][store_address]"></textarea></div>
+                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store Address</label><textarea rows="1" class="form-control" name="items[${item.id}][store_address]"></textarea></div>
                                         <div class="col-lg-2 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="items[${item.id}][remarks]"></textarea></div>
                                         
                                     </div>
@@ -255,9 +255,9 @@ $po_number = request()->po_number ?? '';
     }
 
 
-    async function fetchReceivedNetting(po_number, style) {
+    async function fetchReceivedNetting(po_number, style,dyeing_id) {
         try {
-            const response = await fetch(`/get-recevied-total-netting-by-style?po_number=${encodeURIComponent(po_number)}&style=${encodeURIComponent(style)}`);
+            const response = await fetch(`/get-recevied-total-netting-by-style?po_number=${encodeURIComponent(po_number)}&style=${encodeURIComponent(style)}&dyeing_id=${encodeURIComponent(dyeing_id)}`);
 
             if (!response.ok) {
                 throw new Error(`Network response was not ok: ${response.status}`);

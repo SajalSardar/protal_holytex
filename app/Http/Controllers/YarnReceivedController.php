@@ -30,9 +30,11 @@ class YarnReceivedController extends Controller {
     public function getReceviedTotalYarnByStyle(Request $request) {
         $po_number = $request->query('po_number');
         $style     = $request->query('style');
+        $knit_fact = $request->query('knit_fact');
 
         $totalReceived = YarnReceived::where('po_number', $po_number)
             ->where('style', $style)
+            ->where('netting_factory_id', $knit_fact)
             ->sum('quantity');
 
         // Always return JSON
@@ -146,7 +148,7 @@ class YarnReceivedController extends Controller {
 
             if ((float) $totalYearnQut === (float) $total) {
                 $yearnQut->update([
-                    'status'        => 'recevied',
+                    'status'        => 'received',
                     'delivery_date' => $request->received_date,
                     'updated_by'    => Auth::id(),
                 ]);

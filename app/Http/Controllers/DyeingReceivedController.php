@@ -55,7 +55,7 @@ class DyeingReceivedController extends Controller {
         //     ->get();
 
         $nettingQut = NettingQuotation::select('po_number')
-            ->where('status', 'recevied')
+            ->where('status', 'received')
             ->groupby('po_number')
             ->pluck('po_number');
 
@@ -99,6 +99,7 @@ class DyeingReceivedController extends Controller {
 
                 NettingReceivedGarments::create([
                     'dyeing_quotation_id'  => $item['dyeing_qty_id'],
+                    'garments_factory_id'  => $item['delivery_point_id'],
                     'delived_factory_type' => 'dyeing',
                     'po_number'            => $request->po_number,
                     'style'                => $item['style'],

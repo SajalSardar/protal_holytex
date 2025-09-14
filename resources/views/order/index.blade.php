@@ -88,6 +88,14 @@
                                                             <i
                                                                 class="material-symbols-outlined fs-16 text-primary">contact_page</i>
                                                             Update Status</a></li>
+                                                    <li>
+                                                        <a class="dropdown-item py-2"
+                                                            href="{{ route('order.distribute',$item->id) }}">
+                                                            <i
+                                                                class="material-symbols-outlined fs-16 text-primary">contact_page</i>
+                                                            Distribute
+                                                        </a>
+                                                    </li>
                                                     <li><a class="dropdown-item py-2"
                                                             href="{{ route('order.show',$item->id) }}"> <i
                                                                 class="material-symbols-outlined fs-16 text-primary">visibility</i>

@@ -24,7 +24,6 @@ class NettingReceivedController extends Controller {
             ->withSum('nettingLoss', 'quantity')
             ->withSum('storeStock', 'quantity')
             ->withSum('nettingReceiveGarments', 'quantity')
-            ->withSum('yarenReceivedNettingFactory', 'quantity')
             ->where('po_number', $po_number)
             ->whereIn('style', $receivedStyles->toArray())
             ->where('status', 'approved')
@@ -41,9 +40,11 @@ class NettingReceivedController extends Controller {
     public function getReceviedTotalNettingByStyle(Request $request) {
         $po_number = $request->query('po_number');
         $style     = $request->query('style');
+        $dyeing_id = $request->query('dyeing_id');
 
         $totalReceived = NettingReceived::where('po_number', $po_number)
             ->where('style', $style)
+            ->where('receving_point_id', $dyeing_id)
             ->sum('quantity');
 
         // Always return JSON
@@ -217,7 +218,7 @@ class NettingReceivedController extends Controller {
 
             if ((float) $item['yarn_recevied'] === (float) $total) {
                 $nettingQut->update([
-                    'status'        => 'recevied',
+                    'status'        => 'received',
                     'delivery_date' => $request->received_date,
                     'updated_by'    => Auth::id(),
                 ]);

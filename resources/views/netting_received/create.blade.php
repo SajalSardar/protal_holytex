@@ -94,7 +94,7 @@ $po_number = request()->po_number ?? '';
                 if (!response.ok) throw new Error('Network response was not ok');
 
                 const data = await response.json();
-                console.log('API response:', data);
+                // console.log('API response:', data);
 
                 let order_id = null;
                 let order_number = null;
@@ -164,9 +164,9 @@ $po_number = request()->po_number ?? '';
                         <div id="collapse${key}" class="accordion-collapse collapse show">
                             <div class="accordion-body p-0 px-2">`;
                         for (const item of items) {
-                            // const totalReceviedYarnCa = await fetchReceivedYarn(po_number, key);
-                            const totalReceviedYarnData = item.yaren_received_netting_factory_sum_quantity || 0;
-
+                            const totalReceviedYarnCa = await fetchReceivedYarn(po_number, key,item.netting_factory_id);
+                            // const totalReceviedYarnData = item.yaren_received_netting_factory_sum_quantity || 0;
+                            // console.log(totalReceviedYarnCa.total_received);
                             order_id = item.order_id;
                             order_number = item.order_number;
                             let quotation = parseFloat(item.quantity);
@@ -175,8 +175,8 @@ $po_number = request()->po_number ?? '';
                                                 (Number(item.netting_loss_sum_quantity) || 0) +
                                                 (Number(item.netting_receive_garments_sum_quantity) || 0) +
                                                 (Number(item.store_stock_sum_quantity) || 0);
-                            // let noreceived = parseFloat(quotation - allTotalRecevied).toFixed(2);
-                            let noreceived = parseFloat(totalReceviedYarnData - allTotalRecevied).toFixed(2);
+                            let noreceived = parseFloat(totalReceviedYarnCa.total_received - allTotalRecevied).toFixed(2);
+                            // let noreceived = parseFloat(totalReceviedYarnData - allTotalRecevied).toFixed(2);
                             
                             if(item.delivery_factory_type === "garments"){
                                 singleItem +=` <input type="hidden" name="items[${item.id}][receving_factory_type]" value="${item.delivery_factory_type}">`;
@@ -186,13 +186,12 @@ $po_number = request()->po_number ?? '';
                             singleItem +=`
                                 <div class="row mt-4">
                                     <input type="hidden" name="items[${item.id}][netting_id]" value="${item.id}">
-                                    <input type="hidden" name="items[${item.id}][dyeing_factory_id]" value="${item.delivery_point_id}">
                                     <input type="hidden" name="items[${item.id}][netting_factory_id]" value="${item.netting_factory_id}">
                                     <input type="hidden" name="items[${item.id}][style]" value="${item.style}">
                                     
-                                    <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">From Stock</label><input type="text" class="form-control" readonly value="${item.from_stock_quantity}"></div>
+                                    <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">From Stock</label><input type="text" class="form-control" readonly value="${item.from_stock_quantity || 0}"></div>
                                     <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Quotation(KG)</label><input type="text" class="form-control" readonly value="${item.quantity}"></div>
-                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Yarn Recevied(KG)</label><input type="text" class="form-control" readonly name="items[${item.id}][yarn_recevied]" value="${totalReceviedYarnData || 0}"></div>`;
+                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Yarn Recevied(KG)</label><input type="text" class="form-control" readonly name="items[${item.id}][yarn_recevied]" value="${totalReceviedYarnCa.total_received || 0}"></div>`;
                                     if(item.delivery_factory_type === "garments"){
                                     singleItem +=`<div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.netting_receive_garments_sum_quantity || 0}"></div>
                                     `;
@@ -237,6 +236,14 @@ $po_number = request()->po_number ?? '';
                                                 <div class="col-lg-4 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="items[${item.id}][remarks]"></textarea></div>
                                                 <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store Stock</label><input type="text" class="form-control" max="${noreceived}" id="store_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][stock]"></div>
                                                 <div class="col-lg-4 mb-3"><label class="label text-secondary">Store Address</label><textarea rows="1" class="form-control" name="items[${item.id}][store_address]"></textarea></div>                            
+                                                <div class="col-lg-3 mb-3"><label class="label text-secondary">Dyeing Factory</label>
+                                                    <select name="items[${item.id}][dyeing_factory_id]" class="form-control">
+                                                        <option value="">Select Dyeing</option>`;
+                                                        for (const nitem of item.netting_quotation_items){
+                                                            singleItem +=`<option value="${nitem.dyeing_factory.id}">${nitem.dyeing_factory.name}</option>`;
+                                                        }
+                                    singleItem +=`  </select>
+                                                </div>                            
                                             </div>
                                         </div>
                                     </div> <hr class="m-0">`;
@@ -288,20 +295,20 @@ $po_number = request()->po_number ?? '';
         $('#'+id).val(null).trigger('change');
     }
 
-    // async function fetchReceivedYarn(po_number, style) {
-    //     try {
-    //         const response = await fetch(`/get-recevied-total-yarn-by-style?po_number=${encodeURIComponent(po_number)}&style=${encodeURIComponent(style)}`);
+    async function fetchReceivedYarn(po_number, style,knit_fact) {
+        try {
+            const response = await fetch(`/get-recevied-total-yarn-by-style?po_number=${encodeURIComponent(po_number)}&style=${encodeURIComponent(style)}&knit_fact=${encodeURIComponent(knit_fact)}`);
 
-    //         if (!response.ok) {
-    //             throw new Error(`Network response was not ok: ${response.status}`);
-    //         }
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.status}`);
+            }
 
-    //         const totalReceived = await response.json();
-    //         return totalReceived;
-    //     } catch (error) {
-    //         console.error('Error fetching received yarn:', error);
-    //     }
-    // }
+            const totalReceived = await response.json();
+            return totalReceived;
+        } catch (error) {
+            console.error('Error fetching received yarn:', error);
+        }
+    }
 
 </script>
 @endsection

@@ -35,6 +35,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::resource('order', OrderController::class);
+    Route::get('order-distribute/{order}', [OrderController::class, 'distributeOrder'])->name('order.distribute');
+    Route::post('order-distribute', [OrderController::class, 'deliveredOrder'])->name('order.delivered');
     Route::post('order-update-status', [OrderController::class, 'updateStatus'])->name('order.update.status');
     Route::name('order.details')->controller(OrderDetailController::class)->group(function () {
 

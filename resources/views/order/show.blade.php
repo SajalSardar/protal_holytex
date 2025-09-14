@@ -253,13 +253,17 @@
                             </div>
                         </div>
                         <div class="tab-pane fade" id="order_details">
-                            <div class="default-table-area style-two default-table-width">
+                            <div class="default-table-area style-two">
                                 <div class="table-responsive">
-                                    <table class="table align-middle mt-4">
+                                    @php
+                                    $totalDelivered = 0;
+                                    @endphp
+                                    <table class="table align-middle mt-4" style="width: 1800px">
                                         <thead>
                                             <tr>
                                                 <th><strong>Style</strong></th>
                                                 <th><strong>Description</strong></th>
+                                                <th><strong>Delivered(PC)</strong></th>
                                                 <th><strong>Quantity(PC)</strong></th>
                                                 <th><strong>Unit Price</strong></th>
                                                 <th><strong>Total Price</strong></th>
@@ -271,9 +275,13 @@
                                         </thead>
                                         <tbody>
                                             @forelse ($order->orderDetails as $item)
+                                            @php
+                                            $totalDelivered += $item->order_delivery_qty_sum_quantity ?? 0;
+                                            @endphp
                                             <tr>
                                                 <td>{{ $item->style }}</td>
                                                 <td>{{ $item->description }}</td>
+                                                <td>{{ $item->order_delivery_qty_sum_quantity ?? 0 }}</td>
                                                 <td>{{ $item->unit_quantity }}</td>
                                                 <td>{{ $item->unit_price }}</td>
                                                 <td>{{ $item->total_unit_price }}</td>
@@ -292,6 +300,12 @@
                                         <tfoot>
                                             <tr>
                                                 <td colspan="2" class="text-center"><strong>Total:</strong></td>
+                                                <td>
+                                                    <strong>{{
+                                                        number_format($totalDelivered,
+                                                        2)
+                                                        }}PC</strong>
+                                                </td>
                                                 <td colspan="2">
                                                     <strong>{{
                                                         number_format($order->orderDetails->sum('unit_quantity'), 2)
@@ -361,7 +375,7 @@
                                                             // $totalQty = $item->quantity + $item->from_stock_quantity;
                                                             $totalQty = $item->quantity;
                                                             $noReceivedTotal +=$totalQty - $totalQotDelevary;
-                                                            $allTotalQty +=$totalQty;
+                                                            $allTotalQty +=$totalQty + $item->from_stock_quantity;
 
                                                             $noReceivedStock = $item->from_stock_quantity -
                                                             $item->yarn_received_from_stock_sum_quantity;

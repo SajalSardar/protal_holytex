@@ -1,0 +1,40 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
+    public function up(): void {
+        Schema::create('order_delivereds', function (Blueprint $table) {
+            $table->id();
+            $table->bigInteger('order_id')->nullable();
+            $table->bigInteger('order_details_id')->nullable();
+            $table->bigInteger('garments_factory_id')->nullable();
+            $table->decimal('quantity', 10, 2)->nullable();
+            $table->string('unit')->default('pc');
+            $table->string('lot_number')->nullable();
+            $table->string('bag_count')->nullable();
+            $table->date('challan_date')->nullable();
+            $table->string('challan_number')->nullable();
+            $table->string('vehicle_number')->nullable();
+            $table->string('status')->default('received');
+            $table->date('received_date')->nullable()->index();
+            $table->string('challan_file')->nullable();
+            $table->text('remarks')->nullable();
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void {
+        Schema::dropIfExists('order_delivereds');
+    }
+};

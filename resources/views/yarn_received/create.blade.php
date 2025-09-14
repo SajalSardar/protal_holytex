@@ -168,14 +168,15 @@ $po_number = request()->po_number ?? '';
                          items.forEach(item => {
                             order_id = item.order_id;
                             order_number = item.order_number;
-                            let quotation = parseFloat(item.quantity);
-                            let stock_quantity = parseFloat(item.from_stock_quantity);
+                            let quotation = parseFloat(item.quantity) || 0;
+                            let stock_quantity = parseFloat(item.from_stock_quantity) || 0;
                             let allTotalRecevied =
                                                 (Number(item.yarn_received_only_qot_sum_quantity) || 0) +
                                                 (Number(item.yarn_loss_sum_quantity) || 0) +
                                                 (Number(item.store_stock_sum_quantity) || 0);
                             let noreceived = parseFloat(quotation - allTotalRecevied).toFixed(2);
-                            let totalQot = stock_quantity
+                            let totalQot = quotation + stock_quantity
+
 
                             let noreceivedstock = stock_quantity - (Number(item.yarn_received_from_stock_sum_quantity) || 0).toFixed(2)
                             singleItem +=`
@@ -189,7 +190,7 @@ $po_number = request()->po_number ?? '';
                                         <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Description</label><input class="form-control" value="${item.description}" readonly></div>
                                         <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Stock Quotation</label><input type="text" class="form-control" readonly value="${item.from_stock_quantity || 0}"></div>
                                         <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Quotation(KG)</label><input type="text" class="form-control" readonly value="${item.quantity}"></div>
-                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Total Quotation</label><input type="text" class="form-control" readonly value="${(quotation + stock_quantity).toFixed(2)}"></div>
+                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Total Quotation</label><input type="text" class="form-control" readonly value="${(totalQot).toFixed(2)}"></div>
                                         
                                         <div class="col-md-2 pe-0 mb-3"><label class="label text-secondary">Yarn Factory</label><input class="form-control" readonly value="${item.yarn_factory.name}"></div>
                                         <div class="col-md-2 mb-3"><label class="label text-secondary">Knit Factory</label><input class="form-control" readonly value="${item.netting_factory.name}"></div>

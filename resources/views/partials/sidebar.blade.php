@@ -43,7 +43,7 @@
                 </ul>
             </li>
             <li
-                class="menu-item {{ request()->routeIs(['yarnquotation.*', 'nettingquotation.*','dyeingquotation.*','accessoriesquotation.*']) ? 'open' : '' }}">
+                class="menu-item {{ request()->routeIs(['yarnquotation.*', 'nettingquotation.*','dyeingquotation.*','accessoriesquotation.*','dyedquotation.*']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
                     <span class="title">Quotation</span>
@@ -53,6 +53,12 @@
                         <a href="{{ route('yarnquotation.index') }}"
                             class="menu-link {{ request()->routeIs('yarnquotation.*') ? 'active' : '' }}">
                             Yarn Quotation
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('dyedquotation.index') }}"
+                            class="menu-link {{ request()->routeIs('dyedquotation.*') ? 'active' : '' }}">
+                            Dyed Quotation
                         </a>
                     </li>
                     <li class="menu-item">
@@ -152,6 +158,12 @@
                         <a href="{{ route('settings.yarnfactroy.index') }}"
                             class="menu-link {{ request()->routeIs('settings.yarnfactroy.index') ? 'active' : '' }}">
                             Yarn Factory
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('settings.dyedfactory.index') }}"
+                            class="menu-link {{ request()->routeIs('settings.dyedfactory.index') ? 'active' : '' }}">
+                            Dyed Factory
                         </a>
                     </li>
                     <li class="menu-item">

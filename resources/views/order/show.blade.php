@@ -460,7 +460,7 @@
                                                 </div>
                                             </div>
                                             <div class="table-responsive  mt-4">
-                                                <table class="table align-middle">
+                                                <table class="table align-middle" style="width: 1800px">
                                                     <thead class="table-dark">
                                                         <tr>
                                                             <th>Description</th>
@@ -473,7 +473,7 @@
                                                             <th>Last Up. By</th>
                                                             <th>Last Up. At</th>
                                                             <th>Yarn Fac.</th>
-                                                            <th>Netting Fac.</th>
+                                                            <th>Delivery Point</th>
                                                         </tr>
                                                     </thead>
 
@@ -491,9 +491,16 @@
                                                             <td>{{ $item->updated_at->format('d M Y')}}</td>
                                                             <td>Name: {{ $item->yarnFactory->name}} <br> Address: {{
                                                                 $item->yarnFactory->address}}</td>
-                                                            <td>Name: {{ $item->nettingFactory->name}} <br> Address:
-                                                                {{
-                                                                $item->nettingFactory->address}}</td>
+                                                            <td>
+                                                                @if ($item->receving_factory === 'knit')
+                                                                Name: {{ @$item->nettingFactory->name}} <br>
+                                                                Address: {{@$item->nettingFactory->address}}
+                                                                @else
+                                                                Name: {{ @$item->dyedFactory->name}} <br>
+                                                                Address: {{@$item->dyedFactory->address}}
+                                                                @endif
+
+                                                            </td>
                                                         </tr>
                                                         @endforeach
                                                     </tbody>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DyedQuotation;
 use App\Models\NettingQuotation;
 use App\Models\NettingQuotationItem;
 use App\Models\YarnQuotation;
@@ -14,20 +15,29 @@ class NettingQuotationController extends Controller {
         $nettings = NettingQuotation::where('po_number', $po_number)->pluck('style');
         $yearns   = YarnQuotation::with('yarnFactory', 'nettingFactory')
             ->where('po_number', $po_number)
+            ->where('receving_factory', 'knit')
             ->where('status', 'approved')
             ->whereNotIn('style', $nettings)
             ->get()->groupBy(['style', 'netting_factory_id']);
-        if ($yearns->isNotEmpty()) {
-            return $yearns;
-        } else {
-            return response()->json(['message' => 'New Yarn Quotation not found!']);
-        }
+
+        $dyeds = DyedQuotation::with('dyedFactory', 'nettingFactory')
+            ->where('po_number', $po_number)
+            ->whereNotIn('style', $nettings)
+            ->where('status', 'approved')
+            ->get()->groupBy(['style', 'delivery_point_id']);
+
+        return json_encode([
+            'yearns' => $yearns ?? null,
+            'dyeds'  => $dyeds ?? null,
+        ]);
+
     }
 
     /**
      * Display a listing of the resource.
      */
     public function index() {
+        //
         $nettings = NettingQuotation::with('nettingFactory:id,name,address')->orderBy('id', 'desc')->get();
         return view('netting_quotation.index', compact('nettings'));
     }
@@ -37,7 +47,11 @@ class NettingQuotationController extends Controller {
      */
     public function create() {
 
-        $yearns = YarnQuotation::select('po_number')->where('status', 'approved')->groupby('po_number')->get();
+        $yearns = YarnQuotation::select('po_number')
+            ->where('receving_factory', 'knit')
+            ->where('status', 'approved')
+            ->groupby('po_number')
+            ->get();
         return view('netting_quotation.create', compact('yearns'));
     }
 

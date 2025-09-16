@@ -3,6 +3,8 @@
 use App\Http\Controllers\AccessoriesQuotationController;
 use App\Http\Controllers\AccessoriesReceivedController;
 use App\Http\Controllers\AccessoriesStockController;
+use App\Http\Controllers\DyedFactoryController;
+use App\Http\Controllers\DyedQuotationController;
 use App\Http\Controllers\DyeingFactroyController;
 use App\Http\Controllers\DyeingQuotationController;
 use App\Http\Controllers\DyeingReceivedController;
@@ -48,6 +50,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('yarnreceived', YarnReceivedController::class);
     Route::resource('yarnstorestock', YarnStoreStockController::class);
 
+    Route::resource('dyedquotation', DyedQuotationController::class);
+
     Route::resource('nettingquotation', NettingQuotationController::class);
     Route::post('netting-qty-status-update', [NettingQuotationController::class, 'nettingQtyStatusUpdate'])->name('netting.qty.update.status');
     Route::resource('nettingreceived', NettingReceivedController::class);
@@ -68,9 +72,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('nettingfactroy', NettingFactroyController::class)->only(['index', 'edit', 'update', 'store']);
         Route::resource('dyeingfactroy', DyeingFactroyController::class)->only(['index', 'edit', 'update', 'store']);
         Route::resource('garmentsfactroy', GarmentsFactroyController::class)->only(['index', 'edit', 'update', 'store']);
+        Route::resource('dyedfactory', DyedFactoryController::class)->only(['index', 'edit', 'update', 'store']);
     });
     Route::get('get-all-dyeing-factory', [DyeingFactroyController::class, 'showAll']);
+    Route::get('get-all-dyed-factory', [DyedFactoryController::class, 'showAll']);
     Route::get('get-all-garments-factory', [GarmentsFactroyController::class, 'showAll']);
+    Route::get('get-yarn-style-by-po-dyed/{po_number}', [DyedQuotationController::class, 'getYarnStyleByPo']);
     Route::get('get-yarn-style-by-po/{po_number}', [NettingQuotationController::class, 'getYarnStyleByPo']);
     Route::get('get-netting-order/{po_number}', [DyeingQuotationController::class, 'getNetting']);
     Route::get('get-yarn-quotation-by-po/{po_number}', [YarnReceivedController::class, 'getYarnStyleByPo']);

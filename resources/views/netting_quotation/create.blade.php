@@ -141,39 +141,39 @@
                     }
 
                     // Append new options
-                    Object.entries(data).forEach(([key, style]) => {
-                    Object.entries(style).forEach(([keyFa, factoryId]) => {
-                        let total_quantity = 0;
-                        let netting_factory_id = null;
-                        singleItem +=`<div class="card border-0 rounded-3 mb-5">
-                                        <div class="card-header bg-primary">
-                                             <h3 class="text-white" style="text-transform:uppercase">Style: ${key}</h3>
-                                        </div>
-                                        <div class="card-body">
-                                        <table class="table">
-                                            <tr>
-                                                <th>Description</th>
-                                                <th>Quantity(KG)</th>
-                                                <th>Yarn Factory</th>
-                                                <th>Netting Factory</th>
-                                            </tr>`;
-                        factoryId.forEach(item => {
-                            totalQty = parseFloat(item.quantity || 0) + parseFloat(item.from_stock_quantity || 0)
-                            total_quantity += totalQty;
-                            order_number = item.order_number;
-                            order_id = item.order_id;
-                            netting_factory_id =item.netting_factory.id;
-                            singleItem += `
+                    Object.entries(data.yearns).forEach(([key, style]) => {
+                        Object.entries(style).forEach(([keyFa, factoryId]) => {
+                            let total_quantity = 0;
+                            let netting_factory_id = null;
+                            singleItem +=`<div class="card border-0 rounded-3 mb-5">
+                                            <div class="card-header bg-primary">
+                                                <h3 class="text-white" style="text-transform:uppercase">Style: ${key}</h3>
+                                            </div>
+                                            <div class="card-body">
+                                            <table class="table">
+                                                <tr>
+                                                    <th>Description</th>
+                                                    <th>Quantity(KG)</th>
+                                                    <th>Yarn Factory</th>
+                                                    <th>Netting Factory</th>
+                                                </tr>`;
+                            factoryId.forEach(item => {
+                                totalQty = parseFloat(item.quantity || 0) + parseFloat(item.from_stock_quantity || 0)
+                                total_quantity += totalQty;
+                                order_number = item.order_number;
+                                order_id = item.order_id;
+                                netting_factory_id =item.netting_factory.id;
+                                singleItem += `
+                                
+                                    <tr>
+                                        <td>${item.description}</td>
+                                        <td>${totalQty}</td>
+                                        <td>Name:${item.yarn_factory.name} <br> Address:${item.yarn_factory.address}</td>
+                                        <td>Name:${item.netting_factory.name}<br> Address:${item.netting_factory.address}</td>
+                                    </tr>
+                                    `;
                             
-                                <tr>
-                                    <td>${item.description}</td>
-                                    <td>${totalQty}</td>
-                                    <td>Name:${item.yarn_factory.name} <br> Address:${item.yarn_factory.address}</td>
-                                    <td>Name:${item.netting_factory.name}<br> Address:${item.netting_factory.address}</td>
-                                </tr>
-                                `;
-                         
-                        });
+                            });
                                            
                             singleItem +=`<tr>
                                     <td><strong>Total Quantity (KG)</strong></td>
@@ -281,7 +281,148 @@
                                 </div>
                             `;
                         });
-                     });
+                    });
+                    Object.entries(data.dyeds).forEach(([key, style]) => {
+                        Object.entries(style).forEach(([keyFa, factoryId]) => {
+                            let total_quantity = 0;
+                            let netting_factory_id = null;
+                            singleItem +=`<div class="card border-0 rounded-3 mb-5">
+                                            <div class="card-header bg-primary">
+                                                <h3 class="text-white" style="text-transform:uppercase">Style: ${key}</h3>
+                                            </div>
+                                            <div class="card-body">
+                                            <table class="table">
+                                                <tr>
+                                                    <th>Description</th>
+                                                    <th>Quantity(KG)</th>
+                                                    <th>Dyed Factory</th>
+                                                    <th>Netting Factory</th>
+                                                </tr>`;
+                            factoryId.forEach(item => {
+                                totalQty = parseFloat(item.quantity || 0) + parseFloat(item.from_stock_quantity || 0)
+                                total_quantity += totalQty;
+                                order_number = item.order_number;
+                                order_id = item.order_id;
+                                netting_factory_id =item.netting_factory.id;
+                                singleItem += `
+                                
+                                    <tr>
+                                        <td>${item.description}</td>
+                                        <td>${totalQty}</td>
+                                        <td>Name:${item.dyed_factory.name} <br> Address:${item.dyed_factory.address}</td>
+                                        <td>Name:${item.netting_factory.name}<br> Address:${item.netting_factory.address}</td>
+                                    </tr>
+                                    `;
+                            
+                            });
+                                           
+                            singleItem +=`<tr>
+                                    <td><strong>Total Quantity (KG)</strong></td>
+                                    <td><strong>${total_quantity.toFixed(2)}</strong></td>
+                                </tr></table>
+                                
+                                </div>
+                                    <div class="card-footer">
+                                        <div class="row">
+                                            <input type="hidden" value="${netting_factory_id}" name="items[${key}][${keyFa}][netting_factory_id]"> 
+                                            <div class="col-sm-2">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Total Quantity (KG)</label>
+                                                    <input type="text" class="form-control" id="total_quantity_${key}_${keyFa}"  value="${total_quantity.toFixed(2)}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">From Stock(KG)</label>
+                                                    <input type="text" class="form-control" oninput="knitFromQtyCal(this,'${key}_${keyFa}')" id="from_stock_quantity_${key}_${keyFa}" name="items[${key}][${keyFa}][from_stock_quantity]">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Knit Quantity(KG)</label>
+                                                    <input type="text" class="form-control" id="knit_quantity_${key}_${keyFa}" name="items[${key}][${keyFa}][knit_quantity]" value="${total_quantity.toFixed(2)}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Rate(TK)</label>
+                                                    <input type="number" class="form-control" oninput="attachRateCalculation(this,'${key}_${keyFa}')" name="items[${key}][${keyFa}][rate]"  id="rate_${key}_${keyFa}" min="1">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <div class="form-group mb-4">
+                                                    <label class="label text-secondary">Total</label>
+                                                    <input type="number" class="form-control" id="total_amount_${key}_${keyFa}" name="items[${key}][${keyFa}][total]" readonly>
+                                                    
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <p class="label text-secondary">Delivery to garments factory?</p>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label>
+                                                        <input type="radio" class="form-check-input" style="border:1px solid #000" name="items[${key}][${keyFa}][delevary_poin_check]" value="dyeing" onclick="showHideDeliveryPoint(this,'${key}','${keyFa}')"> No</label>
+                                                        <label class="ms-3">
+                                                        <input type="radio" class="form-check-input" style="border:1px solid #000" name="items[${key}][${keyFa}][delevary_poin_check]" value="garments" onclick="showHideDeliveryPoint(this,'${key}','${keyFa}')"> Yes</label>
+                                                    </div>    
+                                                </div>
+                                            </div>
+
+                                            <div class=col-12" id="garments_select_section_${key}_${keyFa}" style="display:none;">
+                                                <div id="garments_add_row_container_${key}_${keyFa}">
+                                                    <div class="row">
+                                                        <div class="col-sm-3">
+                                                            <div class="form-group mb-4">
+                                                                <label class="label text-secondary">Quantity(KG)</label>
+                                                                <input type="number" class="form-control quantity_${key}_${keyFa}" data-id_prefix="${key}_${keyFa}" oninput="calculateQuantity(this,'${key}_${keyFa}')" name="items[${key}][${keyFa}][inner_items][1][quantity]"  id="quantity_${key}_${keyFa}" min="1">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3 col-sm-3">
+                                                            <div class="form-group mb-4">
+                                                                <label class="label text-secondary">Delivery Point</label>
+                                                                <select name="items[${key}][${keyFa}][inner_items][1][delivery_point]" id="garments_${key}_${keyFa}" class="form-control select2">
+                                                                    <option value="" selected disabled>Select Garments Factory</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2 align-self-center mb-3">
+                                                    <button type="button" id="add_new_row_${key}_${keyFa}" onclick="addNewRows('garments','${key}','${keyFa}')" class="btn btn-warning py-2 px-2 fw-medium fs-14">Add row</button>
+                                                </div>
+                                            </div>
+
+                                            <div class=col-12" id="deying_select_section_${key}_${keyFa}" style="display:none;">
+                                                <div id="dyeing_add_row_container_${key}_${keyFa}">
+                                                    <div class="row">
+                                                        <div class="col-sm-3">
+                                                            <div class="form-group mb-4">
+                                                                <label class="label text-secondary">Quantity(KG)</label>
+                                                                <input type="number" class="form-control quantity_${key}_${keyFa}" data-id_prefix="${key}_${keyFa}" oninput="calculateQuantity(this,'${key}_${keyFa}')" name="items[${key}][${keyFa}][inner_items][1][quantity]"  id="quantity_${key}_${keyFa}" min="1">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                            <div class="form-group mb-4">
+                                                                <label class="label text-secondary">Delivery Point</label>
+                                                                <select name="items[${key}][${keyFa}][inner_items][1][delivery_point]" class="form-control select2" id="deying_point_${key}_${keyFa}">
+                                                                    <option value="" selected disabled>Select Deying Factory</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2 align-self-center mb-3">
+                                                    <button type="button" id="add_new_row_${key}_${keyFa}" onclick="addNewRows('deying','${key}','${keyFa}')" class="btn btn-warning py-2 px-2 fw-medium fs-14">Add row</button>
+                                                </div>
+                                            </div>
+
+
+                                        </div>  
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    });
                     
                      display_div.html(singleItem);
                     

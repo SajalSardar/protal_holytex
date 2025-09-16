@@ -102,6 +102,7 @@ class OrderController extends Controller {
                     ->withSum('storeStock', 'quantity');
             },
             'yarnQuotations.yarnFactory:id,name,address',
+            'yarnQuotations.dyedFactory:id,name,address',
             'yarnQuotations.nettingFactory:id,name,address',
             'yarnQuotations.creator:id,name',
             'yarnQuotations.lastUpdateBy:id,name',

@@ -14,6 +14,9 @@ class YarnQuotation extends Model {
     public function nettingFactory() {
         return $this->hasOne(NettingFactroy::class, 'id', 'netting_factory_id');
     }
+    public function dyedFactory() {
+        return $this->hasOne(DyedFactory::class, 'id', 'dyed_factory_id');
+    }
     public function yarnReceived() {
         return $this->hasMany(YarnReceived::class, 'yarn_quotation_id');
     }

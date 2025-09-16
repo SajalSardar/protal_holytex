@@ -124,7 +124,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2 col-sm-6">
+                            <div class="col-lg-2 col-sm-6 px-0">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Style</label>
                                     <select class="form-select form-control select2" id="style_select">
@@ -135,7 +135,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-lg-2 col-sm-6 pe-0">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Yarn Description</label>
                                     <textarea rows="1" class="form-control" placeholder="Write your note here...."
@@ -144,26 +144,34 @@
                             </div>
                             <div class="col-lg-2 col-sm-6">
                                 <div class="form-group mb-4">
+                                    <label class="label text-secondary">From Stock(KG)</label>
+                                    <input type="text" class="form-control " placeholder="Fill Up from stock"
+                                        id="from_stock"
+                                        oninput="this.value = this.value.replace(/^(\d*\.?\d{0,2}).*$/, '$1')">
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-6 pe-0">
+                                <div class="form-group mb-4">
                                     <label class="label text-secondary">Quantity(KG)</label>
                                     <input type="number" class="form-control " placeholder="Quantity" id="unit_quantity"
                                         min="1">
                                 </div>
                             </div>
-                            <div class="col-lg-2 col-sm-6">
+                            <div class="col-lg-2 col-sm-6 pe-0">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Price(TK)</label>
                                     <input type="number" class="form-control " min="1" placeholder="Unit Price"
                                         id="unit_price">
                                 </div>
                             </div>
-                            <div class="col-lg-3 col-sm-6">
+                            <div class="col-lg-2 col-sm-6 pe-0">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Total Price</label>
                                     <input type="text" readonly class="form-control " placeholder="Unit Price"
                                         id="total_unit_price">
                                 </div>
                             </div>
-                            <div class="col-lg-2 col-sm-6">
+                            <div class="col-lg-2 col-sm-6 px-0">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Yarn Factory</label>
                                     <select name="yarn_factory" id="yarn_factory" class="form-control select2">
@@ -174,27 +182,33 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-2 col-sm-6">
+                            <div class="col-lg-2 col-sm-6 pe-0">
                                 <div class="form-group mb-4">
-                                    <label class="label text-secondary">Delivery Point</label>
-                                    <select name="delivery_point" id="delivery_point" class="form-control select2">
-                                        <option value="" selected disabled>Select Netting Factory</option>
+                                    <label class="label text-secondary">Knit Factory</label>
+                                    <select name="delivery_point" id="delivery_point"
+                                        onchange="selectOneDeliveryPoin('delivery_point')" class="form-control select2">
+                                        <option value="" selected disabled>Select Knit Factory</option>
                                         @foreach ($nettingFactory as $item)
                                         <option value="{{ $item->id }}">{{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-2 col-sm-6">
+                            <div class="col-lg-2 col-sm-6 pe-0">
                                 <div class="form-group mb-4">
-                                    <label class="label text-secondary">From Stock(KG)</label>
-                                    <input type="text" class="form-control " placeholder="Fill Up from stock"
-                                        id="from_stock">
+                                    <label class="label text-secondary">Dyed Factory</label>
+                                    <select name="delivery_point" onchange="selectOneDeliveryPoin('dyed_factory')"
+                                        id="dyed_factory" class="form-control select2">
+                                        <option value="" selected disabled>Select Dyed Factory</option>
+                                        @foreach ($dyenFactory as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-lg-1 col-sm-6 align-self-center">
                                 <button type="button" id="add_item_btn" class="btn btn-danger fs-15 text-white"
-                                    style="height:55px" onclick="addToTable()">Add +
+                                    style="height:45px" onclick="addToTable()">Add +
                                 </button>
                             </div>
 
@@ -222,8 +236,6 @@
 <script>
     $(function() {
         $('.select2').select2();
-
-
         $('#po_number').on('change',function(){
             var po_number = $('#po_number option:selected').text();
             var order_number = $(this).val();
@@ -286,6 +298,21 @@
         });
 
     });
+
+    let isResetting = false; 
+    function selectOneDeliveryPoin(selectBox){
+        
+        if (isResetting) return;
+        isResetting = true;
+        if (selectBox === "delivery_point") {
+            $('#dyed_factory').val(null).trigger('change.select2');
+        }
+
+        if (selectBox === "dyed_factory") {
+            $('#delivery_point').val(null).trigger('change.select2');
+        }
+         isResetting = false;
+    }
     
     const unit_price = document.getElementById("unit_price");
     const unit_quantity = document.getElementById("unit_quantity");
@@ -313,6 +340,7 @@
         const from_stock = document.getElementById("from_stock");
         const yarn_factory = document.getElementById("yarn_factory");
         const delivery_point = document.getElementById("delivery_point");
+        const dyed_factory = document.getElementById("dyed_factory");
         const tableBody = document.getElementById("item_price_table").getElementsByTagName("tbody")[0];
 
         if (!style.value || style.value == '') {
@@ -335,8 +363,8 @@
             alert("Please Select yarn factory.");
             return;
         }
-        if (!delivery_point.value) {
-            alert("Please Select netting factory.");
+        if (!delivery_point.value && !dyed_factory.value) {
+            alert("Please Select Knit Or Dyed factory.");
             return;
         }
 
@@ -371,6 +399,7 @@
 
         if (editingRow) {
         // Update existing row
+            
             editingRow.cells[0].innerHTML = `${style.value} <input type="hidden" value="${style.value}" name="style[]">`;
             editingRow.cells[1].innerHTML = `${description.value} <input type="hidden" value="${description.value}" name="description[]">`;
             editingRow.cells[2].innerHTML = `${from_stock.value} <input type="hidden" value="${from_stock.value}" name="from_stock[]">`;
@@ -378,7 +407,13 @@
             editingRow.cells[4].innerHTML = `${unit_price.value} <input type="hidden" value="${unit_price.value}" name="unit_price[]">`;
             editingRow.cells[5].innerHTML = `${totalVal} <input type="hidden" value="${totalVal}" name="total_unit_price[]">`;
             editingRow.cells[6].innerHTML = `${yarn_factory.options[yarn_factory.selectedIndex].text} <input type="hidden" value="${yarn_factory.value}" name="yarn_factory[]">`;
-            editingRow.cells[7].innerHTML = `${delivery_point.options[delivery_point.selectedIndex].text} <input type="hidden" value="${delivery_point.value}" name="delivery_point[]">`;
+ 
+            if(dyed_factory.value){
+                editingRow.cells[7].innerHTML = `${dyed_factory.options[dyed_factory.selectedIndex].text} <input type="hidden" value="${dyed_factory.value}" name="delivery_point[]"><input type="hidden" value="dyed" name="delivery_fact_type[]">`;
+            }else{
+                editingRow.cells[7].innerHTML = `${delivery_point.options[delivery_point.selectedIndex].text} <input type="hidden" value="${delivery_point.value}" name="delivery_point[]"><input type="hidden" value="knit" name="delivery_fact_type[]">`;
+            }
+            
             editingRow = null;
             add_item_btn.textContent = 'Add +';
         } else {
@@ -392,7 +427,10 @@
                 <td>${unit_price.value} <input type="hidden" value="${unit_price.value}" name="unit_price[]"></td>
                 <td>${totalVal} <input type="hidden" value="${totalVal}" name="total_unit_price[]"></td>
                 <td>${yarn_factory.options[yarn_factory.selectedIndex].text} <input type="hidden" value="${yarn_factory.value}" name="yarn_factory[]"></td>
-                <td>${delivery_point.options[delivery_point.selectedIndex].text} <input type="hidden" value="${delivery_point.value}" name="delivery_point[]"></td>
+                <td>${dyed_factory.value ? dyed_factory.options[dyed_factory.selectedIndex].text : delivery_point.options[delivery_point.selectedIndex].text }
+                    <input type="hidden" value="${dyed_factory.value ? dyed_factory.value :delivery_point.value}" name="delivery_point[]">
+                    <input type="hidden" value="${dyed_factory.value ? 'dyed' : 'knit'}" name="delivery_fact_type[]">
+                </td>
                 <td class="text-end">
                 <i class="material-symbols-outlined fs-16 text-body edit-btn" style="cursor:pointer;">edit</i>
                 <i class="material-symbols-outlined fs-16 text-danger delete-btn" style="cursor:pointer;">delete</i>
@@ -430,7 +468,8 @@
             const unit_price = document.getElementById("unit_price");
             const total_unit_price = document.getElementById("total_unit_price");
             const yarn_factory = document.getElementById("yarn_factory");
-            const delivery_point = document.getElementById("delivery_point");
+            // const delivery_point = document.getElementById("delivery_point");
+            // const dyed_factory = document.getElementById("dyed_factory");
             const from_stock = document.getElementById("from_stock");
 
             // ✅ Get text from text node only (exclude input elements)
@@ -444,7 +483,13 @@
             let yarn_factory_value = row.cells[6].childNodes[1].value.trim();
             let netting_factory_value = row.cells[7].childNodes[1].value.trim();
             $('#yarn_factory').val(yarn_factory_value).trigger('change');
-            $('#delivery_point').val(netting_factory_value).trigger('change');
+
+            let factType      = row.cells[7].querySelector('input[name="delivery_fact_type[]"]').value;
+            if(factType === 'dyed'){
+                $('#dyed_factory').val(netting_factory_value).trigger('change');
+            }else{
+                $('#delivery_point').val(netting_factory_value).trigger('change');
+            }
 
 
             add_item_btn.textContent = 'Update';

@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DyeingQuotation;
+use App\Models\DyedFactory;
 use App\Models\NettingFactroy;
-use App\Models\NettingQuotation;
 use App\Models\Order;
 use App\Models\YarnFactroy;
 use App\Models\YarnQuotation;
@@ -34,7 +33,8 @@ class YarnQuotationController extends Controller {
         $orders         = Order::where('status', 'approved')->pluck('po_number', 'id');
         $yarnFactory    = YarnFactroy::where('status', 'active')->get();
         $nettingFactory = NettingFactroy::where('status', 'active')->get();
-        return view('yarn_quotation.create', compact('orders', 'yarnFactory', 'nettingFactory'));
+        $dyenFactory    = DyedFactory::where('status', 'active')->get();
+        return view('yarn_quotation.create', compact('orders', 'yarnFactory', 'nettingFactory', 'dyenFactory'));
     }
 
     /**
@@ -50,8 +50,8 @@ class YarnQuotationController extends Controller {
 
         foreach ($request->style as $key => $item) {
 
-            $netting = NettingQuotation::where('po_number', $request->po_number)->where('style', $item)->first();
-            $dyeing  = DyeingQuotation::where('po_number', $request->po_number)->where('style', $item)->first();
+            // $netting = NettingQuotation::where('po_number', $request->po_number)->where('style', $item)->first();
+            // $dyeing  = DyeingQuotation::where('po_number', $request->po_number)->where('style', $item)->first();
 
             $yarnCreate = YarnQuotation::create([
                 'order_number'              => $request->order_number,
@@ -66,23 +66,31 @@ class YarnQuotationController extends Controller {
                 'price'                     => $request->unit_price[$key],
                 'total_price'               => $request->total_unit_price[$key],
                 'yarn_factory_id'           => $request->yarn_factory[$key],
-                'netting_factory_id'        => $request->delivery_point[$key],
+                'receving_factory'          => $request->delivery_fact_type[$key],
                 'remarks'                   => $request->remarks,
                 'created_by'                => Auth::id(),
             ]);
 
-            if ($netting && $yarnCreate) {
-                $netting->update([
-                    'quantity'    => $netting->quantity + $request->unit_quantity[$key],
-                    'total_price' => ($netting->quantity + $request->unit_quantity[$key]) * $netting->price,
-                ]);
+            if ($request->delivery_fact_type[$key] === "knit") {
+                $yarnCreate->netting_factory_id = $request->delivery_point[$key];
             }
-            if ($dyeing && $yarnCreate) {
-                $dyeing->update([
-                    'quantity'    => $dyeing->quantity + $request->unit_quantity[$key],
-                    'total_price' => ($dyeing->quantity + $request->unit_quantity[$key]) * $dyeing->price,
-                ]);
+            if ($request->delivery_fact_type[$key] === "dyed") {
+                $yarnCreate->dyed_factory_id = $request->delivery_point[$key];
             }
+            $yarnCreate->save();
+
+            // if ($netting && $yarnCreate) {
+            //     $netting->update([
+            //         'quantity'    => $netting->quantity + $request->unit_quantity[$key],
+            //         'total_price' => ($netting->quantity + $request->unit_quantity[$key]) * $netting->price,
+            //     ]);
+            // }
+            // if ($dyeing && $yarnCreate) {
+            //     $dyeing->update([
+            //         'quantity'    => $dyeing->quantity + $request->unit_quantity[$key],
+            //         'total_price' => ($dyeing->quantity + $request->unit_quantity[$key]) * $dyeing->price,
+            //     ]);
+            // }
         }
 
         toastr('Order Successfully Created!');

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DyedQuotation;
 use App\Models\YarnLoss;
 use App\Models\YarnQuotation;
 use App\Models\YarnReceived;
 use App\Models\YarnStoreStock;
+use function Pest\Laravel\json;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,8 +24,23 @@ class YarnReceivedController extends Controller {
             ->where('status', 'approved')
             ->get()
             ->groupBy('style');
+
+        $dyedYearns = DyedQuotation::with('dyedFactory', 'nettingFactory')
+            ->withSum('yarnReceived', 'quantity')
+            ->withSum('yarnLoss', 'quantity')
+            ->withSum('storeStock', 'quantity')
+            ->withSum('yarnReceivedFromStock', 'quantity')
+            ->withSum('yarnReceivedOnlyQot', 'quantity')
+            ->where('po_number', $po_number)
+            ->where('status', 'approved')
+            ->get()
+            ->groupBy('style');
+
         if ($yearns) {
-            return $yearns;
+            return json_encode([
+                'yearns'     => $yearns,
+                'dyedYearns' => $dyedYearns,
+            ]);
         } else {
             return 'Yarn not found!';
         }
@@ -69,6 +86,7 @@ class YarnReceivedController extends Controller {
      */
     public function store(Request $request) {
 
+        // return $request;
         $request->validate([
             'challan_file' => "nullable|max:512|image",
         ]);
@@ -78,83 +96,174 @@ class YarnReceivedController extends Controller {
             $path = $request->file('challan_file')->store('yarn_received_challan', 'public');
         }
         $successMessageStatus = false;
-        foreach ($request->items as $item) {
-            $yearnQut = YarnQuotation::withSum('yarnReceived', 'quantity')
-                ->withSum('yarnLoss', 'quantity')
-                ->withSum('storeStock', 'quantity')
-                ->where('id', $item['yarn_id'])
-                ->first();
+        if ($request->yarn) {
+            foreach ($request->yarn as $item) {
 
-            $totalYearnQut = $yearnQut->quantity + $yearnQut->from_stock_quantity;
+                if ($item['netting'] > 0 || $item['loss'] > 0 || $item['stock'] > 0) {
+                    $yearnQut = YarnQuotation::withSum('yarnReceived', 'quantity')
+                        ->withSum('yarnLoss', 'quantity')
+                        ->withSum('storeStock', 'quantity')
+                        ->where('id', $item['yarn_id'])
+                        ->first();
 
-            $yearnReceivedTotal = $yearnQut->yarn_received_sum_quantity + $yearnQut->yarn_loss_sum_quantity + $yearnQut->store_stock_sum_quantity;
-            $yarnRec            = array_key_exists('netting', $item) ? $item['netting'] : 0;
-            $yarnLossRec        = array_key_exists('loss', $item) ? $item['loss'] : 0;
-            $stockLossRec       = array_key_exists('stock', $item) ? $item['stock'] : 0;
-            $newReceived        = $yarnRec + $yarnLossRec + $stockLossRec;
-            $total              = $newReceived + $yearnReceivedTotal;
+                    $totalYearnQut = $yearnQut->quantity + $yearnQut->from_stock_quantity;
 
-            $onlyRecSum = $yearnQut->yarn_received_sum_quantity + $yarnRec;
+                    $yearnReceivedTotal = $yearnQut->yarn_received_sum_quantity + $yearnQut->yarn_loss_sum_quantity + $yearnQut->store_stock_sum_quantity;
+                    $yarnRec            = array_key_exists('netting', $item) ? $item['netting'] : 0;
+                    $yarnLossRec        = array_key_exists('loss', $item) ? $item['loss'] : 0;
+                    $stockLossRec       = array_key_exists('stock', $item) ? $item['stock'] : 0;
+                    $newReceived        = $yarnRec + $yarnLossRec + $stockLossRec;
+                    $total              = $newReceived + $yearnReceivedTotal;
+                }
 
-            if (array_key_exists('netting', $item) && $item['netting'] > 0 && $totalYearnQut > $yearnReceivedTotal && $totalYearnQut >= $total) {
-                $successMessageStatus = true;
-                YarnReceived::create([
-                    'yarn_quotation_id'  => $item['yarn_id'],
-                    'po_number'          => $request->po_number,
-                    'style'              => $item['style'],
-                    'quantity'           => $item['netting'],
-                    'lot_number'         => $item['loat_no'],
-                    'bag_count'          => $item['bag_count'],
-                    'challan_date'       => $request->challan_date,
-                    'challan_number'     => $request->challan_number,
-                    'vehicle_number'     => $request->vehicle_number,
-                    'received_date'      => $request->received_date,
-                    'received_by'        => Auth::id(),
-                    'remarks'            => $item['remarks'],
-                    'yarn_factory_id'    => $item['yarn_factory_id'],
-                    'netting_factory_id' => $item['netting_factory_id'],
-                    'challan_file'       => $path,
-                ]);
+                if (array_key_exists('netting', $item) && $item['netting'] > 0 && $totalYearnQut > $yearnReceivedTotal && $totalYearnQut >= $total) {
+                    $successMessageStatus = true;
+                    YarnReceived::create([
+                        'yarn_quotation_id'    => $item['yarn_id'],
+                        'po_number'            => $request->po_number,
+                        'style'                => $item['style'],
+                        'quantity'             => $item['netting'],
+                        'lot_number'           => $item['loat_no'],
+                        'bag_count'            => $item['bag_count'],
+                        'challan_date'         => $request->challan_date,
+                        'challan_number'       => $request->challan_number,
+                        'vehicle_number'       => $request->vehicle_number,
+                        'received_date'        => $request->received_date,
+                        'received_by'          => Auth::id(),
+                        'remarks'              => $item['remarks'],
+                        'yarn_factory_id'      => $item['yarn_factory_id'],
+                        'netting_factory_id'   => $item['netting_factory_id'],
+                        'challan_file'         => $path,
+                        'delived_factory_type' => $item['delived_factory_type'],
+                    ]);
+                }
+
+                if (array_key_exists('loss', $item) && $item['loss'] > 0 && $totalYearnQut > $yearnReceivedTotal && $totalYearnQut >= $total) {
+                    $successMessageStatus = true;
+                    YarnLoss::create([
+                        'yarn_quotation_id'    => $item['yarn_id'],
+                        'quantity'             => $item['loss'],
+                        'created_by'           => Auth::id(),
+                        'delived_factory_type' => $item['delived_factory_type'],
+                    ]);
+                }
+
+                if (array_key_exists('stock', $item) && $item['stock'] > 0 && $totalYearnQut > $yearnReceivedTotal && $totalYearnQut >= $total) {
+                    $successMessageStatus = true;
+                    YarnStoreStock::create([
+                        'yarn_quotation_id'    => $item['yarn_id'],
+                        'po_number'            => $request->po_number,
+                        'style'                => $item['style'],
+                        'quantity'             => $item['stock'],
+                        'lot_number'           => $item['loat_no'],
+                        'bag_count'            => $item['bag_count'],
+                        'store_address'        => $item['store_address'],
+                        'challan_date'         => $request->challan_date,
+                        'challan_number'       => $request->challan_number,
+                        'vehicle_number'       => $request->vehicle_number,
+                        'received_date'        => $request->received_date,
+                        'remarks'              => $item['remarks'],
+                        'challan_file'         => $path,
+                        'created_by'           => Auth::id(),
+                        'delived_factory_type' => $item['delived_factory_type'],
+                    ]);
+                }
+
+                if ($item['netting'] > 0 || $item['loss'] > 0 || $item['stock'] > 0) {
+                    if ((float) $totalYearnQut === (float) $total) {
+                        $yearnQut->update([
+                            'status'        => 'received',
+                            'delivery_date' => $request->received_date,
+                            'updated_by'    => Auth::id(),
+                        ]);
+                    }
+                }
+
             }
+        }
+        if ($request->dyed) {
+            foreach ($request->dyed as $item) {
+                if ($item['netting'] > 0 || $item['loss'] > 0 || $item['stock'] > 0) {
+                    $yearnQut = DyedQuotation::withSum('yarnReceived', 'quantity')
+                        ->withSum('yarnLoss', 'quantity')
+                        ->withSum('storeStock', 'quantity')
+                        ->where('id', $item['dyed_id'])
+                        ->first();
 
-            if (array_key_exists('loss', $item) && $item['loss'] > 0 && $totalYearnQut > $yearnReceivedTotal && $totalYearnQut >= $total) {
-                $successMessageStatus = true;
-                YarnLoss::create([
-                    'yarn_quotation_id' => $item['yarn_id'],
-                    'quantity'          => $item['loss'],
-                    'created_by'        => Auth::id(),
-                ]);
+                    $totalYearnQut = $yearnQut->quantity + $yearnQut->from_stock_quantity;
+
+                    $yearnReceivedTotal = $yearnQut->yarn_received_sum_quantity + $yearnQut->yarn_loss_sum_quantity + $yearnQut->store_stock_sum_quantity;
+                    $yarnRec            = array_key_exists('netting', $item) ? $item['netting'] : 0;
+                    $yarnLossRec        = array_key_exists('loss', $item) ? $item['loss'] : 0;
+                    $stockLossRec       = array_key_exists('stock', $item) ? $item['stock'] : 0;
+                    $newReceived        = $yarnRec + $yarnLossRec + $stockLossRec;
+                    $total              = $newReceived + $yearnReceivedTotal;
+                }
+
+                if (array_key_exists('netting', $item) && $item['netting'] > 0 && $totalYearnQut > $yearnReceivedTotal && $totalYearnQut >= $total) {
+                    $successMessageStatus = true;
+                    YarnReceived::create([
+                        'dyed_quotation_id'    => $item['dyed_id'],
+                        'po_number'            => $request->po_number,
+                        'style'                => $item['style'],
+                        'quantity'             => $item['netting'],
+                        'lot_number'           => $item['loat_no'],
+                        'bag_count'            => $item['bag_count'],
+                        'challan_date'         => $request->challan_date,
+                        'challan_number'       => $request->challan_number,
+                        'vehicle_number'       => $request->vehicle_number,
+                        'received_date'        => $request->received_date,
+                        'received_by'          => Auth::id(),
+                        'remarks'              => $item['remarks'],
+                        'dyed_factory_id'      => $item['dyed_factory_id'],
+                        'netting_factory_id'   => $item['netting_factory_id'],
+                        'challan_file'         => $path,
+                        'delived_factory_type' => $item['delived_factory_type'],
+                    ]);
+                }
+
+                if (array_key_exists('loss', $item) && $item['loss'] > 0 && $totalYearnQut > $yearnReceivedTotal && $totalYearnQut >= $total) {
+                    $successMessageStatus = true;
+                    YarnLoss::create([
+                        'dyed_quotation_id'    => $item['dyed_id'],
+                        'quantity'             => $item['loss'],
+                        'created_by'           => Auth::id(),
+                        'delived_factory_type' => $item['delived_factory_type'],
+                    ]);
+                }
+
+                if (array_key_exists('stock', $item) && $item['stock'] > 0 && $totalYearnQut > $yearnReceivedTotal && $totalYearnQut >= $total) {
+                    $successMessageStatus = true;
+                    YarnStoreStock::create([
+                        'dyed_quotation_id'    => $item['dyed_id'],
+                        'po_number'            => $request->po_number,
+                        'style'                => $item['style'],
+                        'quantity'             => $item['stock'],
+                        'lot_number'           => $item['loat_no'],
+                        'bag_count'            => $item['bag_count'],
+                        'store_address'        => $item['store_address'],
+                        'challan_date'         => $request->challan_date,
+                        'challan_number'       => $request->challan_number,
+                        'vehicle_number'       => $request->vehicle_number,
+                        'received_date'        => $request->received_date,
+                        'remarks'              => $item['remarks'],
+                        'challan_file'         => $path,
+                        'created_by'           => Auth::id(),
+                        'delived_factory_type' => $item['delived_factory_type'],
+                    ]);
+                }
+
+                if ($item['netting'] > 0 || $item['loss'] > 0 || $item['stock'] > 0) {
+                    if ((float) $totalYearnQut === (float) $total) {
+                        $yearnQut->update([
+                            'status'        => 'received',
+                            'delivery_date' => $request->received_date,
+                            'updated_by'    => Auth::id(),
+                        ]);
+                    }
+                }
+
             }
-
-            if (array_key_exists('stock', $item) && $item['stock'] > 0 && $totalYearnQut > $yearnReceivedTotal && $totalYearnQut >= $total) {
-                $successMessageStatus = 1;
-                YarnStoreStock::create([
-                    'yarn_quotation_id' => $item['yarn_id'],
-                    'po_number'         => $request->po_number,
-                    'style'             => $item['style'],
-                    'quantity'          => $item['stock'],
-                    'lot_number'        => $item['loat_no'],
-                    'bag_count'         => $item['bag_count'],
-                    'store_address'     => $item['store_address'],
-                    'challan_date'      => $request->challan_date,
-                    'challan_number'    => $request->challan_number,
-                    'vehicle_number'    => $request->vehicle_number,
-                    'received_date'     => $request->received_date,
-                    'remarks'           => $item['remarks'],
-                    'yarn_factory_id'   => $item['yarn_factory_id'],
-                    'challan_file'      => $path,
-                    'created_by'        => Auth::id(),
-                ]);
-            }
-
-            if ((float) $totalYearnQut === (float) $total) {
-                $yearnQut->update([
-                    'status'        => 'received',
-                    'delivery_date' => $request->received_date,
-                    'updated_by'    => Auth::id(),
-                ]);
-            }
-
         }
 
         if ($successMessageStatus) {

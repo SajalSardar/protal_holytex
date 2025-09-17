@@ -73,7 +73,7 @@
 
                                                 <ul class="dropdown-menu dropdown-menu-end table_action_btn">
                                                     <li><a class="dropdown-item py-2" href="#"
-                                                            onclick="showStatusModal('{{ $item->style }}', '{{ $item->po_number }}','{{ $item->status }}')">
+                                                            onclick="showStatusModal({{ $item->id }},'{{ $item->style }}', '{{ $item->po_number }}','{{ $item->status }}')">
                                                             <i
                                                                 class="material-symbols-outlined fs-16 text-primary">contact_page</i>
                                                             Update Status</a></li>
@@ -111,7 +111,7 @@
 <div class="modal fade" id="status_change_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="{{ route('netting.qty.update.status') }}" method="POST">
+        <form action="{{ route('dyed.qty.update.status') }}" method="POST">
             @csrf
             <div class="modal-content">
                 <div class="modal-header">
@@ -119,6 +119,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" name="id" id="row_id">
                     <input type="hidden" name="style" id="style_nu">
                     <div class="form-group mb-2">
                         <label for="">PO Number</label>
@@ -148,7 +149,7 @@
 
 @section('script')
 <script>
-    function showStatusModal(style, po_number,status){
+    function showStatusModal(id,style, po_number,status){
         const modalEl = document.getElementById('status_change_modal');
         const myModal = new bootstrap.Modal(modalEl, {
             keyboard: false
@@ -157,8 +158,10 @@
 
         let styleN = $('#style_nu');
         let getpo_number = $('#po_number');
+        let row_id = $('#row_id');
         styleN.val(style);
         getpo_number.val(po_number);
+        row_id.val(id);
         $('.status_select').val(status);
     }
 </script>

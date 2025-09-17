@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class DyedQuotation extends Model {
 
     protected $guarded = ['id'];
+
     public function dyedFactory() {
         return $this->hasOne(DyedFactory::class, 'id', 'dyed_factory_id');
     }
@@ -15,5 +16,47 @@ class DyedQuotation extends Model {
         return $this->hasOne(NettingFactroy::class, 'id', 'delivery_point_id');
     }
 
+    public function approvedBy() {
+        return $this->hasOne(User::class, 'id', 'approved_by');
+    }
+    public function creator() {
+        return $this->belongsTo(User::class, 'created_by', 'id');
+    }
+    public function lastUpdateBy() {
+        return $this->hasOne(User::class, 'id', 'updated_by');
+    }
+
+    public function yarnReceived() {
+        return $this->hasMany(YarnReceived::class, 'dyed_quotation_id')
+            ->where('delived_factory_type', 'dyed');
+    }
+    public function yarnReceivedOnlyQot() {
+        return $this->hasMany(YarnReceived::class, 'dyed_quotation_id')
+            ->where('delived_factory_type', 'dyed')
+            ->where('is_stock_received', 'No')
+            ->whereNull('stock_id');
+    }
+    public function yarnReceivedFromStock() {
+        return $this->hasMany(YarnReceived::class, 'dyed_quotation_id')
+            ->where('delived_factory_type', 'dyed')
+            ->where('is_stock_received', 'Yes')
+            ->whereNotNull('stock_id');
+    }
+    public function yarnLossFromStock() {
+        return $this->hasMany(YarnLoss::class, 'dyed_quotation_id')
+            ->where('delived_factory_type', 'dyed')
+            ->where('is_stock_received', 'Yes')
+            ->whereNotNull('stock_id');
+    }
+    public function yarnLoss() {
+        return $this->hasMany(YarnLoss::class, 'dyed_quotation_id')
+            ->where('delived_factory_type', 'dyed')
+            ->where('is_stock_received', 'No')
+            ->whereNull('stock_id');
+    }
+    public function storeStock() {
+        return $this->hasMany(YarnStoreStock::class, 'dyed_quotation_id')
+            ->where('delived_factory_type', 'dyed');
+    }
 
 }

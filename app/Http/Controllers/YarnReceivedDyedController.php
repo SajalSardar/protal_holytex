@@ -1,0 +1,206 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\DyedQuotation;
+use App\Models\YarnLoss;
+use App\Models\YarnQuotation;
+use App\Models\YarnReceived;
+use App\Models\YarnStoreStock;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class YarnReceivedDyedController extends Controller {
+    public function getYarnStyleByPo($po_number) {
+        $yearns = YarnQuotation::with('yarnFactory', 'dyedFactory')
+            ->withSum('yarnReceived', 'quantity')
+            ->withSum('yarnLoss', 'quantity')
+            ->withSum('storeStock', 'quantity')
+            ->withSum('yarnReceivedFromStock', 'quantity')
+            ->withSum('yarnReceivedOnlyQot', 'quantity')
+            ->where('po_number', $po_number)
+            ->where('receving_factory', 'dyed')
+            ->where('status', 'approved')
+            ->get()
+            ->groupBy('style');
+        if ($yearns) {
+            return $yearns;
+        } else {
+            return 'Yarn not found!';
+        }
+    }
+    public function getReceviedTotalYarnByStyle(Request $request) {
+        $po_number = $request->query('po_number');
+        $style     = $request->query('style');
+        $dyed_fact = $request->query('knit_fact');
+
+        $totalReceived = YarnReceived::where('po_number', $po_number)
+            ->where('style', $style)
+            ->where('delived_factory_type', 'dyed')
+            ->where('dyed_factory_id', $dyed_fact)
+            ->sum('quantity');
+
+        // Always return JSON
+        return response()->json([
+            'po_number'      => $po_number,
+            'style'          => $style,
+            'total_received' => $totalReceived,
+        ]);
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index() {
+        $yarnReceived = YarnReceived::where('delived_factory_type', 'dyed')->get();
+        return view('dyed_received.index', compact('yarnReceived'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create(Request $request) {
+
+        $yearns = DyedQuotation::select('po_number')->where('status', 'approved')->groupby('po_number')->get();
+
+        return view('dyed_received.create', compact('yearns'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request) {
+
+        // return $request;
+
+        $request->validate([
+            'challan_file' => "nullable|max:512|image",
+        ]);
+
+        $path = null;
+        if ($request->hasFile('challan_file')) {
+            $path = $request->file('challan_file')->store('yarn_received_challan', 'public');
+        }
+        $successMessageStatus = false;
+        foreach ($request->items as $item) {
+            $yearnQut = YarnQuotation::withSum('yarnReceived', 'quantity')
+                ->withSum('yarnLoss', 'quantity')
+                ->withSum('storeStock', 'quantity')
+                ->where('receving_factory', 'dyed')
+                ->where('id', $item['yarn_id'])
+                ->first();
+
+            $totalYearnQut = $yearnQut->quantity + $yearnQut->from_stock_quantity;
+
+            $yearnReceivedTotal = $yearnQut->yarn_received_sum_quantity + $yearnQut->yarn_loss_sum_quantity + $yearnQut->store_stock_sum_quantity;
+            $yarnRec            = array_key_exists('netting', $item) ? $item['netting'] : 0;
+            $yarnLossRec        = array_key_exists('loss', $item) ? $item['loss'] : 0;
+            $stockLossRec       = array_key_exists('stock', $item) ? $item['stock'] : 0;
+            $newReceived        = $yarnRec + $yarnLossRec + $stockLossRec;
+            $total              = $newReceived + $yearnReceivedTotal;
+
+            $onlyRecSum = $yearnQut->yarn_received_sum_quantity + $yarnRec;
+
+            if (array_key_exists('netting', $item) && $item['netting'] > 0 && $totalYearnQut > $yearnReceivedTotal && $totalYearnQut >= $total) {
+                $successMessageStatus = true;
+                YarnReceived::create([
+                    'yarn_quotation_id'    => $item['yarn_id'],
+                    'po_number'            => $request->po_number,
+                    'style'                => $item['style'],
+                    'quantity'             => $item['netting'],
+                    'lot_number'           => $item['loat_no'],
+                    'bag_count'            => $item['bag_count'],
+                    'challan_date'         => $request->challan_date,
+                    'challan_number'       => $request->challan_number,
+                    'vehicle_number'       => $request->vehicle_number,
+                    'received_date'        => $request->received_date,
+                    'received_by'          => Auth::id(),
+                    'remarks'              => $item['remarks'],
+                    'yarn_factory_id'      => $item['yarn_factory_id'],
+                    'challan_file'         => $path,
+                    'delived_factory_type' => 'dyed',
+                    'dyed_factory_id'      => $item['dyed_factory_id'],
+                ]);
+            }
+
+            if (array_key_exists('loss', $item) && $item['loss'] > 0 && $totalYearnQut > $yearnReceivedTotal && $totalYearnQut >= $total) {
+                $successMessageStatus = true;
+                YarnLoss::create([
+                    'yarn_quotation_id'    => $item['yarn_id'],
+                    'quantity'             => $item['loss'],
+                    'delived_factory_type' => 'dyed',
+                    'dyed_factory_id'      => $item['dyed_factory_id'],
+                    'created_by'           => Auth::id(),
+                ]);
+            }
+
+            if (array_key_exists('stock', $item) && $item['stock'] > 0 && $totalYearnQut > $yearnReceivedTotal && $totalYearnQut >= $total) {
+                $successMessageStatus = 1;
+                YarnStoreStock::create([
+                    'yarn_quotation_id'    => $item['yarn_id'],
+                    'po_number'            => $request->po_number,
+                    'style'                => $item['style'],
+                    'quantity'             => $item['stock'],
+                    'lot_number'           => $item['loat_no'],
+                    'bag_count'            => $item['bag_count'],
+                    'store_address'        => $item['store_address'],
+                    'challan_date'         => $request->challan_date,
+                    'challan_number'       => $request->challan_number,
+                    'vehicle_number'       => $request->vehicle_number,
+                    'received_date'        => $request->received_date,
+                    'remarks'              => $item['remarks'],
+                    'yarn_factory_id'      => $item['yarn_factory_id'],
+                    'challan_file'         => $path,
+                    'created_by'           => Auth::id(),
+                    'delived_factory_type' => 'dyed',
+                    'dyed_factory_id'      => $item['dyed_factory_id'],
+                ]);
+            }
+
+            if ((float) $totalYearnQut === (float) $total) {
+                $yearnQut->update([
+                    'status'        => 'received',
+                    'delivery_date' => $request->received_date,
+                    'updated_by'    => Auth::id(),
+                ]);
+            }
+
+        }
+
+        if ($successMessageStatus) {
+            toastr('Data Successfully Created!');
+            return back();
+        } else {
+            toastr('No Input data found!', 'error');
+            return back();
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(YarnReceived $yarnReceived) {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(YarnReceived $yarnReceived) {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, YarnReceived $yarnReceived) {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(YarnReceived $yarnReceived) {
+        //
+    }
+}

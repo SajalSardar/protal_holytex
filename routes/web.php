@@ -20,6 +20,7 @@ use App\Http\Controllers\StyleController;
 use App\Http\Controllers\YarnFactroyController;
 use App\Http\Controllers\YarnQuotationController;
 use App\Http\Controllers\YarnReceivedController;
+use App\Http\Controllers\YarnReceivedDyedController;
 use App\Http\Controllers\YarnStoreStockController;
 use Illuminate\Support\Facades\Route;
 
@@ -51,6 +52,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('yarnstorestock', YarnStoreStockController::class);
 
     Route::resource('dyedquotation', DyedQuotationController::class);
+    Route::post('dyed-qty-status-update', [DyedQuotationController::class, 'dyedQtyStatusUpdate'])->name('dyed.qty.update.status');
+    Route::resource('yarnreceiveddyed', YarnReceivedDyedController::class);
 
     Route::resource('nettingquotation', NettingQuotationController::class);
     Route::post('netting-qty-status-update', [NettingQuotationController::class, 'nettingQtyStatusUpdate'])->name('netting.qty.update.status');
@@ -81,11 +84,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('get-yarn-style-by-po/{po_number}', [NettingQuotationController::class, 'getYarnStyleByPo']);
     Route::get('get-netting-order/{po_number}', [DyeingQuotationController::class, 'getNetting']);
     Route::get('get-yarn-quotation-by-po/{po_number}', [YarnReceivedController::class, 'getYarnStyleByPo']);
+    Route::get('get-yarn-quotation-by-po-dyed/{po_number}', [YarnReceivedDyedController::class, 'getYarnStyleByPo']);
     Route::get('get-netting-quotation-by-po/{po_number}', [NettingReceivedController::class, 'getNettingStyleByPo']);
     Route::get('get-dyeing-quotation-by-po/{po_number}', [DyeingReceivedController::class, 'getDyeingStyleByPo']);
     Route::get('get-accessories-quotation-by-po/{po_number}', [AccessoriesReceivedController::class, 'getAccessoriesStyleByPo']);
 
     Route::get('get-recevied-total-yarn-by-style', [YarnReceivedController::class, 'getReceviedTotalYarnByStyle']);
+    Route::get('get-recevied-total-yarn-by-style-dyed', [YarnReceivedDyedController::class, 'getReceviedTotalYarnByStyle']);
     Route::get('get-recevied-total-netting-by-style', [NettingReceivedController::class, 'getReceviedTotalNettingByStyle']);
 
 });

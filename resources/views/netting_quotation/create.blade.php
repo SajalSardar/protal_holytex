@@ -284,6 +284,7 @@
                     });
                     Object.entries(data.dyeds).forEach(([key, style]) => {
                         Object.entries(style).forEach(([keyFa, factoryId]) => {
+                            keyFa = keyFa+'dyed';
                             let total_quantity = 0;
                             let netting_factory_id = null;
                             singleItem +=`<div class="card border-0 rounded-3 mb-5">

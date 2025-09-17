@@ -6,7 +6,7 @@ $po_number = request()->po_number ?? '';
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-        <h2 class="mb-0">Yarn Receiving at Netting Factory</h2>
+        <h2 class="mb-0">Yarn Receiving at Dyed Factory</h2>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb align-items-center mb-0 lh-1">
@@ -25,7 +25,7 @@ $po_number = request()->po_number ?? '';
             </ol>
         </nav>
     </div>
-    <form action="{{ route('yarnreceived.store') }}" method="POST" enctype="multipart/form-data" id="yarn_form">
+    <form action="{{ route('yarnreceiveddyed.store') }}" method="POST" enctype="multipart/form-data" id="yarn_form">
         @csrf
         <div class="row">
             <div class="col-lg-12">
@@ -88,7 +88,7 @@ $po_number = request()->po_number ?? '';
         function loadYarnData(po_number){
              if (po_number) {
 
-                fetch(`/get-yarn-quotation-by-po/${encodeURIComponent(po_number)}`)
+                fetch(`/get-yarn-quotation-by-po-dyed/${encodeURIComponent(po_number)}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -99,9 +99,9 @@ $po_number = request()->po_number ?? '';
                 .then(data => {
                     let order_id = null;
                     let order_number = null;
-                    console.log('API response:', data.dyedYearns);
+                    // console.log('API response:', data);
                     let display_div = $('#show_all_yarn_item');
-                    if(data.yearns.length === 0 && data.dyedYearns.length === 0){
+                    if(data.length === 0){
                         display_div.html(`
                             <div class="col-lg-12"><div class="alert alert-success">Total Received Done!</div></div>
                         `);
@@ -153,7 +153,7 @@ $po_number = request()->po_number ?? '';
                                     </div>
                                 </div>`;
                     // Append new options
-                    Object.entries(data.yearns).forEach(([key, items]) => {
+                    Object.entries(data).forEach(([key, items]) => {
                         singleItem +=`
                             <div class="accordion mb-5" style="border-bottom:5px solid #605dff;">
                                 <div class="accordion-item">
@@ -181,12 +181,11 @@ $po_number = request()->po_number ?? '';
                             let noreceivedstock = stock_quantity - (Number(item.yarn_received_from_stock_sum_quantity) || 0).toFixed(2)
                             singleItem +=`
                                     <div class="row my-4">
-                                        <input type="hidden" name="yarn[${item.id}][yarn_id]" value="${item.id}">
-                                        <input type="hidden" name="yarn[${item.id}][description]" value="${item.description}">
-                                        <input type="hidden" name="yarn[${item.id}][yarn_factory_id]" value="${item.yarn_factory_id}">
-                                        <input type="hidden" name="yarn[${item.id}][netting_factory_id]" value="${item.netting_factory_id}">
-                                        <input type="hidden" name="yarn[${item.id}][style]" value="${item.style}">
-                                        <input type="hidden" name="yarn[${item.id}][delived_factory_type]" value="yarn">
+                                        <input type="hidden" name="items[${item.id}][yarn_id]" value="${item.id}">
+                                        <input type="hidden" name="items[${item.id}][description]" value="${item.description}">
+                                        <input type="hidden" name="items[${item.id}][dyed_factory_id]" value="${item.dyed_factory_id}">
+                                        <input type="hidden" name="items[${item.id}][yarn_factory_id]" value="${item.yarn_factory_id}">
+                                        <input type="hidden" name="items[${item.id}][style]" value="${item.style}">
                                         
                                         <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Description</label><input class="form-control" value="${item.description}" readonly></div>
                                         <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Stock Quotation</label><input type="text" class="form-control" readonly value="${item.from_stock_quantity || 0}"></div>
@@ -194,7 +193,7 @@ $po_number = request()->po_number ?? '';
                                         <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Total Quotation</label><input type="text" class="form-control" readonly value="${(totalQot).toFixed(2)}"></div>
                                         
                                         <div class="col-md-2 pe-0 mb-3"><label class="label text-secondary">Yarn Factory</label><input class="form-control" readonly value="${item.yarn_factory.name}"></div>
-                                        <div class="col-md-2 mb-3"><label class="label text-secondary">Knit Factory</label><input class="form-control" readonly value="${item.netting_factory.name}"></div>
+                                        <div class="col-md-2 mb-3"><label class="label text-secondary">Dyed Factory</label><input class="form-control" readonly value="${item.dyed_factory.name}"></div>
                                     </div>
                                     <div class="row">
                                         <div class="col-12 mb-3">
@@ -215,89 +214,13 @@ $po_number = request()->po_number ?? '';
                                                     </div><div class="bg-warning w-100" style="height:3px"></div>`;
                                     }else{
                                         singleItem +=`<div class="row">
-                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Lot No.</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="yarn[${item.id}][loat_no]"></div>
-                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Bags</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="yarn[${item.id}][bag_count]"></div>
-                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Yarn(KG)</label><input type="text" max="${noreceived}" id="netting_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="yarn[${item.id}][netting]"></div>
-                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Loss(KG)</label><input type="text" class="form-control" max="${noreceived}" id="loss_${item.id}" oninput="limitWeightValue(this,${item.id})" name="yarn[${item.id}][loss]"></div>
-                                                <div class="col-lg-4 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="yarn[${item.id}][remarks]"></textarea></div>
-                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store Stock</label><input type="text" class="form-control" max="${noreceived}" id="store_${item.id}" oninput="limitWeightValue(this,${item.id})" name="yarn[${item.id}][stock]"></div>
-                                                <div class="col-lg-4 mb-3"><label class="label text-secondary">Store Address</label><textarea rows="1" class="form-control" name="yarn[${item.id}][store_address]"></textarea></div> 
-                                            </div>
-                                        <div class="bg-warning w-100" style="height:3px"></div>`;
-                                    }
-                        });
-                       singleItem +=`</div></div></div></div></div>`;
-                    });
-                    Object.entries(data.dyedYearns).forEach(([key, items]) => {
-                        singleItem +=`
-                            <div class="accordion mb-5" style="border-bottom:5px solid #605dff;">
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header mb-3">
-                                        <button style="background: #605dff;" class="accordion-button text-uppercase text-white"
-                                            type="button" data-bs-toggle="collapse" data-bs-target="#collapse${key}">
-                                            <strong>Style: ${key}</strong>
-                                        </button>
-                                    </h2>
-                                    <div id="collapse${key}" class="accordion-collapse collapse show">
-                                        <div class="accordion-body p-0 px-2">`;
-                         items.forEach(item => {
-                            order_id = item.order_id;
-                            order_number = item.order_number;
-                            let quotation = parseFloat(item.quantity) || 0;
-                            let stock_quantity = parseFloat(item.from_stock_quantity) || 0;
-                            let allTotalRecevied =
-                                                (Number(item.yarn_received_only_qot_sum_quantity) || 0) +
-                                                (Number(item.yarn_loss_sum_quantity) || 0) +
-                                                (Number(item.store_stock_sum_quantity) || 0);
-                            let noreceived = parseFloat(quotation - allTotalRecevied).toFixed(2);
-                            let totalQot = quotation + stock_quantity;
-
-
-                            let noreceivedstock = stock_quantity - (Number(item.yarn_received_from_stock_sum_quantity) || 0).toFixed(2);
-                            let unId= 'dyed_yearns_'+item.id;
-                            singleItem +=`
-                                    <div class="row my-4">
-                                        <input type="hidden" name="dyed[${unId}][dyed_id]" value="${item.id}">
-                                        <input type="hidden" name="dyed[${unId}][description]" value="${item.description}">
-                                        <input type="hidden" name="dyed[${unId}][dyed_factory_id]" value="${item.dyed_factory_id}">
-                                        <input type="hidden" name="dyed[${unId}][netting_factory_id]" value="${item.delivery_point_id}">
-                                        <input type="hidden" name="dyed[${unId}][style]" value="${item.style}">
-                                        <input type="hidden" name="dyed[${unId}][delived_factory_type]" value="dyed">
-                                        
-                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Description</label><input class="form-control" value="${item.description}" readonly></div>
-                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Stock Quotation</label><input type="text" class="form-control" readonly value="${item.from_stock_quantity || 0}"></div>
-                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Quotation(KG)</label><input type="text" class="form-control" readonly value="${item.quantity}"></div>
-                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Total Quotation</label><input type="text" class="form-control" readonly value="${(totalQot).toFixed(2)}"></div>
-                                        
-                                        <div class="col-md-2 pe-0 mb-3"><label class="label text-secondary">Dyed Factory</label><input class="form-control" readonly value="${item.dyed_factory.name}"></div>
-                                        <div class="col-md-2 mb-3"><label class="label text-secondary">Knit Factory</label><input class="form-control" readonly value="${item.netting_factory.name}"></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-12 mb-3">
-                                            <h4 class="fs-18 text-primary">Receive Quantity(Yarn, Loss, Store In Stock)</h4>
-                                        </div>   
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-3 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.yarn_received_sum_quantity || 0}"></div>
-                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Quotation Loss</label><input type="text" class="form-control" readonly  value="${item.yarn_loss_sum_quantity || 0}"></div>
-                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store In Stock</label><input type="text" class="form-control" readonly value="${item.store_stock_sum_quantity || 0}"></div>
-                                        <div class="col-lg-3 pe-0 mb-3"><label class="label text-secondary">No Quot. Received</label><input type="text" class="form-control" readonly value="${noreceived}"></div>
-                                        <div class="col-lg-2 mb-3"><label class="label text-secondary">No Stock Received</label><input type="text" class="form-control" readonly value="${noreceivedstock}"></div>
-                                    </div>
-                                    `;
-                                    if(allTotalRecevied >= quotation){ 
-                                        singleItem +=`<div class="col-12">
-                                                        <div class="alert alert-success mb-3">Total Quotation Received Done!</div>
-                                                    </div><div class="bg-warning w-100" style="height:3px"></div>`;
-                                    }else{
-                                        singleItem +=`<div class="row">
-                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Lot No.</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="dyed[${unId}][loat_no]"></div>
-                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Bags</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="dyed[${unId}][bag_count]"></div>
-                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Yarn(KG)</label><input type="text" max="${noreceived}" id="netting_${unId}" class="form-control" oninput="limitWeightValue(this,'${unId}')" name="dyed[${unId}][netting]"></div>
-                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Loss(KG)</label><input type="text" class="form-control" max="${noreceived}" id="loss_${unId}" oninput="limitWeightValue(this,'${unId}')" name="dyed[${unId}][loss]"></div>
-                                                <div class="col-lg-4 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="dyed[${unId}][remarks]"></textarea></div>
-                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store Stock</label><input type="text" class="form-control" max="${noreceived}" id="store_${unId}" oninput="limitWeightValue(this,'${unId}')" name="dyed[${unId}][stock]"></div>
-                                                <div class="col-lg-4 mb-3"><label class="label text-secondary">Store Address</label><textarea rows="1" class="form-control" name="dyed[${unId}][store_address]"></textarea></div> 
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Lot No.</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][loat_no]"></div>
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Bags</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][bag_count]"></div>
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Yarn(KG)</label><input type="text" max="${noreceived}" id="netting_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][netting]"></div>
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Loss(KG)</label><input type="text" class="form-control" max="${noreceived}" id="loss_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][loss]"></div>
+                                                <div class="col-lg-4 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="items[${item.id}][remarks]"></textarea></div>
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store Stock</label><input type="text" class="form-control" max="${noreceived}" id="store_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][stock]"></div>
+                                                <div class="col-lg-4 mb-3"><label class="label text-secondary">Store Address</label><textarea rows="1" class="form-control" name="items[${item.id}][store_address]"></textarea></div> 
                                             </div>
                                         <div class="bg-warning w-100" style="height:3px"></div>`;
                                     }

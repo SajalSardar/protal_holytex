@@ -132,4 +132,18 @@ class DyedQuotationController extends Controller {
     public function destroy(DyedQuotation $dyedQuotation) {
         //
     }
+
+    public function dyedQtyStatusUpdate(Request $request) {
+        if (!$request->style && !$request->po_number) {
+            toastr('PO number and style not found!', 'error');
+            return back();
+        }
+        DyedQuotation::where('id', $request->id)->where('po_number', $request->po_number)->where('style', $request->style)->update([
+            'status'      => $request->status,
+            'updated_by'  => Auth::id(),
+            'approved_by' => Auth::id(),
+        ]);
+        toastr('Dyed quotation status updated!');
+        return back();
+    }
 }

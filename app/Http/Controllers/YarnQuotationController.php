@@ -50,9 +50,6 @@ class YarnQuotationController extends Controller {
 
         foreach ($request->style as $key => $item) {
 
-            // $netting = NettingQuotation::where('po_number', $request->po_number)->where('style', $item)->first();
-            // $dyeing  = DyeingQuotation::where('po_number', $request->po_number)->where('style', $item)->first();
-
             $yarnCreate = YarnQuotation::create([
                 'order_number'              => $request->order_number,
                 'po_number'                 => $request->po_number,
@@ -79,18 +76,6 @@ class YarnQuotationController extends Controller {
             }
             $yarnCreate->save();
 
-            // if ($netting && $yarnCreate) {
-            //     $netting->update([
-            //         'quantity'    => $netting->quantity + $request->unit_quantity[$key],
-            //         'total_price' => ($netting->quantity + $request->unit_quantity[$key]) * $netting->price,
-            //     ]);
-            // }
-            // if ($dyeing && $yarnCreate) {
-            //     $dyeing->update([
-            //         'quantity'    => $dyeing->quantity + $request->unit_quantity[$key],
-            //         'total_price' => ($dyeing->quantity + $request->unit_quantity[$key]) * $dyeing->price,
-            //     ]);
-            // }
         }
 
         toastr('Order Successfully Created!');

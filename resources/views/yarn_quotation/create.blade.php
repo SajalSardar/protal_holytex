@@ -79,6 +79,8 @@
                                 </div>
                             </div>
 
+                            <div id="style_display_message"></div>
+
                             <hr>
                             <h3 class="mb-lg-4 mb-3">Price & Quantity</h3>
                             <div class="col-lg-12 mb-5">
@@ -252,7 +254,15 @@
                     return response.json();
                 })
                 .then(data => {
-                    // console.log('API response:', data);
+                    console.log('API response:', data.length);
+                    if(!data.length){
+                         $('#style_display_message').show();
+                         $('#style_display_message').html(`
+                            <div class="alert alert-success mb-3">Style not found on this yarn!</div>
+                         `);
+                    }else{
+                         $('#style_display_message').hide();
+                    }
                     $('#style_select').empty().append('<option selected disabled value="">Style</option>');
 
                     let order_id = null;

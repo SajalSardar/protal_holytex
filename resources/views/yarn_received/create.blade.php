@@ -97,6 +97,7 @@ $po_number = request()->po_number ?? '';
                     return response.json();
                 })
                 .then(data => {
+                    // console.log('API response:', data);
                     let order_id = null;
                     let order_number = null;
                     console.log('API response:', data.dyedYearns);

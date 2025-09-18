@@ -217,6 +217,9 @@
                                 data-bs-target="#yarn_quot_details" type="button"><strong>Yarn Qut.
                                     Details</strong></button>
                             <button class="nav-link text-uppercase" data-bs-toggle="tab"
+                                data-bs-target="#dyed_quot_details" type="button"><strong>Dyed Qut.
+                                    Details</strong></button>
+                            <button class="nav-link text-uppercase" data-bs-toggle="tab"
                                 data-bs-target="#netting_quot_details" type="button"><strong>Netting Qut.
                                     Details</strong></button>
                             <button class="nav-link text-uppercase" data-bs-toggle="tab"
@@ -344,6 +347,7 @@
                                                         <thead>
                                                             <tr>
                                                                 <th>Description</th>
+                                                                <th>Recever Type</th>
                                                                 <th>Strock Qot</th>
                                                                 <th>Qot Qty(KG)</th>
                                                                 <th>Qot Unit Price</th>
@@ -380,9 +384,15 @@
                                                             $noReceivedStock = $item->from_stock_quantity -
                                                             $item->yarn_received_from_stock_sum_quantity;
                                                             $noReceivedStockTotal += $noReceivedStock;
+
+                                                            $yarn_received_sum = $item->receving_factory ===
+                                                            'dyed' ? $item->yarn_received_dyed_sum_quantity
+                                                            :$item->yarn_received_sum_quantity
+
                                                             @endphp
                                                             <tr>
                                                                 <td>{{ $item->description }}</td>
+                                                                <td>{{ $item->receving_factory }}</td>
                                                                 <td>{{ $item->from_stock_quantity ?? '--' }}</td>
                                                                 <td>{{ $item->quantity }}</td>
                                                                 <td>{{ $item->price }}</td>
@@ -397,7 +407,7 @@
                                                                 <td>{{ number_format($noReceivedStock,2)
                                                                     ?? '--' }}
                                                                 </td>
-                                                                <td>{{ $item->yarn_received_sum_quantity ?? '--' }}</td>
+                                                                <td>{{ $yarn_received_sum ?? '--' }}</td>
                                                                 <td>{{ $item->yarn_loss_sum_quantity ?? '--' }}</td>
                                                                 <td>{{ $item->store_stock_sum_quantity ?? '--' }}</td>
                                                             </tr>
@@ -405,7 +415,7 @@
                                                         </tbody>
                                                         <tfoot>
                                                             <tr>
-                                                                <td class="text-center"><strong
+                                                                <td class="text-center" colspan="2"><strong
                                                                         class="text-primary">Total:</strong></td>
                                                                 <td>
                                                                     <strong class="text-primary">{{
@@ -499,6 +509,216 @@
                                                                 Name: {{ @$item->dyedFactory->name}} <br>
                                                                 Address: {{@$item->dyedFactory->address}}
                                                                 @endif
+
+                                                            </td>
+                                                        </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @empty
+                            <p>No Data Found!</p>
+                            @endforelse
+                            <div class="card mt-3">
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <h3 class="text-primary">Total Quantity(KG): {{
+                                            number_format($order->yarnQuotations->sum('quantity'),
+                                            2)
+                                            }}KG</h3>
+
+                                        <h3 class="ms-5 text-primary">Total TK: {{
+                                            number_format($order->yarnQuotations->sum('total_price'),
+                                            2)
+                                            }}TK</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="dyed_quot_details">
+                            @forelse ($order->dyedQuotations->groupBy('style') as $key => $items)
+
+                            <div class="accordion mb-5">
+                                <div class="accordion-item">
+
+                                    <h2 class="accordion-header">
+                                        <button style="background: #605dff;"
+                                            class="accordion-button text-uppercase text-white" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapse{{ $key }}">
+                                            <strong>Style: {{ $key }}</strong>
+                                        </button>
+                                    </h2>
+
+                                    <div id="collapse{{ $key }}" class="accordion-collapse collapse show">
+                                        <div class="accordion-body p-0">
+                                            <div class="default-table-area style-two">
+                                                <div class="table-responsive">
+                                                    <table class="table align-middle" style="width: 1800px">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Description</th>
+                                                                <th>Yarn Received</th>
+                                                                <th>Strock Qot</th>
+                                                                <th>Qot Qty(KG)</th>
+                                                                <th>Qot Unit Price</th>
+                                                                <th>Qot Total Price</th>
+                                                                <th>Total Qty.</th>
+                                                                <th>Status</th>
+                                                                <th>No Qot. Rece.</th>
+                                                                <th>No Stock. Rece.</th>
+                                                                <th>Received</th>
+                                                                <th>Loss</th>
+                                                                <th>Store Stock</th>
+                                                            </tr>
+                                                        </thead>
+
+                                                        <tbody>
+                                                            @php
+                                                            $noReceivedStockTotal = 0.00;
+                                                            $noReceivedTotal = 0.00;
+                                                            $allTotalQty = 0.00;
+                                                            @endphp
+                                                            @foreach ($items as $item)
+                                                            @php
+                                                            $totalQotDelevary =
+                                                            $item->yarn_received_sum_quantity
+                                                            +
+                                                            $item->yarn_loss_sum_quantity +
+                                                            $item->store_stock_sum_quantity;
+
+                                                            // $totalQty = $item->quantity + $item->from_stock_quantity;
+                                                            $totalQty = $item->yarn_recevied ?? $item->quantity;
+                                                            $noReceivedTotal +=$totalQty - $totalQotDelevary;
+                                                            $allTotalQty +=$totalQty + $item->from_stock_quantity;
+
+                                                            $noReceivedStock = $item->from_stock_quantity -
+                                                            $item->yarn_received_from_stock_sum_quantity;
+                                                            $noReceivedStockTotal += $noReceivedStock;
+
+                                                            $yarn_received_sum = $item->receving_factory ===
+                                                            'dyed' ? $item->yarn_received_dyed_sum_quantity
+                                                            :$item->yarn_received_sum_quantity
+
+                                                            @endphp
+                                                            <tr>
+                                                                <td>{{ $item->description }}</td>
+                                                                <td>{{ $item->yarn_recevied ?? 0 }}</td>
+                                                                <td>{{ $item->from_stock_quantity ?? '--' }}</td>
+                                                                <td>{{ $item->quantity }}</td>
+                                                                <td>{{ $item->price }}</td>
+                                                                <td>{{ $item->total_price }}</td>
+                                                                <td>{{ number_format($totalQty+
+                                                                    $item->from_stock_quantity, 2) }}
+                                                                </td>
+                                                                <td>{{ Str::ucfirst($item->status) }}</td>
+                                                                <td>{{ number_format($totalQty - $totalQotDelevary,2)
+                                                                    ?? '--' }}
+                                                                </td>
+                                                                <td>{{ number_format($noReceivedStock,2)
+                                                                    ?? '--' }}
+                                                                </td>
+                                                                <td>{{ $yarn_received_sum ?? '--' }}</td>
+                                                                <td>{{ $item->yarn_loss_sum_quantity ?? '--' }}</td>
+                                                                <td>{{ $item->store_stock_sum_quantity ?? '--' }}</td>
+                                                            </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                        <tfoot>
+                                                            <tr>
+                                                                <td class="text-center"><strong
+                                                                        class="text-primary">Total:</strong></td>
+                                                                <td>
+                                                                    <strong class="text-primary">{{
+                                                                        number_format($items->sum('from_stock_quantity'),
+                                                                        2)
+                                                                        }}KG</strong>
+                                                                </td>
+                                                                <td colspan="2">
+                                                                    <strong class="text-primary">{{
+                                                                        number_format($items->sum('quantity'),
+                                                                        2)
+                                                                        }}KG</strong>
+                                                                </td>
+                                                                <td>
+                                                                    <strong class="text-primary">{{
+                                                                        number_format($items->sum('total_price'),
+                                                                        2)
+                                                                        }}TK</strong>
+                                                                </td>
+                                                                <td colspan="2">
+                                                                    <strong class="text-primary">{{
+                                                                        number_format($allTotalQty,2)
+                                                                        }}KG</strong>
+                                                                </td>
+                                                                <td><strong class="text-primary">{{
+                                                                        number_format($noReceivedTotal, 2)
+                                                                        }}KG</strong></td>
+                                                                <td><strong class="text-primary">{{
+                                                                        number_format($noReceivedStockTotal, 2)
+                                                                        }}KG</strong></td>
+                                                                <td>
+                                                                    <strong class="text-primary">{{
+                                                                        number_format($items->sum('yarn_received_sum_quantity'),
+                                                                        2)
+                                                                        }}KG</strong>
+                                                                </td>
+                                                                <td>
+                                                                    <strong class="text-primary">{{
+                                                                        number_format($items->sum('yarn_loss_sum_quantity'),
+                                                                        2)
+                                                                        }}KG</strong>
+                                                                </td>
+                                                                <td>
+                                                                    <strong class="text-primary">{{
+                                                                        number_format($items->sum('store_stock_sum_quantity'),
+                                                                        2)
+                                                                        }}KG</strong>
+                                                                </td>
+                                                            </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="table-responsive  mt-4">
+                                                <table class="table align-middle" style="width: 1800px">
+                                                    <thead class="table-dark">
+                                                        <tr>
+                                                            <th>Description</th>
+                                                            <th>Approx. Delivery</th>
+                                                            <th>Delivery Date</th>
+                                                            <th>remarks</th>
+                                                            <th>Approved By</th>
+                                                            <th>Created By</th>
+                                                            <th>Created At</th>
+                                                            <th>Last Up. By</th>
+                                                            <th>Last Up. At</th>
+                                                            <th>Yarn Fac.</th>
+                                                            <th>Delivery Point</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+                                                        @foreach ($items as $item)
+                                                        <tr>
+                                                            <td>{{ $item->description }}</td>
+                                                            <td>{{ $item->approximate_delivery_date }}</td>
+                                                            <td>{{ $item->delivery_date ?? '--' }}</td>
+                                                            <td>{{ $item->remarks }}</td>
+                                                            <td>{{ $item->approvedBy->name ?? '--' }}</td>
+                                                            <td>{{ $item->creator->name ?? '--' }}</td>
+                                                            <td>{{ $item->created_at->format('d M Y')}}</td>
+                                                            <td>{{ $item->lastUpdateBy->name ?? '--'}}</td>
+                                                            <td>{{ $item->updated_at->format('d M Y')}}</td>
+                                                            <td>Name: {{ $item->dyedFactory->name}} <br> Address: {{
+                                                                $item->dyedFactory->address}}</td>
+                                                            <td>
+
+                                                                Name: {{ @$item->nettingFactory->name}} <br>
+                                                                Address: {{@$item->nettingFactory->address}}
 
                                                             </td>
                                                         </tr>

@@ -96,6 +96,7 @@ class OrderController extends Controller {
             'lastUpdateBy',
             'yarnQuotations'        => function ($q) {
                 $q->withSum('yarnReceived', 'quantity')
+                    ->withSum('yarnReceivedDyed', 'quantity')
                     ->withSum('yarnReceivedFromStock', 'quantity')
                     ->withSum('yarnReceivedOnlyQot', 'quantity')
                     ->withSum('yarnLoss', 'quantity')
@@ -107,6 +108,12 @@ class OrderController extends Controller {
             'yarnQuotations.creator:id,name',
             'yarnQuotations.lastUpdateBy:id,name',
             'yarnQuotations.approvedBy:id,name',
+            'dyedQuotations',
+            'dyedQuotations'        => function ($q) {
+                $q->withSum('yarnReceived', 'quantity')
+                    ->withSum('yarnLoss', 'quantity')
+                    ->withSum('storeStock', 'quantity');
+            },
             'nettingQuotations',
             'nettingQuotations.nettingQuotationItems',
             'nettingQuotations.creator:id,name',

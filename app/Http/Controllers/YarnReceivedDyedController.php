@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DyedQuotation;
 use App\Models\YarnLoss;
 use App\Models\YarnQuotation;
 use App\Models\YarnReceived;
+use App\Models\YarnReceivedDyed;
 use App\Models\YarnStoreStock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,11 +32,10 @@ class YarnReceivedDyedController extends Controller {
     public function getReceviedTotalYarnByStyle(Request $request) {
         $po_number = $request->query('po_number');
         $style     = $request->query('style');
-        $dyed_fact = $request->query('knit_fact');
+        $dyed_fact = $request->query('dyed_fact');
 
-        $totalReceived = YarnReceived::where('po_number', $po_number)
+        $totalReceived = YarnReceivedDyed::where('po_number', $po_number)
             ->where('style', $style)
-            ->where('delived_factory_type', 'dyed')
             ->where('dyed_factory_id', $dyed_fact)
             ->sum('quantity');
 
@@ -52,7 +51,7 @@ class YarnReceivedDyedController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        $yarnReceived = YarnReceived::where('delived_factory_type', 'dyed')->get();
+        $yarnReceived = YarnReceivedDyed::get();
         return view('dyed_received.index', compact('yarnReceived'));
     }
 
@@ -61,7 +60,7 @@ class YarnReceivedDyedController extends Controller {
      */
     public function create(Request $request) {
 
-        $yearns = DyedQuotation::select('po_number')->where('status', 'approved')->groupby('po_number')->get();
+        $yearns = YarnQuotation::select('po_number')->where('receving_factory', 'dyed')->where('status', 'approved')->groupby('po_number')->get();
 
         return view('dyed_received.create', compact('yearns'));
     }
@@ -103,23 +102,22 @@ class YarnReceivedDyedController extends Controller {
 
             if (array_key_exists('netting', $item) && $item['netting'] > 0 && $totalYearnQut > $yearnReceivedTotal && $totalYearnQut >= $total) {
                 $successMessageStatus = true;
-                YarnReceived::create([
-                    'yarn_quotation_id'    => $item['yarn_id'],
-                    'po_number'            => $request->po_number,
-                    'style'                => $item['style'],
-                    'quantity'             => $item['netting'],
-                    'lot_number'           => $item['loat_no'],
-                    'bag_count'            => $item['bag_count'],
-                    'challan_date'         => $request->challan_date,
-                    'challan_number'       => $request->challan_number,
-                    'vehicle_number'       => $request->vehicle_number,
-                    'received_date'        => $request->received_date,
-                    'received_by'          => Auth::id(),
-                    'remarks'              => $item['remarks'],
-                    'yarn_factory_id'      => $item['yarn_factory_id'],
-                    'challan_file'         => $path,
-                    'delived_factory_type' => 'dyed',
-                    'dyed_factory_id'      => $item['dyed_factory_id'],
+                YarnReceivedDyed::create([
+                    'yarn_quotation_id' => $item['yarn_id'],
+                    'po_number'         => $request->po_number,
+                    'style'             => $item['style'],
+                    'quantity'          => $item['netting'],
+                    'lot_number'        => $item['loat_no'],
+                    'bag_count'         => $item['bag_count'],
+                    'challan_date'      => $request->challan_date,
+                    'challan_number'    => $request->challan_number,
+                    'vehicle_number'    => $request->vehicle_number,
+                    'received_date'     => $request->received_date,
+                    'received_by'       => Auth::id(),
+                    'remarks'           => $item['remarks'],
+                    'yarn_factory_id'   => $item['yarn_factory_id'],
+                    'challan_file'      => $path,
+                    'dyed_factory_id'   => $item['dyed_factory_id'],
                 ]);
             }
 
@@ -128,7 +126,7 @@ class YarnReceivedDyedController extends Controller {
                 YarnLoss::create([
                     'yarn_quotation_id'    => $item['yarn_id'],
                     'quantity'             => $item['loss'],
-                    'delived_factory_type' => 'dyed',
+                    'delived_factory_type' => 'yarn',
                     'dyed_factory_id'      => $item['dyed_factory_id'],
                     'created_by'           => Auth::id(),
                 ]);
@@ -152,7 +150,7 @@ class YarnReceivedDyedController extends Controller {
                     'yarn_factory_id'      => $item['yarn_factory_id'],
                     'challan_file'         => $path,
                     'created_by'           => Auth::id(),
-                    'delived_factory_type' => 'dyed',
+                    'delived_factory_type' => 'yarn',
                     'dyed_factory_id'      => $item['dyed_factory_id'],
                 ]);
             }

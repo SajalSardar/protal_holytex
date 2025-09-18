@@ -20,6 +20,9 @@ class YarnQuotation extends Model {
     public function yarnReceived() {
         return $this->hasMany(YarnReceived::class, 'yarn_quotation_id')->where('delived_factory_type', 'yarn');
     }
+    public function yarnReceivedDyed() {
+        return $this->hasMany(YarnReceivedDyed::class, 'yarn_quotation_id');
+    }
     public function yarnReceivedOnlyQot() {
         return $this->hasMany(YarnReceived::class, 'yarn_quotation_id')
             ->where('delived_factory_type', 'yarn')

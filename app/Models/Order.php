@@ -14,6 +14,9 @@ class Order extends Model {
     public function yarnQuotations() {
         return $this->hasMany(YarnQuotation::class);
     }
+    public function dyedQuotations() {
+        return $this->hasMany(DyedQuotation::class);
+    }
     public function nettingQuotations() {
         return $this->hasMany(NettingQuotation::class);
     }

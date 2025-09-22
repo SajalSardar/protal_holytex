@@ -21,3 +21,4 @@
 <script src="{{ asset('assets/js/custom/custom.js') }}"></script>
 <script src="{{ asset('assets/js/jquery-3.7.1.slim.min.js') }}"></script>
 <script src="{{ asset('assets/js/select2.min.js') }}"></script>
+<script src="{{ asset('assets/js/sweetalert2.all.min.js') }}"></script>

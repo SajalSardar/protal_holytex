@@ -58,19 +58,21 @@ class YarnStoreStockController extends Controller {
             'style'         => "required",
             'quantity'      => "required",
             'store_address' => "required",
+            'description'   => "required",
         ]);
 
         YarnStoreStock::create([
             "po_number"            => $request->po_number,
             "style"                => $request->style,
             "remarks"              => $request->remarks,
-            "loat_no"              => $request->loat_no,
+            "lot_number"           => $request->loat_no,
             "bag_count"            => $request->bag_count,
             "quantity"             => $request->quantity,
             "store_address"        => $request->store_address,
             "delived_factory_type" => $request->delived_factory_type,
             "created_by"           => Auth::id(),
             "received_date"        => $request->received_date,
+            "description"          => $request->description,
         ]);
 
         toastr('Data Successfully Created!');
@@ -81,28 +83,62 @@ class YarnStoreStockController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(YarnStoreStock $yarnStoreStock) {
-        //
+    public function show(YarnStoreStock $yarnstorestock) {
+        // $yarnstorestock->load('usesStock', 'yarnQty');
+        // return $yarnstorestock;
+        $yarnstorestock = YarnStoreStock::with('yarnQty')->find($yarnstorestock->id);
+        $usesStock      = $yarnstorestock->usesStock()
+            ->orderBy('id', 'desc')
+            ->paginate(20);
+
+        return view('yarn_store.show', compact('yarnstorestock', 'usesStock'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(YarnStoreStock $yarnStoreStock) {
+    public function edit(YarnStoreStock $yarnstorestock) {
         //
+        return view('yarn_store.edit', compact('yarnstorestock'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, YarnStoreStock $yarnStoreStock) {
-        //
+    public function update(Request $request, YarnStoreStock $yarnstorestock) {
+        $request->validate([
+            'po_number'     => "required",
+            'style'         => "required",
+            'quantity'      => "required",
+            'store_address' => "required",
+            'description'   => "required",
+        ]);
+
+        $yarnstorestock->update([
+            "po_number"            => $request->po_number,
+            "style"                => $request->style,
+            "remarks"              => $request->remarks,
+            "lot_number"           => $request->loat_no,
+            "bag_count"            => $request->bag_count,
+            "quantity"             => $request->quantity,
+            "store_address"        => $request->store_address,
+            "delived_factory_type" => $request->delived_factory_type,
+            "created_by"           => Auth::id(),
+            "received_date"        => $request->received_date,
+            "description"          => $request->description,
+        ]);
+
+        toastr('Data Successfully Updated!');
+        return redirect()->route('yarnstorestock.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(YarnStoreStock $yarnStoreStock) {
+    public function destroy(YarnStoreStock $yarnstorestock) {
         //
+        $yarnstorestock->delete();
+        toastr('Data Successfully Deleted!');
+        return redirect()->route('yarnstorestock.index');
     }
 }

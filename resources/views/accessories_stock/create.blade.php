@@ -1,15 +1,9 @@
-@php
-$delived_factory_type = request()->get('delived_factory_type');
-@endphp
-
 @extends('layouts.master')
-@section('title')
-{{ $delived_factory_type == 'yarn' ? 'Yarn Create Stock' : 'Dyed Yarn Create Stock' }}
-@endsection
+@section('title','Accessories Stock Create')
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-        <h2 class="mb-0">{{ $delived_factory_type == 'yarn' ? 'Yarn Create Stock' : 'Dyed Yarn Create Stock' }}</h2>
+        <h2 class="mb-0">Accessories Stock Create</h2>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb align-items-center mb-0 lh-1">
@@ -23,15 +17,13 @@ $delived_factory_type = request()->get('delived_factory_type');
                     <span class="fw-medium">Order</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">{{ $delived_factory_type == 'yarn' ? 'Yarn Create Stock' : 'Dyed Yarn Create
-                        Stock' }}</span>
+                    <span class="fw-medium">Accessories Stock Create</span>
                 </li>
             </ol>
         </nav>
     </div>
-    <form action="{{ route('yarnstorestock.store') }}" method="POST" enctype="multipart/form-data" id="yarn_form">
+    <form action="{{ route('accessoriesstock.store') }}" method="POST" enctype="multipart/form-data" id="yarn_form">
         @csrf
-        <input type="hidden" name="delived_factory_type" value="{{ $delived_factory_type ?? '' }}">
         <div class="row">
             <div class="col-lg-12">
                 <div class="card bg-white border-0 rounded-3 mb-4">
@@ -85,7 +77,7 @@ $delived_factory_type = request()->get('delived_factory_type');
                                     oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')"
                                     name="bag_count">
                             </div>
-                            <div class="col-lg-3 pe-0 mb-3">
+                            <div class="col-lg-2 pe-0 mb-3">
                                 <label class="label text-secondary">Description<span
                                         style="color: rgb(205, 2, 2)">*</span></label>
                                 <input type="text" class="form-control" name="description">
@@ -93,10 +85,21 @@ $delived_factory_type = request()->get('delived_factory_type');
                                 <div class="text-danger mt-2">{{ $message }}</div>
                                 @enderror
                             </div>
+
                             <div class="col-lg-2 pe-0 mb-3">
                                 <label class="label text-secondary">Quantity(KG)<span
                                         style="color: rgb(205, 2, 2)">*</span></label>
                                 <input type="text" class="form-control" name="quantity">
+                                @error('quantity')
+                                <div class="text-danger mt-2">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-lg-1 pe-0 mb-3">
+                                <label class="label text-secondary">Unit</label>
+                                <select class="form-control" name="unit">
+                                    <option value="pc">PC</option>
+                                    <option value="kg">KG</option>
+                                </select>
                                 @error('quantity')
                                 <div class="text-danger mt-2">{{ $message }}</div>
                                 @enderror

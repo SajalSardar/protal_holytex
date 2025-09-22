@@ -61,7 +61,7 @@
                                             @endif
                                         </td>
                                         <td>{{ $item->po_number }}</td>
-                                        <td>{{ @$item->yarnQty->description ?? '--' }}</td>
+                                        <td>{{ @$item->yarnQty->description ?? ($item->description ?? '--') }}</td>
                                         <td>{{ $item->style }}</td>
                                         <td>{{ $item->quantity }}</td>
                                         <td>{{ $item->unit }}</td>
@@ -91,15 +91,27 @@
                                                             <i
                                                                 class="material-symbols-outlined fs-16 text-primary">contact_page</i>
                                                             Use Stock</a></li>
-                                                    <li><a class="dropdown-item py-2" href=""> <i
+                                                    <li><a class="dropdown-item py-2"
+                                                            href="{{ route('yarnstorestock.show', $item->id) }}"> <i
                                                                 class="material-symbols-outlined fs-16 text-primary">visibility</i>
                                                             View</a></li>
-                                                    <li><a class="dropdown-item py-2" href=""><i
+                                                    <li><a class="dropdown-item py-2"
+                                                            href="{{ route('yarnstorestock.edit', $item->id) }}"><i
                                                                 class="material-symbols-outlined fs-16 text-body">edit</i>
                                                             Edit</a></li>
-                                                    <li><a class="dropdown-item py-2" href="#"><i
-                                                                class="material-symbols-outlined fs-16 text-danger">delete</i>
-                                                            Delete</a></li>
+                                                    <li>
+                                                        <form action="{{ route('yarnstorestock.destroy', $item->id) }}"
+                                                            method="POST" onclick="deleteAlert(this)">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="button" class="dropdown-item py-2">
+                                                                <i
+                                                                    class="material-symbols-outlined fs-16 text-danger">delete</i>
+                                                                Delete
+                                                            </button>
+                                                        </form>
+
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </td>
@@ -301,6 +313,22 @@
     $(function(){
         $('.select2').select2();
     });
+
+    function deleteAlert(form){
+        Swal.fire({
+            title: "Are you sure?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    }
+    
 
     function showStockModal(item){
         const modalEl = document.getElementById('stock_change_modal');

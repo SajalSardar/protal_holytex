@@ -50,6 +50,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('yarn-qty-status-update', [YarnQuotationController::class, 'yarnQtyStatusUpdate'])->name('yarn.qty.update.status');
     Route::resource('yarnreceived', YarnReceivedController::class);
     Route::resource('yarnstorestock', YarnStoreStockController::class);
+    Route::get('dyed-yarn-stock', [YarnStoreStockController::class, 'dyedYarnStock'])->name('dyedyarnstock.index');
+    Route::get('dyed-yarn-stock-create', [YarnStoreStockController::class, 'create'])->name('dyedyarnstock.create');
 
     Route::resource('dyedquotation', DyedQuotationController::class);
     Route::post('dyed-qty-status-update', [DyedQuotationController::class, 'dyedQtyStatusUpdate'])->name('dyed.qty.update.status');
@@ -59,6 +61,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('netting-qty-status-update', [NettingQuotationController::class, 'nettingQtyStatusUpdate'])->name('netting.qty.update.status');
     Route::resource('nettingreceived', NettingReceivedController::class);
     Route::resource('nettingstorestock', NettingStoreStockController::class);
+    Route::get('dyeing-knit-stock', [NettingStoreStockController::class, 'dyeingKnitStock'])->name('dyeingknitstorestock.index');
 
     Route::resource('dyeingquotation', DyeingQuotationController::class);
     Route::post('dyeing-qty-status-update', [DyeingQuotationController::class, 'dyeingQtyStatusUpdate'])->name('dyeing.qty.update.status');

@@ -121,7 +121,7 @@
                 </ul>
             </li>
             <li
-                class="menu-item {{ request()->routeIs(['yarnstorestock.*','nettingstorestock.*', 'accessoriesstock.*']) ? 'open' : '' }}">
+                class="menu-item {{ request()->routeIs(['yarnstorestock.*','nettingstorestock.*', 'accessoriesstock.*', 'dyedyarnstock.*','dyeingknitstorestock.*']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
                     <span class="title">Goods Stock</span>
@@ -134,9 +134,21 @@
                         </a>
                     </li>
                     <li class="menu-item">
+                        <a href="{{ route('dyedyarnstock.index') }}"
+                            class="menu-link {{ request()->routeIs('dyedyarnstock.*') ? 'active' : '' }}">
+                            Dyed Yarn Stock
+                        </a>
+                    </li>
+                    <li class="menu-item">
                         <a href="{{ route('nettingstorestock.index') }}"
                             class="menu-link {{ request()->routeIs('nettingstorestock.*') ? 'active' : '' }}">
-                            Netting Stock
+                            Row Knit Stock
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('dyeingknitstorestock.index') }}"
+                            class="menu-link {{ request()->routeIs('dyeingknitstorestock.*') ? 'active' : '' }}">
+                            Dyeing Knit
                         </a>
                     </li>
                     <li class="menu-item">

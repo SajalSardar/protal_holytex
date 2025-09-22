@@ -1,12 +1,12 @@
 @extends('layouts.master')
-@section('title', 'Knit Store')
+@section('title', 'Dyeing knit Store')
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div class="d-flex">
-            <h2 class="mb-0">Knit Store</h2>
+            <h2 class="mb-0">Dyeing knit Store</h2>
             <a href="{{ route('nettingreceived.create') }}" class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
-                Receive Goods in Stock</a>
+                Create Store</a>
         </div>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
@@ -21,7 +21,7 @@
                     <span class="fw-medium">Order</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Knit Store</span>
+                    <span class="fw-medium">Dyeing knit Store</span>
                 </li>
             </ol>
         </nav>
@@ -49,7 +49,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($rowNettingstock as $item)
+                                    @forelse ($dyeingNettingstock as $item)
                                     <tr>
                                         <td>
                                             @if ($item->challan_file)

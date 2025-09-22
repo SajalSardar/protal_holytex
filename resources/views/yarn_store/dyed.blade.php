@@ -1,15 +1,15 @@
 @extends('layouts.master')
-@section('title', 'Yarn Store')
+@section('title', 'Dyed Yarn Store')
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div class="d-flex">
-            <h2 class="mb-0">Yarn Store</h2>
-            <a href="{{ route('yarnstorestock.create',['delived_factory_type' => 'yarn']) }}"
+            <h2 class="mb-0">Dyed Yarn Store</h2>
+            <a href="{{ route('dyedyarnstock.create',['delived_factory_type' => 'dyed']) }}"
                 class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
                 Create Stock</a>
             <a href="{{ route('yarnreceived.create') }}" class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
-                Receive Stock</a>
+                Create Store</a>
         </div>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
@@ -24,7 +24,7 @@
                     <span class="fw-medium">Order</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Yarn Store</span>
+                    <span class="fw-medium">Dyed Yarn Store</span>
                 </li>
             </ol>
         </nav>

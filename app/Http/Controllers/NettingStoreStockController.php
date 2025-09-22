@@ -10,10 +10,15 @@ class NettingStoreStockController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        $rowNettingstock    = NettingStoreStock::with('yarnQuotations:po_number,style,description')->where('delived_factory_type', 'netting')->orderBy('id', 'desc')->get();
+        $rowNettingstock = NettingStoreStock::with('yarnQuotations:po_number,style,description')->where('delived_factory_type', 'netting')->orderBy('id', 'desc')->get();
+
+        return view('netting_store.index', compact('rowNettingstock'));
+    }
+
+    public function dyeingKnitStock() {
         $dyeingNettingstock = NettingStoreStock::with('yarnQuotations:po_number,style,description')->where('delived_factory_type', 'dyeing')->orderBy('id', 'desc')->get();
 
-        return view('netting_store.index', compact('rowNettingstock', 'dyeingNettingstock'));
+        return view('netting_store.dyeing', compact('dyeingNettingstock'));
     }
 
     /**

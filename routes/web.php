@@ -62,6 +62,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('nettingreceived', NettingReceivedController::class);
     Route::resource('nettingstorestock', NettingStoreStockController::class);
     Route::get('dyeing-knit-stock', [NettingStoreStockController::class, 'dyeingKnitStock'])->name('dyeingknitstorestock.index');
+    Route::get('dyeing-knit-stock-create', [NettingStoreStockController::class, 'create'])->name('dyeingknitstorestock.create');
 
     Route::resource('dyeingquotation', DyeingQuotationController::class);
     Route::post('dyeing-qty-status-update', [DyeingQuotationController::class, 'dyeingQtyStatusUpdate'])->name('dyeing.qty.update.status');

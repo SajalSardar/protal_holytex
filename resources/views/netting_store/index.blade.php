@@ -5,6 +5,9 @@
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div class="d-flex">
             <h2 class="mb-0">Knit Store</h2>
+            <a href="{{ route('nettingstorestock.create',['delived_factory_type' => 'netting']) }}"
+                class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
+                Create Stock</a>
             <a href="{{ route('nettingreceived.create') }}" class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
                 Receive Goods in Stock</a>
         </div>
@@ -59,11 +62,15 @@
                                             @endif
                                         </td>
                                         <td width="200">
+                                            @if ($item->yarnQuotations->isNotEmpty())
                                             <div readonly rows="2" class="overflow-x-auto border rounded-3 p-2"
                                                 style="height:60px;">
                                                 {{ $item->yarnQuotations->pluck('description')->map(fn($d) =>
                                                 trim($d))->join(", ") }}
                                             </div>
+                                            @else
+                                            --
+                                            @endif
                                         </td>
                                         <td>{{ $item->po_number }}</td>
                                         <td>{{ $item->style }}</td>

@@ -65,7 +65,7 @@ $title = $delived_factory_type == 'yarn' ? 'Edit Yarn Stock' : 'Edit Dyed Yarn S
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Received Date</label>
                                     <input type="date" name="received_date" class="form-control"
-                                        value="{{ old('received_date',$yarnstorestock->received_date) }}">
+                                        value="{{ old('received_date',$yarnstorestock->received_date ? $yarnstorestock->received_date->format('Y-m-d') : '') }}">
                                     @error('received_date')
                                     <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror
@@ -95,7 +95,7 @@ $title = $delived_factory_type == 'yarn' ? 'Edit Yarn Stock' : 'Edit Dyed Yarn S
                                 <label class="label text-secondary">Description<span
                                         style="color: rgb(205, 2, 2)">*</span></label>
                                 <input type="text" class="form-control" name="description"
-                                    value="{{ old('description',$yarnstorestock->description) }}">
+                                    value="{{ old('description', @$yarnstorestock->yarnQty->description ?? ($yarnstorestock->description ?? '')) }}">
                                 @error('description')
                                 <div class="text-danger mt-2">{{ $message }}</div>
                                 @enderror

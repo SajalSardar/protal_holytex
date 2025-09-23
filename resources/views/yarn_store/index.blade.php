@@ -65,7 +65,8 @@
                                         <td>{{ $item->style }}</td>
                                         <td>{{ $item->quantity }}</td>
                                         <td>{{ $item->unit }}</td>
-                                        <td>{{ $item->received_date }}</td>
+                                        <td>{{ $item->received_date ? $item->received_date->format('d-m-Y') : '-' }}
+                                        </td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
                                         <td>{{ $item->store_address }}</td>
                                         <td>

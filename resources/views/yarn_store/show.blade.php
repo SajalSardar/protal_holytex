@@ -1,15 +1,15 @@
+@php
+$delived_factory_type = $yarnstorestock->delived_factory_type;
+$title = $delived_factory_type == 'yarn' ? 'Yarn Store Details' : 'Dyed Yarn Store Details';
+@endphp
+
 @extends('layouts.master')
 @section('title', 'Yarn Store Details')
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div class="d-flex">
-            <h2 class="mb-0">Yarn Store Details</h2>
-            <a href="{{ route('yarnstorestock.create',['delived_factory_type' => 'yarn']) }}"
-                class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
-                Create Stock</a>
-            <a href="{{ route('yarnreceived.create') }}" class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
-                Receive Stock</a>
+            <h2 class="mb-0">{{ $title }}</h2>
         </div>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
@@ -24,7 +24,7 @@
                     <span class="fw-medium">Order</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Yarn Store Details</span>
+                    <span class="fw-medium">{{ $title }}</span>
                 </li>
             </ol>
         </nav>
@@ -54,6 +54,11 @@
                             <td><strong>Quantity</strong></td>
                             <td>:</td>
                             <td>{{ $yarnstorestock->quantity }} {{ $yarnstorestock->unit }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Yarn Type</strong></td>
+                            <td>:</td>
+                            <td>{{ $yarnstorestock->delived_factory_type }}</td>
                         </tr>
                         <tr>
                             <td><strong>Loat Number</strong></td>
@@ -125,41 +130,39 @@
                     <h3 class="card-title">Uses This Stock</h3>
                 </div>
                 <div class="card-body">
-                    <div class="default-table-area style-two default-table-width">
-                        <div class="table-responsive">
-                            <table class="table align-middle">
-                                <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>PO</th>
-                                        <th>Style</th>
-                                        <th>Quantity(kg)</th>
-                                        <th>Received Date</th>
-                                        <th>Created At</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($usesStock as $uses_stock)
-                                    <tr>
-                                        <td>{{ $uses_stock->id }}</td>
-                                        <td>{{ $uses_stock->po_number }}</td>
-                                        <td>{{ $uses_stock->style }}</td>
-                                        <td>{{ $uses_stock->quantity }} {{ $uses_stock->unit }}</td>
-                                        <td>{{ $uses_stock->received_date }}</td>
-                                        <td>{{ $uses_stock->created_at->format('d-m-Y') }}</td>
-                                    </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="6">
-                                            <div class="alert alert-info">
-                                                <p>No data Found</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>PO</th>
+                                    <th>Style</th>
+                                    <th>Quantity(kg)</th>
+                                    <th>Received Date</th>
+                                    <th>Created At</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($usesStock as $uses_stock)
+                                <tr>
+                                    <td>{{ $uses_stock->id }}</td>
+                                    <td>{{ $uses_stock->po_number }}</td>
+                                    <td>{{ $uses_stock->style }}</td>
+                                    <td>{{ $uses_stock->quantity }} {{ $uses_stock->unit }}</td>
+                                    <td>{{ $uses_stock->received_date }}</td>
+                                    <td>{{ $uses_stock->created_at->format('d-m-Y') }}</td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="alert alert-info">
+                                            <p>No data Found</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                     <div class="paginate mt-3">
                         {{ $usesStock->links() }}

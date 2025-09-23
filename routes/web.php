@@ -49,9 +49,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('yarnquotation', YarnQuotationController::class);
     Route::post('yarn-qty-status-update', [YarnQuotationController::class, 'yarnQtyStatusUpdate'])->name('yarn.qty.update.status');
     Route::resource('yarnreceived', YarnReceivedController::class);
+
     Route::resource('yarnstorestock', YarnStoreStockController::class);
-    Route::get('dyed-yarn-stock', [YarnStoreStockController::class, 'dyedYarnStock'])->name('dyedyarnstock.index');
-    Route::get('dyed-yarn-stock-create', [YarnStoreStockController::class, 'create'])->name('dyedyarnstock.create');
+    Route::controller(YarnStoreStockController::class)->name('dyedyarnstock.')->group(function () {
+        Route::get('dyed-yarn-stock', 'dyedYarnStock')->name('index');
+        Route::get('dyed-yarn-stock-create', 'create')->name('create');
+        Route::get('dyed-yarn-stock-show/{yarnstorestock}', 'show')->name('show');
+        Route::get('dyed-yarn-stock-edit/{yarnstorestock}', 'edit')->name('edit');
+    });
 
     Route::resource('dyedquotation', DyedQuotationController::class);
     Route::post('dyed-qty-status-update', [DyedQuotationController::class, 'dyedQtyStatusUpdate'])->name('dyed.qty.update.status');

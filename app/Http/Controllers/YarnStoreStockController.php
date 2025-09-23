@@ -129,7 +129,7 @@ class YarnStoreStockController extends Controller {
         ]);
 
         toastr('Data Successfully Updated!');
-        return redirect()->route('yarnstorestock.index');
+        return back();
     }
 
     /**
@@ -139,6 +139,6 @@ class YarnStoreStockController extends Controller {
         //
         $yarnstorestock->delete();
         toastr('Data Successfully Deleted!');
-        return redirect()->route('yarnstorestock.index');
+        return back();
     }
 }

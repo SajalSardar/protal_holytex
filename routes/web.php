@@ -65,9 +65,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('nettingquotation', NettingQuotationController::class);
     Route::post('netting-qty-status-update', [NettingQuotationController::class, 'nettingQtyStatusUpdate'])->name('netting.qty.update.status');
     Route::resource('nettingreceived', NettingReceivedController::class);
+
     Route::resource('nettingstorestock', NettingStoreStockController::class);
-    Route::get('dyeing-knit-stock', [NettingStoreStockController::class, 'dyeingKnitStock'])->name('dyeingknitstorestock.index');
-    Route::get('dyeing-knit-stock-create', [NettingStoreStockController::class, 'create'])->name('dyeingknitstorestock.create');
+    Route::controller(NettingStoreStockController::class)->name('dyeingknitstorestock.')->group(function () {
+        Route::get('dyeing-knit-stock', 'dyeingKnitStock')->name('index');
+        Route::get('dyeing-knit-stock-create', 'create')->name('create');
+        Route::get('dyeing-knit-stock-show/{nettingstorestock}', 'show')->name('show');
+        Route::get('dyeing-knit-stock-edit/{nettingstorestock}', 'edit')->name('edit');
+    });
 
     Route::resource('dyeingquotation', DyeingQuotationController::class);
     Route::post('dyeing-qty-status-update', [DyeingQuotationController::class, 'dyeingQtyStatusUpdate'])->name('dyeing.qty.update.status');

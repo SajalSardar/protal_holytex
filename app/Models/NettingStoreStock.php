@@ -3,10 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class NettingStoreStock extends Model {
+
+    use SoftDeletes;
     //
     protected $guarded = ['id'];
+
+    protected $casts = [
+        'challan_date'  => 'datetime',
+        'received_date' => 'datetime',
+    ];
 
     // public function nettingQty() {
     //     return $this->belongsTo(NettingQuotation::class, 'netting_quotation_id');

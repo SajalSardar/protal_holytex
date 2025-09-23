@@ -1,16 +1,9 @@
-@php
-$delived_factory_type = $yarnstorestock->delived_factory_type;
-$title = $delived_factory_type == 'yarn' ? 'Edit Yarn Stock' : 'Edit Dyed Yarn Stock';
-@endphp
-
 @extends('layouts.master')
-@section('title')
-{{ $title }}
-@endsection
+@section('title','Edit Accessories')
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-        <h2 class="mb-0">{{ $title }}</h2>
+        <h2 class="mb-0">Edit Accessories</h2>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb align-items-center mb-0 lh-1">
@@ -24,16 +17,15 @@ $title = $delived_factory_type == 'yarn' ? 'Edit Yarn Stock' : 'Edit Dyed Yarn S
                     <span class="fw-medium">Order</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">{{ $title }}</span>
+                    <span class="fw-medium">Edit Accessories</span>
                 </li>
             </ol>
         </nav>
     </div>
-    <form action="{{ route('yarnstorestock.update', $yarnstorestock->id) }}" method="POST" enctype="multipart/form-data"
-        id="yarn_form">
+    <form action="{{ route('accessoriesstock.update', $accessoriesstock->id) }}" method="POST"
+        enctype="multipart/form-data" id="yarn_form">
         @csrf
         @method('PUT')
-        <input type="hidden" name="delived_factory_type" value="{{ $delived_factory_type ?? '' }}">
         <div class="row">
             <div class="col-lg-12">
                 <div class="card bg-white border-0 rounded-3 mb-4">
@@ -44,7 +36,7 @@ $title = $delived_factory_type == 'yarn' ? 'Edit Yarn Stock' : 'Edit Dyed Yarn S
                                     <label class="label text-secondary">PO Number <span
                                             style="color: rgb(205, 2, 2)">*</span></label>
                                     <input type="text" name="po_number" class="form-control"
-                                        value="{{ old('po_number',$yarnstorestock->po_number) }}">
+                                        value="{{ old('po_number',$accessoriesstock->po_number) }}">
                                     @error('po_number')
                                     <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror
@@ -55,7 +47,7 @@ $title = $delived_factory_type == 'yarn' ? 'Edit Yarn Stock' : 'Edit Dyed Yarn S
                                     <label class="label text-secondary">Style<span
                                             style="color: rgb(205, 2, 2)">*</span></label>
                                     <input type="text" name="style" class="form-control"
-                                        value="{{ old('style',$yarnstorestock->style) }}">
+                                        value="{{ old('style',$accessoriesstock->style) }}">
                                     @error('style')
                                     <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror
@@ -65,7 +57,7 @@ $title = $delived_factory_type == 'yarn' ? 'Edit Yarn Stock' : 'Edit Dyed Yarn S
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Received Date</label>
                                     <input type="date" name="received_date" class="form-control"
-                                        value="{{ old('received_date',$yarnstorestock->received_date ? $yarnstorestock->received_date->format('Y-m-d') : '') }}">
+                                        value="{{ old('received_date',$accessoriesstock->received_date ? $accessoriesstock->received_date->format('Y-m-d') : '') }}">
                                     @error('received_date')
                                     <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror
@@ -74,7 +66,7 @@ $title = $delived_factory_type == 'yarn' ? 'Edit Yarn Stock' : 'Edit Dyed Yarn S
                             <div class="col-lg-4 mb-4">
                                 <label class="label text-secondary">Remarks</label>
                                 <textarea rows="1" class="form-control"
-                                    name="remarks">{{old('remarks',$yarnstorestock->remarks)  }}</textarea>
+                                    name="remarks">{{old('remarks',$accessoriesstock->remarks)  }}</textarea>
                             </div>
                         </div>
                         <div class="row">
@@ -83,20 +75,20 @@ $title = $delived_factory_type == 'yarn' ? 'Edit Yarn Stock' : 'Edit Dyed Yarn S
                                     No.</label>
                                 <input type="text" class="form-control"
                                     oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')"
-                                    name="loat_no" value="{{ old('loat_no',$yarnstorestock->lot_number) }}">
+                                    name="loat_no" value="{{ old('loat_no',$accessoriesstock->lot_number) }}">
                             </div>
                             <div class="col-lg-2 pe-0 mb-3">
                                 <label class="label text-secondary">Bags</label>
                                 <input type="text" class="form-control"
                                     oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')"
-                                    name="bag_count" value="{{ old('bag_count',$yarnstorestock->bag_count) }}">
+                                    name="bag_count" value="{{ old('bag_count',$accessoriesstock->bag_count) }}">
                             </div>
                             <div class="col-lg-3 pe-0 mb-3">
                                 <label class="label text-secondary">Description<span
                                         style="color: rgb(205, 2, 2)">*</span></label>
                                 <input type="text" class="form-control" name="description"
-                                    value="{{ old('description', @$yarnstorestock->yarnQty->description ?? ($yarnstorestock->description ?? '')) }}"
-                                    {{ @$yarnstorestock->yarnQty->description ? 'readonly' : ''}}>
+                                    value="{{ old('description', $accessoriesstock->accessoriesQty->description ?? ($accessoriesstock->description ?? '--')) }}"
+                                    {{ @$accessoriesstock->accessoriesQty->description ? 'readonly' : '' }}>
                                 @error('description')
                                 <div class="text-danger mt-2">{{ $message }}</div>
                                 @enderror
@@ -105,7 +97,7 @@ $title = $delived_factory_type == 'yarn' ? 'Edit Yarn Stock' : 'Edit Dyed Yarn S
                                 <label class="label text-secondary">Quantity(KG)<span
                                         style="color: rgb(205, 2, 2)">*</span></label>
                                 <input type="text" class="form-control" name="quantity"
-                                    value="{{ old('quantity',$yarnstorestock->quantity) }}">
+                                    value="{{ old('quantity',$accessoriesstock->quantity) }}">
                                 @error('quantity')
                                 <div class="text-danger mt-2">{{ $message }}</div>
                                 @enderror
@@ -114,7 +106,7 @@ $title = $delived_factory_type == 'yarn' ? 'Edit Yarn Stock' : 'Edit Dyed Yarn S
                                 <label class="label text-secondary">Store
                                     Address<span style="color: rgb(205, 2, 2)">*</span></label>
                                 <textarea rows="1" class="form-control"
-                                    name="store_address">{{ old('store_address',$yarnstorestock->store_address) }}</textarea>
+                                    name="store_address">{{ old('store_address',$accessoriesstock->store_address) }}</textarea>
                                 @error('store_address')
                                 <div class="text-danger mt-2">{{ $message }}</div>
                                 @enderror

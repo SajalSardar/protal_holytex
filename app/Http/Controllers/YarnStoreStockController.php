@@ -123,7 +123,7 @@ class YarnStoreStockController extends Controller {
             "quantity"             => $request->quantity,
             "store_address"        => $request->store_address,
             "delived_factory_type" => $request->delived_factory_type,
-            "created_by"           => Auth::id(),
+            "updated_by"           => Auth::id(),
             "received_date"        => $request->received_date,
             "description"          => $request->description,
         ]);

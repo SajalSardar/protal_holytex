@@ -36,7 +36,6 @@
                             <table class="table align-middle">
                                 <thead>
                                     <tr>
-                                        <th>Order Number</th>
                                         <th>PO</th>
                                         <th>Style</th>
                                         <th>From Stock(kg)</th>
@@ -54,7 +53,6 @@
                                     $item = $items->first();
                                     @endphp
                                     <tr>
-                                        <td>{{ $item->order_number }}</td>
                                         <td>{{ $item->po_number }}</td>
                                         <td>{{ $item->style }}</td>
                                         <td>{{ number_format($items->sum('from_stock_quantity'), 2) }}</td>

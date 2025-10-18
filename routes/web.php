@@ -51,6 +51,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('yarnreceived', YarnReceivedController::class);
 
     Route::resource('yarnstorestock', YarnStoreStockController::class);
+    Route::post('use-yarn-stock', [YarnStoreStockController::class, 'useYarnStock'])->name('use.yarn.stock');
     Route::controller(YarnStoreStockController::class)->name('dyedyarnstock.')->group(function () {
         Route::get('dyed-yarn-stock', 'dyedYarnStock')->name('index');
         Route::get('dyed-yarn-stock-create', 'create')->name('create');

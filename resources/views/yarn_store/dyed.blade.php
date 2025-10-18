@@ -136,7 +136,7 @@
 <!-- Modal -->
 <div class="modal fade" id="stock_change_modal" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-xl">
-        <form action="{{ route('yarnstorestock.store') }}" method="POST">
+        <form action="{{ route('use.yarn.stock') }}" method="POST">
             @csrf
             <input type="hidden" id="yarn_quotation_id" name="yarn_quotation_id">
             <input type="hidden" id="stock_id" name="stock_id">

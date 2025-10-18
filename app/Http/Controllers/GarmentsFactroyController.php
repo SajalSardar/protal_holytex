@@ -40,21 +40,30 @@ class GarmentsFactroyController extends Controller {
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(GarmentsFactroy $garmentsFactroy) {
-        //
+    public function edit(GarmentsFactroy $garmentsfactroy) {
+        return view('garments_factory.edit', compact('garmentsfactroy'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, GarmentsFactroy $garmentsFactroy) {
-        //
+    public function update(Request $request, GarmentsFactroy $garmentsfactroy) {
+        $request->validate([
+            'name'    => 'required|unique:garments_factroys,name,' . $garmentsfactroy->id,
+            'address' => 'required',
+        ]);
+
+        $garmentsfactroy->update($request->all());
+        toastr('Garments Factory Successfully updated!');
+        return back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(GarmentsFactroy $garmentsFactroy) {
-        //
+    public function destroy(GarmentsFactroy $garmentsfactroy) {
+        $garmentsfactroy->delete();
+        toastr('Garments Factory Successfully Deleted!');
+        return back();
     }
 }

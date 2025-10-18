@@ -168,37 +168,37 @@
                 <ul class="menu-sub">
                     <li class="menu-item">
                         <a href="{{ route('settings.style.index') }}"
-                            class="menu-link {{ request()->routeIs('settings.style.index') ? 'active' : '' }}">
+                            class="menu-link {{ request()->routeIs('settings.style.*') ? 'active' : '' }}">
                             Style
                         </a>
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('settings.yarnfactroy.index') }}"
-                            class="menu-link {{ request()->routeIs('settings.yarnfactroy.index') ? 'active' : '' }}">
+                            class="menu-link {{ request()->routeIs('settings.yarnfactroy.*') ? 'active' : '' }}">
                             Yarn Factory
                         </a>
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('settings.dyedfactory.index') }}"
-                            class="menu-link {{ request()->routeIs('settings.dyedfactory.index') ? 'active' : '' }}">
+                            class="menu-link {{ request()->routeIs('settings.dyedfactory.*') ? 'active' : '' }}">
                             Dyed Factory
                         </a>
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('settings.nettingfactroy.index') }}"
-                            class="menu-link {{ request()->routeIs('settings.nettingfactroy.index') ? 'active' : '' }}">
+                            class="menu-link {{ request()->routeIs('settings.nettingfactroy.*') ? 'active' : '' }}">
                             Netting Factory
                         </a>
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('settings.dyeingfactroy.index') }}"
-                            class="menu-link {{ request()->routeIs('settings.dyeingfactroy.index') ? 'active' : '' }}">
+                            class="menu-link {{ request()->routeIs('settings.dyeingfactroy.*') ? 'active' : '' }}">
                             Dyeing Factory
                         </a>
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('settings.garmentsfactroy.index') }}"
-                            class="menu-link {{ request()->routeIs('settings.garmentsfactroy.index') ? 'active' : '' }}">
+                            class="menu-link {{ request()->routeIs('settings.garmentsfactroy.*') ? 'active' : '' }}">
                             Garments Factory
                         </a>
                     </li>

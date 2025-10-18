@@ -31,21 +31,30 @@ class YarnFactroyController extends Controller {
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(YarnFactroy $yarnFactroy) {
-        //
+    public function edit(YarnFactroy $yarnfactroy) {
+        return view('yarn_factory.edit', compact('yarnfactroy'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, YarnFactroy $yarnFactroy) {
-        //
+    public function update(Request $request, YarnFactroy $yarnfactroy) {
+        $request->validate([
+            'name'    => 'required|unique:yarn_factroys,name,' . $yarnfactroy->id,
+            'address' => 'required',
+        ]);
+
+        $yarnfactroy->update($request->all());
+        toastr('Yarn Factory Successfully Updated!');
+        return back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(YarnFactroy $yarnFactroy) {
-        //
+    public function destroy(YarnFactroy $yarnfactroy) {
+        $yarnfactroy->delete();
+        toastr('Yarn Factory Successfully Deleted!');
+        return back();
     }
 }

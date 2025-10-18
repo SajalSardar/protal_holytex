@@ -40,21 +40,30 @@ class DyeingFactroyController extends Controller {
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(DyeingFactroy $dyeingFactroy) {
-        //
+    public function edit(DyeingFactroy $dyeingfactroy) {
+        return view('dyeing_factory.edit', compact('dyeingfactroy'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, DyeingFactroy $dyeingFactroy) {
-        //
+    public function update(Request $request, DyeingFactroy $dyeingfactroy) {
+        $request->validate([
+            'name'    => 'required|unique:dyeing_factroys,name,' . $dyeingfactroy->id,
+            'address' => 'required',
+        ]);
+
+        $dyeingfactroy->update($request->all());
+        toastr('Dyeing Factory Successfully Updated!');
+        return back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(DyeingFactroy $dyeingFactroy) {
-        //
+    public function destroy(DyeingFactroy $dyeingfactroy) {
+        $dyeingfactroy->delete();
+        toastr('Dyeing Factory Successfully Deleted!');
+        return back();
     }
 }

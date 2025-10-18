@@ -58,8 +58,7 @@
                                     <label class="label text-secondary">Factory Address<span
                                             style="color: rgb(205, 2, 2)">*</span></label>
                                     <textarea rows="2" class="form-control @error('address') is-invalid @enderror"
-                                        placeholder="Factory address" name="address"
-                                        value="{{ old('address') }}"></textarea>
+                                        placeholder="Factory address" name="address">{{ old('address') }}</textarea>
                                     @error('address')
                                     <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror
@@ -69,8 +68,8 @@
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Remarks</label>
                                     <textarea rows="2" class="form-control @error('description') is-invalid @enderror"
-                                        placeholder="Factory description" name="description"
-                                        value="{{ old('description') }}"></textarea>
+                                        placeholder="Factory description"
+                                        name="description">{{ old('description') }}</textarea>
                                     @error('description')
                                     <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror
@@ -118,14 +117,20 @@
                                         <td>{{ Str::ucfirst($item->status) }}</td>
                                         <td>
                                             <div class="d-flex align-items-center gap-1 justify-content-end">
-                                                <button
+                                                <a href="{{ route('settings.yarnfactroy.edit',$item->id) }}"
                                                     class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
                                                     <i class="material-symbols-outlined fs-16 text-body">edit</i>
-                                                </button>
-                                                <button
-                                                    class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
-                                                    <i class="material-symbols-outlined fs-16 text-danger">delete</i>
-                                                </button>
+                                                </a>
+                                                <form action="{{ route('settings.yarnfactroy.destroy',$item->id) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" onclick="yarnFactoryDelete(this)"
+                                                        class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
+                                                        <i
+                                                            class="material-symbols-outlined fs-16 text-danger">delete</i>
+                                                    </button>
+                                                </form>
                                             </div>
                                         </td>
                                     </tr>
@@ -146,4 +151,24 @@
 </div>
 
 <div class="flex-grow-1"></div>
+@endsection
+
+@section('script')
+<script>
+    function yarnFactoryDelete(element) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $(element).parent('form').submit();
+            }
+        });
+    }
+</script>
 @endsection

@@ -20,6 +20,7 @@ class StyleController extends Controller {
     public function store(Request $request) {
         $request->validate([
             'style_name' => 'required|unique:styles,style_name',
+            'status'     => 'required',
         ]);
 
         Style::create($request->all());
@@ -31,20 +32,29 @@ class StyleController extends Controller {
      * Show the form for editing the specified resource.
      */
     public function edit(Style $style) {
-        //
+        return view('style_view.edit', compact('style'));
     }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Style $style) {
-        //
+        $request->validate([
+            'style_name' => 'required|unique:styles,style_name,' . $style->id,
+            'status'     => 'required',
+        ]);
+
+        $style->update($request->all());
+        toastr('Style Successfully Updated!');
+        return back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Style $style) {
-        //
+        $style->delete();
+        toastr('Style Successfully Deleted!');
+        return back();
     }
 }

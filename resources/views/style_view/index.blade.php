@@ -40,6 +40,20 @@
                                     @enderror
                                 </div>
                             </div>
+                            <div class="col-lg-6 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Status <span
+                                            style="color: rgb(205, 2, 2)">*</span></label>
+                                    <select name="status"
+                                        class="form-control @error('description') is-invalid @enderror">
+                                        <option value="active" selected>Active</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                    @error('status')
+                                    <div class="text-danger mt-2">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
                             <div class="col-lg-6 col-sm-6 align-self-center">
                                 <div class="form-group mb-4 mt-4">
                                     <button class="btn btn-primary py-2 px-4 fw-medium fs-16"> <i
@@ -78,14 +92,20 @@
                                         <td>{{ Str::ucfirst($item->status) }}</td>
                                         <td>
                                             <div class="d-flex align-items-center gap-1 justify-content-end">
-                                                <button
+                                                <a href="{{ route('settings.style.edit',$item->id) }}"
                                                     class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
                                                     <i class="material-symbols-outlined fs-16 text-body">edit</i>
-                                                </button>
-                                                <button
-                                                    class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
-                                                    <i class="material-symbols-outlined fs-16 text-danger">delete</i>
-                                                </button>
+                                                </a>
+                                                <form action="{{ route('settings.style.destroy',$item->id) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" onclick="styleDelete(this)"
+                                                        class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
+                                                        <i
+                                                            class="material-symbols-outlined fs-16 text-danger">delete</i>
+                                                    </button>
+                                                </form>
                                             </div>
                                         </td>
                                     </tr>
@@ -106,4 +126,24 @@
 </div>
 
 <div class="flex-grow-1"></div>
+@endsection
+
+@section('script')
+<script>
+    function styleDelete(element) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $(element).parent('form').submit();
+            }
+        });
+    }
+</script>
 @endsection

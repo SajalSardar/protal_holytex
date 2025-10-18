@@ -85,12 +85,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('accessoriesstock', AccessoriesStockController::class);
 
     Route::prefix('settings')->name('settings.')->group(function () {
-        Route::resource('style', StyleController::class)->only(['index', 'edit', 'update', 'store']);
-        Route::resource('yarnfactroy', YarnFactroyController::class)->only(['index', 'edit', 'update', 'store']);
-        Route::resource('nettingfactroy', NettingFactroyController::class)->only(['index', 'edit', 'update', 'store']);
-        Route::resource('dyeingfactroy', DyeingFactroyController::class)->only(['index', 'edit', 'update', 'store']);
-        Route::resource('garmentsfactroy', GarmentsFactroyController::class)->only(['index', 'edit', 'update', 'store']);
-        Route::resource('dyedfactory', DyedFactoryController::class)->only(['index', 'edit', 'update', 'store']);
+        Route::resource('style', StyleController::class)->only(['index', 'edit', 'update', 'store', 'destroy']);
+        Route::resource('yarnfactroy', YarnFactroyController::class)->only(['index', 'edit', 'update', 'store', 'destroy']);
+        Route::resource('nettingfactroy', NettingFactroyController::class)->only(['index', 'edit', 'update', 'store', 'destroy']);
+        Route::resource('dyeingfactroy', DyeingFactroyController::class)->only(['index', 'edit', 'update', 'store', 'destroy']);
+        Route::resource('garmentsfactroy', GarmentsFactroyController::class)->only(['index', 'edit', 'update', 'store', 'destroy']);
+        Route::resource('dyedfactory', DyedFactoryController::class)->only(['index', 'edit', 'update', 'store', 'destroy']);
     });
     Route::get('get-all-dyeing-factory', [DyeingFactroyController::class, 'showAll']);
     Route::get('get-all-dyed-factory', [DyedFactoryController::class, 'showAll']);

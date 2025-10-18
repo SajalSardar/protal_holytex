@@ -24,13 +24,6 @@ class DyedFactoryController extends Controller {
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create() {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request) {
@@ -45,30 +38,32 @@ class DyedFactoryController extends Controller {
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(DyedFactory $dyedFactory) {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
-    public function edit(DyedFactory $dyedFactory) {
-        //
+    public function edit(DyedFactory $dyedfactory) {
+        return view('dyed_factory.edit', compact('dyedfactory'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, DyedFactory $dyedFactory) {
-        //
+    public function update(Request $request, DyedFactory $dyedfactory) {
+        $request->validate([
+            'name'    => 'required|unique:dyed_factories,name,' . $dyedfactory->id,
+            'address' => 'required',
+        ]);
+
+        $dyedfactory->update($request->all());
+        toastr('Dyed Factory Successfully updated!');
+        return back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(DyedFactory $dyedFactory) {
-        //
+    public function destroy(DyedFactory $dyedfactory) {
+        $dyedfactory->delete();
+        toastr('Dyed Factory Successfully Deleted!');
+        return back();
     }
 }

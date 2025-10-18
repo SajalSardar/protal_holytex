@@ -31,21 +31,30 @@ class NettingFactroyController extends Controller {
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(NettingFactroy $nettingFactroy) {
-        //
+    public function edit(NettingFactroy $nettingfactroy) {
+        return view('netting_factory.edit', compact('nettingfactroy'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, NettingFactroy $nettingFactroy) {
-        //
+    public function update(Request $request, NettingFactroy $nettingfactroy) {
+        $request->validate([
+            'name'    => 'required|unique:netting_factroys,name,' . $nettingfactroy->id,
+            'address' => 'required',
+        ]);
+
+        $nettingfactroy->update($request->all());
+        toastr('Netting Factory Successfully Updated!');
+        return back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(NettingFactroy $nettingFactroy) {
-        //
+    public function destroy(NettingFactroy $nettingfactroy) {
+        $nettingfactroy->delete();
+        toastr('Netting Factory Successfully Deleted!');
+        return back();
     }
 }

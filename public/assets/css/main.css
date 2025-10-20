@@ -42,6 +42,7 @@
 .table_action_btn{
     background-color: #fff;
 }
+.table_action_btn li:hover button,
 .table_action_btn li:hover a{
     background-color: #7977fa;
     color: #fff;

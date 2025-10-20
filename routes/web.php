@@ -47,7 +47,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::resource('yarnquotation', YarnQuotationController::class);
-    Route::post('yarn-qty-status-update', [YarnQuotationController::class, 'yarnQtyStatusUpdate'])->name('yarn.qty.update.status');
     Route::resource('yarnreceived', YarnReceivedController::class);
 
     Route::resource('yarnstorestock', YarnStoreStockController::class);

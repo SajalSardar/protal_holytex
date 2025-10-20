@@ -86,8 +86,14 @@ class YarnQuotationController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(YarnQuotation $buyYarn) {
-        //
+    public function show(YarnQuotation $yarnquotation) {
+        $yarnquotation->load(
+            "approvedBy",
+            "creator",
+            "lastUpdateBy"
+        );
+
+        return view('yarn_quotation.show', compact('yarnquotation'));
     }
 
     /**
@@ -103,27 +109,11 @@ class YarnQuotationController extends Controller {
         return view('yarn_quotation.edit', compact('yarnquotation', 'yarnFactory', 'nettingFactory', 'dyenFactory', 'getStyleByPo'));
     }
 
-    public function yarnQtyStatusUpdate(Request $request) {
-        // return $request;
-        if (!$request->style && !$request->po_number) {
-            toastr('PO number and style not found!', 'error');
-            return back();
-        }
-        YarnQuotation::where('po_number', $request->po_number)->where('style', $request->style)->update([
-            'status'      => $request->status,
-            'updated_by'  => Auth::id(),
-            'approved_by' => Auth::id(),
-        ]);
-        toastr('Yarn quotation Status Updated!');
-        return back();
-    }
-
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, YarnQuotation $yarnquotation) {
-        //
-        return $request;
+        //return $request;
 
         $request->validate([
             'po_number'    => 'required',
@@ -131,28 +121,30 @@ class YarnQuotationController extends Controller {
         ]);
 
         $yarnquotation->update([
-            'order_number'              => $request->order_number,
-            'po_number'                 => $request->po_number,
             'order_date'                => $request->order_date,
             'approximate_delivery_date' => $request->approximate_delivery_date,
-            'order_id'                  => $request->order_id,
-            'style'                     => $item,
-            'description'               => $request->description[$key],
-            'from_stock_quantity'       => $request->from_stock[$key],
-            'quantity'                  => $request->unit_quantity[$key],
-            'price'                     => $request->unit_price[$key],
-            'total_price'               => $request->total_unit_price[$key],
-            'yarn_factory_id'           => $request->yarn_factory[$key],
-            'receving_factory'          => $request->delivery_fact_type[$key],
+            'style'                     => $request->style,
+            'description'               => $request->description,
+            'from_stock_quantity'       => $request->from_stock_quantity,
+            'quantity'                  => $request->quantity,
+            'price'                     => $request->price,
+            'total_price'               => $request->total_unit_price,
+            'yarn_factory_id'           => $request->yarn_factory,
             'remarks'                   => $request->remarks,
-            'created_by'                => Auth::id(),
+            'updated_by'                => Auth::id(),
+            "netting_factory_id"        => $request->netting_factory_id ?? null,
+            "dyed_factory_id"           => $request->dyed_factory_id ?? null,
+            'status'                    => $request->status,
         ]);
 
-        if ($request->delivery_fact_type[$key] === "knit") {
-            $yarnquotation->netting_factory_id = $request->delivery_point[$key];
+        if ($request->netting_factory_id) {
+            $yarnquotation->receving_factory = "knit";
         }
-        if ($request->delivery_fact_type[$key] === "dyed") {
-            $yarnquotation->dyed_factory_id = $request->delivery_point[$key];
+        if ($request->dyed_factory_id) {
+            $yarnquotation->receving_factory = "dyed";
+        }
+        if ($request->status === "approved") {
+            $yarnquotation->approved_by = Auth::id();
         }
         $yarnquotation->save();
 
@@ -164,6 +156,8 @@ class YarnQuotationController extends Controller {
      * Remove the specified resource from storage.
      */
     public function destroy(YarnQuotation $yarnquotation) {
-        //
+        $yarnquotation->delete();
+        toastr('Yarn Quotation Successfully Deleted!');
+        return back();
     }
 }

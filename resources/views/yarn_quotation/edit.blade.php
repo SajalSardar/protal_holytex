@@ -60,13 +60,30 @@
                                         name="approximate_delivery_date">
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-sm-6">
+                            <div class="col-lg-3 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Order number</label>
                                     <input type="text" value="{{ old('order_number',$yarnquotation->order_number) }}"
                                         class="form-control" id="order_number" name="order_number" readonly>
                                 </div>
                             </div>
+                            <div class="col-lg-3 col-sm-6">
+                                <div class="form-group">
+                                    <label class="label text-secondary">Status</label>
+                                    <select name="status" class="form-select form-control status_select">
+                                        <option value="" disabled selected>Select Status</option>
+                                        <option value="pending" {{ $yarnquotation->status === "pending" ? 'selected' :
+                                            '' }}>Pending</option>
+                                        <option value="approved" {{ $yarnquotation->status === "approved" ? 'selected' :
+                                            '' }}>Approved</option>
+                                        <option value="cancelled" {{ $yarnquotation->status === "cancelled" ? 'selected'
+                                            : '' }}>Cancelled</option>
+                                        <option value="finished" {{ $yarnquotation->status === "finished" ? 'selected' :
+                                            '' }}>Finished</option>
+                                    </select>
+                                </div>
+                            </div>
+
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Remarks</label>
@@ -74,6 +91,7 @@
                                         rows="1">{{ old('remarks',$yarnquotation->remarks) }}</textarea>
                                 </div>
                             </div>
+                            <hr>
 
                             <div class="col-lg-2 col-sm-6 px-0">
                                 <div class="form-group mb-4">
@@ -124,7 +142,8 @@
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Total Price</label>
                                     <input type="text" readonly class="form-control " placeholder="Unit Price"
-                                        id="total_unit_price" value="{{ @$yarnquotation->total_price }}">
+                                        id="total_unit_price" name="total_unit_price"
+                                        value="{{ @$yarnquotation->total_price }}">
                                 </div>
                             </div>
                             <div class="col-lg-2 col-sm-6 px-0">

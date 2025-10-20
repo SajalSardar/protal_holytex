@@ -47,19 +47,15 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($yearnList as $key=>$poItems)
-                                    @foreach ($poItems as $items)
-                                    @php
-                                    $item = $items->first();
-                                    @endphp
+                                    @forelse ($yearnList as $item)
                                     <tr>
                                         <td>{{ $item->po_number }}</td>
                                         <td>{{ $item->style }}</td>
-                                        <td>{{ number_format($items->sum('from_stock_quantity'), 2) }}</td>
-                                        <td>{{ number_format($items->sum('quantity'), 2) }}</td>
-                                        <td>{{ number_format($items->sum('total_price'), 2) }}</td>
-                                        <td>{{ number_format(($items->sum('from_stock_quantity') +
-                                            $items->sum('quantity')), 2) }}</td>
+                                        <td>{{ number_format($item->from_stock_quantity, 2) }}</td>
+                                        <td>{{ number_format($item->quantity, 2) }}</td>
+                                        <td>{{ number_format($item->total_price, 2) }}</td>
+                                        <td>{{ number_format(($item->from_stock_quantity +
+                                            $item->quantity), 2) }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
                                         <td>
                                             <div class="dropdown text-end">
@@ -77,7 +73,8 @@
                                                     <li><a class="dropdown-item py-2" href="#"> <i
                                                                 class="material-symbols-outlined fs-16 text-primary">visibility</i>
                                                             View</a></li>
-                                                    <li><a class="dropdown-item py-2" href="#"><i
+                                                    <li><a class="dropdown-item py-2"
+                                                            href="{{ route('yarnquotation.edit',$item->id) }}"><i
                                                                 class="material-symbols-outlined fs-16 text-body">edit</i>
                                                             Edit</a></li>
                                                     <li><a class="dropdown-item py-2" href="#"><i
@@ -87,7 +84,6 @@
                                             </div>
                                         </td>
                                     </tr>
-                                    @endforeach
                                     @empty
                                     <tr>
                                         <td colspan="3">No data found!</td>

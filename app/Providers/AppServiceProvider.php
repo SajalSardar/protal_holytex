@@ -19,5 +19,12 @@ class AppServiceProvider extends ServiceProvider {
     public function boot(): void {
         //
         Paginator::useBootstrapFive();
+
+        $publicPath  = public_path('storage');
+        $storagePath = storage_path('app/public');
+
+        if (!file_exists($publicPath)) {
+            @symlink($storagePath, $publicPath);
+        }
     }
 }

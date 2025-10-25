@@ -83,7 +83,7 @@ class DyedQuotationController extends Controller {
                                 'from_stock_quantity'       => $inner['form_stock_quantity'] ?? null,
                                 'quantity'                  => $inner['quantity'] ?? null,
                                 'price'                     => $item['rate'] ?? null,
-                                'total_price'               => $item['total'] ?? null,
+                                'total_price'               => ($inner['quantity'] * $item['rate']) ?? null,
                                 'created_by'                => Auth::id(),
                                 'delivery_point_id'         => $inner['delivery_point'] ?? null,
                             ]);
@@ -149,8 +149,12 @@ class DyedQuotationController extends Controller {
             'updated_by'                => Auth::id(),
             'delivery_point_id'         => $request->netting_factory_id ?? null,
             'status'                    => $request->status,
-            'approved_by'               => Auth::id(),
         ]);
+
+        if ($request->status === "approved") {
+            $dyedquotation->approved_by = Auth::id();
+            $dyedquotation->save();
+        }
 
         toastr("Dyed Quotation Successfully Updated!");
         return back();

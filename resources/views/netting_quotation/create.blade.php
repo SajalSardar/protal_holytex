@@ -226,55 +226,11 @@
                                                     </div>    
                                                 </div>
                                             </div>
+                                            <hr>
 
-                                            <div class=col-12" id="garments_select_section_${key}_${keyFa}" style="display:none;">
-                                                <div id="garments_add_row_container_${key}_${keyFa}">
-                                                    <div class="row">
-                                                        <div class="col-sm-3">
-                                                            <div class="form-group mb-4">
-                                                                <label class="label text-secondary">Quantity(KG)</label>
-                                                                <input type="number" class="form-control quantity_${key}_${keyFa}" data-id_prefix="${key}_${keyFa}" oninput="calculateQuantity(this,'${key}_${keyFa}')" name="items[${key}][${keyFa}][inner_items][1][quantity]"  id="quantity_${key}_${keyFa}" min="1">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-3 col-sm-3">
-                                                            <div class="form-group mb-4">
-                                                                <label class="label text-secondary">Delivery Point</label>
-                                                                <select name="items[${key}][${keyFa}][inner_items][1][delivery_point]" id="garments_${key}_${keyFa}" class="form-control select2">
-                                                                    <option value="" selected disabled>Select Garments Factory</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-2 align-self-center mb-3">
-                                                    <button type="button" id="add_new_row_${key}_${keyFa}" onclick="addNewRows('garments','${key}','${keyFa}')" class="btn btn-warning py-2 px-2 fw-medium fs-14">Add row</button>
-                                                </div>
+                                            <div class=col-12" id="inner_items_section_${key}_${keyFa}">
+                                                
                                             </div>
-
-                                            <div class=col-12" id="deying_select_section_${key}_${keyFa}" style="display:none;">
-                                                <div id="dyeing_add_row_container_${key}_${keyFa}">
-                                                    <div class="row">
-                                                        <div class="col-sm-3">
-                                                            <div class="form-group mb-4">
-                                                                <label class="label text-secondary">Quantity(KG)</label>
-                                                                <input type="number" class="form-control quantity_${key}_${keyFa}" data-id_prefix="${key}_${keyFa}" oninput="calculateQuantity(this,'${key}_${keyFa}')" name="items[${key}][${keyFa}][inner_items][1][quantity]"  id="quantity_${key}_${keyFa}" min="1">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-3">
-                                                            <div class="form-group mb-4">
-                                                                <label class="label text-secondary">Delivery Point</label>
-                                                                <select name="items[${key}][${keyFa}][inner_items][1][delivery_point]" class="form-control select2" id="deying_point_${key}_${keyFa}">
-                                                                    <option value="" selected disabled>Select Deying Factory</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-2 align-self-center mb-3">
-                                                    <button type="button" id="add_new_row_${key}_${keyFa}" onclick="addNewRows('deying','${key}','${keyFa}')" class="btn btn-warning py-2 px-2 fw-medium fs-14">Add row</button>
-                                                </div>
-                                            </div>
-
 
                                         </div>  
                                     </div>
@@ -368,56 +324,10 @@
                                                     </div>    
                                                 </div>
                                             </div>
-
-                                            <div class=col-12" id="garments_select_section_${key}_${keyFa}" style="display:none;">
-                                                <div id="garments_add_row_container_${key}_${keyFa}">
-                                                    <div class="row">
-                                                        <div class="col-sm-3">
-                                                            <div class="form-group mb-4">
-                                                                <label class="label text-secondary">Quantity(KG)</label>
-                                                                <input type="number" class="form-control quantity_${key}_${keyFa}" data-id_prefix="${key}_${keyFa}" oninput="calculateQuantity(this,'${key}_${keyFa}')" name="items[${key}][${keyFa}][inner_items][1][quantity]"  id="quantity_${key}_${keyFa}" min="1">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-3 col-sm-3">
-                                                            <div class="form-group mb-4">
-                                                                <label class="label text-secondary">Delivery Point</label>
-                                                                <select name="items[${key}][${keyFa}][inner_items][1][delivery_point]" id="garments_${key}_${keyFa}" class="form-control select2">
-                                                                    <option value="" selected disabled>Select Garments Factory</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-2 align-self-center mb-3">
-                                                    <button type="button" id="add_new_row_${key}_${keyFa}" onclick="addNewRows('garments','${key}','${keyFa}')" class="btn btn-warning py-2 px-2 fw-medium fs-14">Add row</button>
-                                                </div>
+                                            <hr>
+                                            <div class=col-12" id="inner_items_section_${key}_${keyFa}">
+                                                
                                             </div>
-
-                                            <div class=col-12" id="deying_select_section_${key}_${keyFa}" style="display:none;">
-                                                <div id="dyeing_add_row_container_${key}_${keyFa}">
-                                                    <div class="row">
-                                                        <div class="col-sm-3">
-                                                            <div class="form-group mb-4">
-                                                                <label class="label text-secondary">Quantity(KG)</label>
-                                                                <input type="number" class="form-control quantity_${key}_${keyFa}" data-id_prefix="${key}_${keyFa}" oninput="calculateQuantity(this,'${key}_${keyFa}')" name="items[${key}][${keyFa}][inner_items][1][quantity]"  id="quantity_${key}_${keyFa}" min="1">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-3">
-                                                            <div class="form-group mb-4">
-                                                                <label class="label text-secondary">Delivery Point</label>
-                                                                <select name="items[${key}][${keyFa}][inner_items][1][delivery_point]" class="form-control select2" id="deying_point_${key}_${keyFa}">
-                                                                    <option value="" selected disabled>Select Deying Factory</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-2 align-self-center mb-3">
-                                                    <button type="button" id="add_new_row_${key}_${keyFa}" onclick="addNewRows('deying','${key}','${keyFa}')" class="btn btn-warning py-2 px-2 fw-medium fs-14">Add row</button>
-                                                </div>
-                                            </div>
-
-
                                         </div>  
                                     </div>
                                 </div>
@@ -473,6 +383,10 @@
         calculateQuantity(element,classPrefx);
         attachRateCalculation(element,classPrefx);
         // console.log(classPrefx);
+
+        $('.stock_quantity_' + classPrefx).each(function () {
+           $(this).val(0);
+        });
     }
 
     function calculateQuantity (element,classPrefx){
@@ -493,36 +407,92 @@
         }
     }
 
-    function showHideDeliveryPoint(element,style,factoryId) {
+    function showHideDeliveryPoint(element,key,keyFa) {
 
-        if (!element.checked) return; 
+        // if (!element.checked) return; 
 
         let value = element.value;
 
-        let deyingSection = document.getElementById(`deying_select_section_${style}_${factoryId}`);
-        let garmentsSection = document.getElementById(`garments_select_section_${style}_${factoryId}`);
+        let inner_items_section = document.getElementById(`inner_items_section_${key}_${keyFa}`);
+        // let garmentsSection = document.getElementById(`garments_select_section_${key}_${keyFa}`);
 
         if (value === "garments") {
-            let add_row_container = document.getElementById(`garments_add_row_container_${style}_${factoryId}`);
-            let container_rows = add_row_container.querySelectorAll('.row');
-            container_rows.forEach((row, index) => {
-               if(row > 0) row.remove();
-            });
+            // let add_row_container = document.getElementById(`garments_add_row_container_${style}_${factoryId}`);
+            // let container_rows = add_row_container.querySelectorAll('.row');
+            // container_rows.forEach((row, index) => {
+            //    if(row > 0) row.remove();
+            // });
             
-            garmentsSection.style.display = "block";
-            deyingSection.style.display = "none";
-            getGarmentsFactory(`#garments_${style}_${factoryId}`);
+            inner_items_section.innerHTML = `
+                <div id="garments_add_row_container_${key}_${keyFa}">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group mb-4">
+                                <label class="label text-secondary">From Stock(KG)</label>
+                                <input type="text" class="form-control stock_quantity_${key}_${keyFa}"" name="items[${key}][${keyFa}][inner_items][1][form_stock_quantity]" oninput="calculateStockQuantity(this,'${key}_${keyFa}')"  data-id_prefix="${key}_${keyFa}" id="stock_quantity_${key}_${keyFa}" min="1">
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group mb-4">
+                                <label class="label text-secondary">Quantity(KG)</label>
+                                <input type="number" class="form-control quantity_${key}_${keyFa}" data-id_prefix="${key}_${keyFa}" oninput="calculateQuantity(this,'${key}_${keyFa}')" name="items[${key}][${keyFa}][inner_items][1][quantity]"  id="quantity_${key}_${keyFa}" min="1">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-3">
+                            <div class="form-group mb-4">
+                                <label class="label text-secondary">Delivery Point</label>
+                                <select name="items[${key}][${keyFa}][inner_items][1][delivery_point]" id="garments_${key}_${keyFa}" class="form-control select2">
+                                    <option value="" selected disabled>Select Garments Factory</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2 align-self-center mb-3">
+                    <button type="button" id="add_new_row_${key}_${keyFa}" onclick="addNewRows('garments','${key}','${keyFa}')" class="btn btn-warning py-2 px-2 fw-medium fs-14">Add row</button>
+                </div>
+            `;
+
+            getGarmentsFactory(`#garments_${key}_${keyFa}`);
         } 
         else if (value === "dyeing") {
-            let add_row_container = document.getElementById(`dyeing_add_row_container_${style}_${factoryId}`);
-            let container_rows = add_row_container.querySelectorAll('.row');
-            container_rows.forEach((row, index) => {
-               if(row > 0) row.remove();
-            });
+            // let add_row_container = document.getElementById(`dyeing_add_row_container_${style}_${factoryId}`);
+            // let container_rows = add_row_container.querySelectorAll('.row');
+            // container_rows.forEach((row, index) => {
+            //    if(row > 0) row.remove();
+            // });
 
-            deyingSection.style.display = "block";
-            garmentsSection.style.display = "none";
-            getDyeingFactory(`#deying_point_${style}_${factoryId}`); 
+            inner_items_section.innerHTML =`
+            <div id="dyeing_add_row_container_${key}_${keyFa}">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group mb-4">
+                            <label class="label text-secondary">From Stock(KG)</label>
+                            <input type="text" class="form-control stock_quantity_${key}_${keyFa}"" name="items[${key}][${keyFa}][inner_items][1][form_stock_quantity]" oninput="calculateStockQuantity(this,'${key}_${keyFa}')"  data-id_prefix="${key}_${keyFa}" id="stock_quantity_${key}_${keyFa}" min="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group mb-4">
+                            <label class="label text-secondary">Quantity(KG)</label>
+                            <input type="number" class="form-control quantity_${key}_${keyFa}" data-id_prefix="${key}_${keyFa}" oninput="calculateQuantity(this,'${key}_${keyFa}')" name="items[${key}][${keyFa}][inner_items][1][quantity]"  id="quantity_${key}_${keyFa}" min="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group mb-4">
+                            <label class="label text-secondary">Delivery Point</label>
+                            <select name="items[${key}][${keyFa}][inner_items][1][delivery_point]" class="form-control select2" id="deying_point_${key}_${keyFa}">
+                                <option value="" selected disabled>Select Deying Factory</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2 align-self-center mb-3">
+                <button type="button" id="add_new_row_${key}_${keyFa}" onclick="addNewRows('deying','${key}','${keyFa}')" class="btn btn-warning py-2 px-2 fw-medium fs-14">Add row</button>
+            </div>
+            `;
+
+            getDyeingFactory(`#deying_point_${key}_${keyFa}`); 
         }
     }
     
@@ -570,6 +540,13 @@
             <div class="row" id="row_${key}_${keyFa}_${indexRow}">
                 <div class="col-sm-3">
                     <div class="form-group mb-4">
+                        <label class="label text-secondary">From Stock(KG)</label>
+                        <input type="text" class="form-control stock_quantity_${key}_${keyFa}"" name="items[${key}][${keyFa}][inner_items][${indexRow+1}][form_stock_quantity]" oninput="calculateStockQuantity(this,'${key}_${keyFa}')"  data-id_prefix="${key}_${keyFa}_${indexRow}" id="stock_quantity_${key}_${keyFa}_${indexRow}" min="1">
+                    </div>
+                </div>
+                
+                <div class="col-sm-3">
+                    <div class="form-group mb-4">
                         <label class="label text-secondary">Quantity(KG)</label>
                         <input type="number" class="form-control quantity_${key}_${keyFa}" data-id_prefix="${key}_${keyFa}_${indexRow}" oninput="calculateQuantity(this,'${key}_${keyFa}')" name="items[${key}][${keyFa}][inner_items][${indexRow+1}][quantity]" id="quantity_${key}_${keyFa}_${indexRow}" min="1">
                     </div>
@@ -598,6 +575,12 @@
         }else{
             let newRow = `
             <div class="row" id="row_${key}_${keyFa}_${indexRow}">
+                <div class="col-sm-3">
+                    <div class="form-group mb-4">
+                        <label class="label text-secondary">From Stock(KG)</label>
+                        <input type="text" class="form-control stock_quantity_${key}_${keyFa}"" name="items[${key}][${keyFa}][inner_items][${indexRow+1}][form_stock_quantity]" oninput="calculateStockQuantity(this,'${key}_${keyFa}')"  data-id_prefix="${key}_${keyFa}_${indexRow}" id="stock_quantity_${key}_${keyFa}_${indexRow}" min="1">
+                    </div>
+                </div>
                 <div class="col-sm-3">
                     <div class="form-group mb-4">
                         <label class="label text-secondary">Quantity(KG)</label>
@@ -633,6 +616,21 @@
         let rowId = $(this).data('row');
         $(rowId).remove();
     });
+
+    function calculateStockQuantity (element,classPrefx){
+        let from_stock_quantity = $('#from_stock_quantity_'+classPrefx).val();
+        
+        let total = 0;
+        $('.stock_quantity_' + classPrefx).each(function () {
+            let val = parseFloat($(this).val()) || 0;
+            total += val;
+        });
+
+        if(from_stock_quantity < total){
+            $(element).val('');
+            alert(`Max allowed is ${from_stock_quantity || 0}Kg (From Stock Quantity)`);
+        }
+    }
 
 </script>
 @endsection

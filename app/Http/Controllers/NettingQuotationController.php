@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\DyedQuotation;
+use App\Models\DyeingFactroy;
+use App\Models\GarmentsFactroy;
 use App\Models\NettingQuotation;
-use App\Models\NettingQuotationItem;
 use App\Models\YarnQuotation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -70,41 +71,36 @@ class NettingQuotationController extends Controller {
         foreach ($request->items as $style => $items) {
             foreach ($items as $item) {
                 // Main item
-                $totalInnerQty = collect($item['inner_items'])->sum('quantity');
+                if (!empty($item['inner_items']) && is_array($item['inner_items'])) {
+                    $totalInnerQty = collect($item['inner_items'])->sum('quantity');
 
-                if ($item['knit_quantity'] > 0 && $item['knit_quantity'] == $totalInnerQty) {
-                    $successMessageStatus = 1;
-
-                    $knitQty = NettingQuotation::create([
-                        'order_id'                  => $request->order_id,
-                        'order_number'              => $request->order_number,
-                        'style'                     => $style,
-                        'po_number'                 => $request->po_number,
-                        'purchase_date'             => $request->order_date,
-                        'approximate_delivery_date' => $request->approximate_delivery_date,
-                        'remarks'                   => $request->remarks,
-                        'delivery_factory_type'     => $item['delevary_poin_check'] ?? null,
-                        'netting_factory_id'        => $item['netting_factory_id'] ?? null,
-                        'from_stock_quantity'       => $item['from_stock_quantity'] ?? null,
-                        'quantity'                  => $item['knit_quantity'],
-                        'price'                     => $item['rate'] ?? null,
-                        'total_price'               => $item['total'] ?? null,
-                        'created_by'                => Auth::id(),
-                    ]);
-
-                    if ($knitQty && !empty($item['inner_items']) && is_array($item['inner_items'])) {
+                    if ($item['knit_quantity'] > 0 && $item['knit_quantity'] == $totalInnerQty) {
+                        $successMessageStatus = 1;
                         foreach ($item['inner_items'] as $inner) {
-                            NettingQuotationItem::create([
-                                'netting_quotation_id' => $knitQty->id,
-                                'quantity'             => $inner['quantity'] ?? null,
-                                'delivery_point_id'    => $inner['delivery_point'] ?? null,
-                                'created_by'           => Auth::id(),
+                            NettingQuotation::create([
+                                'order_id'                  => $request->order_id,
+                                'order_number'              => $request->order_number,
+                                'style'                     => $style,
+                                'po_number'                 => $request->po_number,
+                                'purchase_date'             => $request->order_date,
+                                'approximate_delivery_date' => $request->approximate_delivery_date,
+                                'remarks'                   => $request->remarks,
+                                'delivery_factory_type'     => $item['delevary_poin_check'] ?? null,
+                                'netting_factory_id'        => $item['netting_factory_id'] ?? null,
+                                'from_stock_quantity'       => $inner['form_stock_quantity'] ?? null,
+                                'quantity'                  => $inner['quantity'],
+                                'price'                     => $item['rate'] ?? null,
+                                'total_price'               => ($inner['quantity'] * $item['rate']) ?? null,
+                                'created_by'                => Auth::id(),
+                                'delivery_point_id'         => $inner['delivery_point'] ?? null,
                             ]);
                         }
+                    } else {
+                        toastr("Enter Total Quantity in {$style}!", 'error');
                     }
 
                 } else {
-                    toastr("Enter Total Quantity in {$style}!", 'error');
+                    toastr("Enter Quantity in {$style}!", 'error');
                 }
             }
         }
@@ -119,41 +115,56 @@ class NettingQuotationController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(NettingQuotation $netting) {
-        //
+    public function show(NettingQuotation $nettingquotation) {
+        return view('netting_quotation.show', compact('nettingquotation'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(NettingQuotation $netting) {
-        //
+    public function edit(NettingQuotation $nettingquotation) {
+        if ($nettingquotation->delivery_factory_type === "dyeing") {
+            $delivery_factory = DyeingFactroy::where('status', 'active')->get();
+        } else {
+            $delivery_factory = GarmentsFactroy::where('status', 'active')->get();
+        }
+        return view('netting_quotation.edit', compact('nettingquotation', 'delivery_factory'));
     }
 
-    public function nettingQtyStatusUpdate(Request $request) {
-        if (!$request->style && !$request->po_number) {
-            toastr('PO number and style not found!', 'error');
-            return back();
-        }
-        NettingQuotation::where('po_number', $request->po_number)->where('style', $request->style)->update([
-            'status'      => $request->status,
-            'updated_by'  => Auth::id(),
-            'approved_by' => Auth::id(),
-        ]);
-        toastr('Netting quotation Status Updated!');
-        return back();
-    }
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, NettingQuotation $netting) {
-        //
+    public function update(Request $request, NettingQuotation $nettingquotation) {
+        $request->validate([
+            'po_number' => 'required',
+        ]);
+        $nettingquotation->update([
+            'purchase_date'             => $request->order_date,
+            'approximate_delivery_date' => $request->approximate_delivery_date,
+            'remarks'                   => $request->remarks,
+            'from_stock_quantity'       => $request->from_stock_quantity,
+            'quantity'                  => $request->quantity,
+            'price'                     => $request->price,
+            'total_price'               => $request->total_unit_price,
+            'updated_by'                => Auth::id(),
+            'delivery_point_id'         => $request->delivery_point_id,
+            'status'                    => $request->status,
+        ]);
+
+        if ($request->status === "approved") {
+            $nettingquotation->approved_by = Auth::id();
+            $nettingquotation->save();
+        }
+        toastr('Netting quotation Updated!');
+        return back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(NettingQuotation $netting) {
-        //
+    public function destroy(NettingQuotation $nettingquotation) {
+        $nettingquotation->delete();
+        toastr('Netting Quotation Successfully Deleted!');
+        return back();
     }
 }

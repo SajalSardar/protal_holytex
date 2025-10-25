@@ -308,6 +308,10 @@
         calculateQuantity(element,classPrefx);
         attachRateCalculation(element,classPrefx);
         // console.log(classPrefx);
+        
+        $('.stock_quantity_' + classPrefx).each(function () {
+           $(this).val(0);
+        });
     }
 
     function calculateQuantity (element,classPrefx){
@@ -339,7 +343,7 @@
 
         if(from_stock_quantity < total){
             $(element).val('');
-            alert(`Max allowed is ${from_stock_quantity}Kg (From Stock Quantity)`);
+            alert(`Max allowed is ${from_stock_quantity || 0}Kg (From Stock Quantity)`);
         }
     }
     

@@ -1,10 +1,10 @@
 @extends('layouts.master')
-@section('title', 'Yarn Quotation Item Details')
+@section('title', 'Dyed Quotation Item Details')
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div class="d-flex">
-            <h2 class="mb-0">Yarn Quotation Item Details</h2>
+            <h2 class="mb-0">Dyed Quotation Item Details</h2>
         </div>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
@@ -16,10 +16,10 @@
                     </a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Yarn Quotation</span>
+                    <span class="fw-medium">Dyed Quotation</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Yarn Quotation Item Details</span>
+                    <span class="fw-medium">Dyed Quotation Item Details</span>
                 </li>
             </ol>
         </nav>
@@ -32,48 +32,48 @@
                         <tr>
                             <td><strong>PO Number</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->po_number }}</td>
+                            <td>{{ $dyedquotation->po_number }}</td>
                         </tr>
                         <tr>
                             <td><strong>Style</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->style }}</td>
+                            <td>{{ $dyedquotation->style }}</td>
                         </tr>
                         <tr>
                             <td><strong>Description</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->description}}
+                            <td>{{ $dyedquotation->description}}
                             </td>
                         </tr>
                         <tr>
                             <td><strong>Quantity</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->quantity }} {{ $yarnquotation->unit }}</td>
+                            <td>{{ $dyedquotation->quantity }} {{ $dyedquotation->unit }}</td>
                         </tr>
                         <tr>
                             <td><strong>From Stock Quantity</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->from_stock_quantity ?? '00' }} {{ $yarnquotation->unit }}</td>
+                            <td>{{ $dyedquotation->from_stock_quantity ?? '00' }} {{ $dyedquotation->unit }}</td>
                         </tr>
                         <tr>
                             <td><strong>Price</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->price }}</td>
+                            <td>{{ $dyedquotation->price }}</td>
                         </tr>
                         <tr>
                             <td><strong>Total Price</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->total_price }}</td>
+                            <td>{{ $dyedquotation->total_price }}</td>
                         </tr>
                         <tr>
                             <td><strong>Status</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->status }}</td>
+                            <td>{{ $dyedquotation->status }}</td>
                         </tr>
                         <tr>
                             <td><strong>Remarks</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->remarks ?? '--' }}</td>
+                            <td>{{ $dyedquotation->remarks ?? '--' }}</td>
                         </tr>
                     </table>
                 </div>
@@ -87,48 +87,48 @@
                         <tr>
                             <td><strong>Recever Factory Type</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->receving_factory ?? '--' }}</td>
+                            <td>{{ $dyedquotation->receving_factory ?? '--' }}</td>
                         </tr>
                         <tr>
                             <td><strong>Order Date</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->order_date ?? '--' }}</td>
+                            <td>{{ $dyedquotation->order_date ?? '--' }}</td>
                         </tr>
                         <tr>
                             <td><strong>Approximate Delivery Date</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->approximate_delivery_date ?? '--' }}</td>
+                            <td>{{ $dyedquotation->approximate_delivery_date ?? '--' }}</td>
                         </tr>
                         <tr>
                             <td><strong>Delivery Date</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->delivery_date ?? '--' }}</td>
+                            <td>{{ $dyedquotation->delivery_date ?? '--' }}</td>
                         </tr>
 
                         <tr>
                             <td><strong>Created By</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->creator->name ?? '-'}}</td>
+                            <td>{{ $dyedquotation->creator->name ?? '-'}}</td>
                         </tr>
                         <tr>
                             <td><strong>Last Updated By</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->lastUpdateBy->name ?? '-'}}</td>
+                            <td>{{ $dyedquotation->lastUpdateBy->name ?? '-'}}</td>
                         </tr>
                         <tr>
                             <td><strong>Approved By</strong></td>
                             <td>:</td>
-                            <td>{{ @$yarnquotation->approvedBy->name}}</td>
+                            <td>{{ @$dyedquotation->approvedBy->name}}</td>
                         </tr>
                         <tr>
                             <td><strong>Created At</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->created_at ??'-' }}</td>
+                            <td>{{ $dyedquotation->created_at ??'-' }}</td>
                         </tr>
                         <tr>
                             <td><strong>Updated At</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->updated_at ??'-' }}</td>
+                            <td>{{ $dyedquotation->updated_at ??'-' }}</td>
                         </tr>
                     </table>
                 </div>

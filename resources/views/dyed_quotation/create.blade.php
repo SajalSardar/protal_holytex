@@ -217,10 +217,17 @@
                                                     
                                                 </div>
                                             </div>
+                                            <hr>
 
                                             <div class=col-12" id="garments_select_section_${key}_${keyFa}">
                                                 <div id="garments_add_row_container_${key}_${keyFa}">
                                                     <div class="row">
+                                                        <div class="col-sm-3">
+                                                            <div class="form-group mb-4">
+                                                                <label class="label text-secondary">From Stock(KG)</label>
+                                                                <input type="text" class="form-control stock_quantity_${key}_${keyFa}"" name="items[${key}][${keyFa}][inner_items][1][form_stock_quantity]" oninput="calculateStockQuantity(this,'${key}_${keyFa}')"  data-id_prefix="${key}_${keyFa}" id="stock_quantity_${key}_${keyFa}" min="1">
+                                                            </div>
+                                                        </div>
                                                         <div class="col-sm-3">
                                                             <div class="form-group mb-4">
                                                                 <label class="label text-secondary">Quantity(KG)</label>
@@ -321,6 +328,21 @@
         }
     }
     
+    function calculateStockQuantity (element,classPrefx){
+        let from_stock_quantity = $('#from_stock_quantity_'+classPrefx).val();
+        
+        let total = 0;
+        $('.stock_quantity_' + classPrefx).each(function () {
+            let val = parseFloat($(this).val()) || 0;
+            total += val;
+        });
+
+        if(from_stock_quantity < total){
+            $(element).val('');
+            alert(`Max allowed is ${from_stock_quantity}Kg (From Stock Quantity)`);
+        }
+    }
+    
 
     function resetSelect(id) {
         $('#'+id).val(null).trigger('change');
@@ -330,6 +352,12 @@
     function addNewRows(sectionType,key,keyFa){
         let newRow = `
         <div class="row" id="row_${key}_${keyFa}_${indexRow}">
+            <div class="col-sm-3">
+                <div class="form-group mb-4">
+                    <label class="label text-secondary">From Stock(KG)</label>
+                    <input type="text" class="form-control stock_quantity_${key}_${keyFa}"" name="items[${key}][${keyFa}][inner_items][${indexRow+1}][form_stock_quantity]" oninput="calculateStockQuantity(this,'${key}_${keyFa}')"  data-id_prefix="${key}_${keyFa}_${indexRow}" id="stock_quantity_${key}_${keyFa}_${indexRow}" min="1">
+                </div>
+            </div>
             <div class="col-sm-3">
                 <div class="form-group mb-4">
                     <label class="label text-secondary">Quantity(KG)</label>

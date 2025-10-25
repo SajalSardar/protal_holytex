@@ -28,8 +28,7 @@ class DyedQuotationController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        $dydeQuty = DyedQuotation::with('dyedFactory:id,name,address')
-            ->orderBy('id', 'desc')
+        $dydeQuty = DyedQuotation::orderBy('id', 'desc')
             ->get();
         return view('dyed_quotation.index', compact('dydeQuty'));
     }
@@ -80,9 +79,8 @@ class DyedQuotationController extends Controller {
                                 'purchase_date'             => $request->order_date,
                                 'approximate_delivery_date' => $request->approximate_delivery_date,
                                 'remarks'                   => $request->remarks,
-                                'delivery_factory_type'     => $item['delevary_poin_check'] ?? null,
                                 'netting_factory_id'        => $item['netting_factory_id'] ?? null,
-                                'from_stock_quantity'       => $item['from_stock_quantity'] ?? null,
+                                'from_stock_quantity'       => $inner['form_stock_quantity'] ?? null,
                                 'quantity'                  => $inner['quantity'] ?? null,
                                 'price'                     => $item['rate'] ?? null,
                                 'total_price'               => $item['total'] ?? null,
@@ -108,42 +106,63 @@ class DyedQuotationController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(DyedQuotation $dyedQuotation) {
-        //
+    public function show(DyedQuotation $dyedquotation) {
+        $dyedquotation->load(
+            "dyedFactory",
+            "nettingFactory",
+            "approvedBy",
+            "creator",
+            "lastUpdateBy"
+        );
+        return view('dyed_quotation.show', compact('dyedquotation'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(DyedQuotation $dyedQuotation) {
-        //
+    public function edit(DyedQuotation $dyedquotation) {
+        $knitgFactory = NettingFactroy::where('status', 'active')
+            ->get();
+
+        $yearnsQuotationSum = YarnQuotation::where('po_number', $dyedquotation->po_number)
+            ->where('receving_factory', 'dyed')
+            ->where('status', 'approved')
+            ->where('style', $dyedquotation->style)
+            ->sum('quantity');
+
+        return view('dyed_quotation.edit', compact('dyedquotation', 'knitgFactory', 'yearnsQuotationSum'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, DyedQuotation $dyedQuotation) {
-        //
+    public function update(Request $request, DyedQuotation $dyedquotation) {
+        $dyedquotation->update([
+            'purchase_date'             => $request->order_date,
+            'approximate_delivery_date' => $request->approximate_delivery_date,
+            'remarks'                   => $request->remarks,
+            'netting_factory_id'        => $request->netting_factory_id ?? null,
+            'from_stock_quantity'       => $request->from_stock_quantity ?? null,
+            'quantity'                  => $request->quantity ?? null,
+            'price'                     => $request->price ?? null,
+            'total_price'               => $request->total_unit_price ?? null,
+            'updated_by'                => Auth::id(),
+            'delivery_point_id'         => $request->netting_factory_id ?? null,
+            'status'                    => $request->status,
+            'approved_by'               => Auth::id(),
+        ]);
+
+        toastr("Dyed Quotation Successfully Updated!");
+        return back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(DyedQuotation $dyedQuotation) {
-        //
-    }
-
-    public function dyedQtyStatusUpdate(Request $request) {
-        if (!$request->style && !$request->po_number) {
-            toastr('PO number and style not found!', 'error');
-            return back();
-        }
-        DyedQuotation::where('id', $request->id)->where('po_number', $request->po_number)->where('style', $request->style)->update([
-            'status'      => $request->status,
-            'updated_by'  => Auth::id(),
-            'approved_by' => Auth::id(),
-        ]);
-        toastr('Dyed quotation status updated!');
+    public function destroy(DyedQuotation $dyedquotation) {
+        $dyedquotation->delete();
+        toastr('Dyed Quotation Successfully Deleted!');
         return back();
     }
+
 }

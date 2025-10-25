@@ -633,6 +633,12 @@
                                                                         class="text-primary">Total:</strong></td>
                                                                 <td>
                                                                     <strong class="text-primary">{{
+                                                                        number_format($items->sum('yarn_recevied'),
+                                                                        2)
+                                                                        }}KG</strong>
+                                                                </td>
+                                                                <td>
+                                                                    <strong class="text-primary">{{
                                                                         number_format($items->sum('from_stock_quantity'),
                                                                         2)
                                                                         }}KG</strong>

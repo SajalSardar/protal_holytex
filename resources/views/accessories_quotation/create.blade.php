@@ -116,6 +116,7 @@
                                             <tr>
                                                 <th>Style</th>
                                                 <th>Description</th>
+                                                <th>From Stock</th>
                                                 <th>Quantity</th>
                                                 <th>Unit Price</th>
                                                 <th>Total Price</th>
@@ -128,6 +129,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
+                                                <td></td>
                                                 <td colspan="2"><strong class="fs-18">Total</strong></td>
                                                 <td><input class="form-control" name="total_quantity"
                                                         id="total_quantity" class="fs-18" value="0.0" readonly
@@ -163,6 +165,13 @@
                             </div>
                             <div class="col-lg-2 col-sm-6">
                                 <div class="form-group mb-4">
+                                    <label class="label text-secondary">From Stock</label>
+                                    <input type="number" class="form-control " placeholder="Quantity"
+                                        id="from_stock_quantity" min="1">
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-6">
+                                <div class="form-group mb-4">
                                     <label class="label text-secondary">Unit Quantity</label>
                                     <input type="number" class="form-control " placeholder="Quantity" id="unit_quantity"
                                         min="1">
@@ -192,8 +201,8 @@
                                 </div>
                             </div>
                             <div class="col-lg-2 col-sm-6 align-self-center">
-                                <button type="button" id="add_item_btn" class="btn btn-danger fs-15 text-white"
-                                    style="height:55px" onclick="addToTable()">Add +
+                                <button type="button" id="add_item_btn" class="btn btn-danger btn-sm fs-15 text-white"
+                                    style="height:45px" onclick="addToTable()">Add +
                                 </button>
                             </div>
 
@@ -283,6 +292,7 @@
     
     const unit_price = document.getElementById("unit_price");
     const unit_quantity = document.getElementById("unit_quantity");
+    const from_stock_quantity = document.getElementById("from_stock_quantity");
     const total_unit_price = document.getElementById("total_unit_price");
     const unit = document.getElementById("unit");
     const add_item_btn = document.getElementById("add_item_btn");
@@ -355,10 +365,11 @@
         // Update existing row
             editingRow.cells[0].innerHTML = `${style.value} <input type="hidden" value="${style.value}" name="style[]">`;
             editingRow.cells[1].innerHTML = `${description.value} <input type="hidden" value="${description.value}" name="description[]">`;
-            editingRow.cells[2].innerHTML = `${unit_quantity.value} <input type="hidden" value="${unit_quantity.value}" name="unit_quantity[]">`;
-            editingRow.cells[3].innerHTML = `${unit_price.value} <input type="hidden" value="${unit_price.value}" name="unit_price[]">`;
-            editingRow.cells[4].innerHTML = `${totalVal} <input type="hidden" value="${totalVal}" name="total_unit_price[]">`;
-            editingRow.cells[5].innerHTML = `${unit.value} <input type="hidden" value="${unit.value}" name="unit[]">`;
+            editingRow.cells[2].innerHTML = `${from_stock_quantity.value} <input type="hidden" value="${from_stock_quantity.value}" name="from_stock_quantity[]">`;
+            editingRow.cells[3].innerHTML = `${unit_quantity.value} <input type="hidden" value="${unit_quantity.value}" name="unit_quantity[]">`;
+            editingRow.cells[4].innerHTML = `${unit_price.value} <input type="hidden" value="${unit_price.value}" name="unit_price[]">`;
+            editingRow.cells[5].innerHTML = `${totalVal} <input type="hidden" value="${totalVal}" name="total_unit_price[]">`;
+            editingRow.cells[6].innerHTML = `${unit.value} <input type="hidden" value="${unit.value}" name="unit[]">`;
             editingRow = null;
             add_item_btn.textContent = 'Add +';
         } else {
@@ -367,6 +378,7 @@
             row.innerHTML = `
                 <td>${style.value} <input type="hidden" value="${style.value}" name="style[]"></td>
                 <td>${description.value} <input type="hidden" value="${description.value}" name="description[]"></td>
+                <td>${from_stock_quantity.value} <input type="hidden" value="${from_stock_quantity.value}" name="from_stock_quantity[]"></td>
                 <td>${unit_quantity.value} <input type="hidden" value="${unit_quantity.value}" name="unit_quantity[]"></td>
                 <td>${unit_price.value} <input type="hidden" value="${unit_price.value}" name="unit_price[]"></td>
                 <td>${totalVal} <input type="hidden" value="${totalVal}" name="total_unit_price[]"></td>
@@ -385,6 +397,7 @@
         resetSelect('style_select');
         // resetSelect('unit');
         description.value = "";
+        from_stock_quantity.value = "";
         unit_quantity.value = "";
         unit_price.value = "";
         total_unit_price.value = "";
@@ -403,19 +416,21 @@
             const style = document.getElementById("style_select");
             const description = document.getElementById("description");
             const unit_quantity = document.getElementById("unit_quantity");
+            const from_stock_quantity = document.getElementById("from_stock_quantity");
             const unit_price = document.getElementById("unit_price");
             const total_unit_price = document.getElementById("total_unit_price");
             const unit = document.getElementById("unit");
 
             // ✅ Get text from text node only (exclude input elements)
             let selectedValue = row.cells[0].childNodes[0].textContent.trim();
-            let unitValue = row.cells[5].childNodes[0].textContent.trim();
+            let unitValue = row.cells[6].childNodes[0].textContent.trim();
             $('#style_select').val(selectedValue).trigger('change');
             $('#unit').val(unitValue).trigger('change');
             description.value = row.cells[1].childNodes[0].textContent.trim();
-            unit_quantity.value = row.cells[2].childNodes[0].textContent.trim();
-            unit_price.value = row.cells[3].childNodes[0].textContent.trim();
-            total_unit_price.value = row.cells[4].childNodes[0].textContent.trim();
+            from_stock_quantity.value = row.cells[2].childNodes[0].textContent.trim();
+            unit_quantity.value = row.cells[3].childNodes[0].textContent.trim();
+            unit_price.value = row.cells[4].childNodes[0].textContent.trim();
+            total_unit_price.value = row.cells[5].childNodes[0].textContent.trim();
 
             add_item_btn.textContent = 'Update';
             editingRow = row;
@@ -430,8 +445,8 @@
         let totalQuantity = 0;
 
         rows.forEach(row => {
-            const qty = parseFloat(row.cells[2].textContent) || 0;         // Quantity column (3rd)
-            const total = parseFloat(row.cells[4].textContent) || 0;       // Total column (5th)
+            const qty = parseFloat(row.cells[3].textContent) || 0;     
+            const total = parseFloat(row.cells[5].textContent) || 0;
 
             totalQuantity += qty;
             totalPrice += total;

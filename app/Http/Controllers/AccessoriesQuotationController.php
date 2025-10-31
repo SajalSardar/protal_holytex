@@ -31,6 +31,11 @@ class AccessoriesQuotationController extends Controller {
     public function store(Request $request) {
         //
         // return $request;
+
+        $request->validate([
+            'po_number' => 'required',
+        ]);
+
         foreach ($request->style as $key => $item) {
             AccessoriesQuotation::create([
                 'order_id'                  => $request->order_id,
@@ -45,6 +50,7 @@ class AccessoriesQuotationController extends Controller {
                 'remarks'                   => $request->remarks,
                 'style'                     => $item,
                 'description'               => $request->description[$key],
+                'from_stock_quantity'       => $request->from_stock_quantity[$key],
                 'quantity'                  => $request->unit_quantity[$key],
                 'price'                     => $request->unit_price[$key],
                 'total_price'               => $request->total_unit_price[$key],
@@ -59,41 +65,57 @@ class AccessoriesQuotationController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(AccessoriesQuotation $accessoriesQuotation) {
+    public function show(AccessoriesQuotation $accessoriesquotation) {
         //
+        return view('accessories_quotation.show', compact('accessoriesquotation'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(AccessoriesQuotation $accessoriesQuotation) {
-        //
+    public function edit(AccessoriesQuotation $accessoriesquotation) {
+        $ordersPo = Order::where('status', 'approved')->pluck('po_number', 'id');
+        return view('accessories_quotation.edit', compact('accessoriesquotation', 'ordersPo'));
     }
 
-    public function accQtyStatusUpdate(Request $request, ) {
-        if (!$request->id) {
-            toastr('Id not found!', 'error');
-            return back();
-        }
-        AccessoriesQuotation::where('id', $request->id)->update([
-            'status'      => $request->status,
-            'updated_by'  => Auth::id(),
-            'approved_by' => Auth::id(),
-        ]);
-        toastr('Accessories quotation Status Updated!');
-        return back();
-    }
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, AccessoriesQuotation $accessoriesQuotation) {
-        //
+    public function update(Request $request, AccessoriesQuotation $accessoriesquotation) {
+        $request->validate([
+            'po_number' => 'required',
+        ]);
+        $accessoriesquotation->update([
+            'supplier_name'             => $request->supplier_name,
+            'supplier_phone'            => $request->supplier_phone,
+            'supplier_address'          => $request->supplier_address,
+            'purchase_date'             => $request->order_date,
+            'shiphing_address'          => $request->shiphing_address,
+            'approximate_delivery_date' => $request->approximate_delivery_date,
+            'remarks'                   => $request->remarks,
+            'description'               => $request->description,
+            'from_stock_quantity'       => $request->from_stock_quantity,
+            'quantity'                  => $request->quantity,
+            'price'                     => $request->price,
+            'total_price'               => $request->total_unit_price,
+            'unit'                      => $request->unit,
+            'updated_by'                => Auth::id(),
+        ]);
+        if ($request->status === "approved") {
+            $accessoriesquotation->approved_by = Auth::id();
+            $accessoriesquotation->save();
+        }
+
+        toastr('Accessories Successfully Updated!');
+        return back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(AccessoriesQuotation $accessoriesQuotation) {
-        //
+    public function destroy(AccessoriesQuotation $accessoriesquotation) {
+        $accessoriesquotation->delete();
+        toastr('Accessories Quotation Successfully Deleted!');
+        return back();
     }
 }

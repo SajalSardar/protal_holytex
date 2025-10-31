@@ -1,9 +1,9 @@
 @extends('layouts.master')
-@section('title', 'Edit Dyed Quotation')
+@section('title', 'Edit Accessories Quotation')
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-        <h2 class="mb-0">Edit Dyed Quotation </h2>
+        <h2 class="mb-0">Edit Accessories Quotation </h2>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb align-items-center mb-0 lh-1">
@@ -14,10 +14,10 @@
                     </a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Dyed Quotation</span>
+                    <span class="fw-medium">Accessories Quotation</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Edit Dyed Quotation</span>
+                    <span class="fw-medium">Edit Accessories Quotation</span>
                 </li>
             </ol>
         </nav>
@@ -28,7 +28,7 @@
             <div class="card bg-white border-0 rounded-3 mb-4">
                 <div class="card-body p-4">
 
-                    <form action="{{ route('dyedquotation.update',$dyedquotation->id) }}" method="POST"
+                    <form action="{{ route('accessoriesquotation.update',$accessoriesquotation->id) }}" method="POST"
                         enctype="multipart/form-data" id="yarn_form">
                         @csrf
                         @method('PUT')
@@ -37,7 +37,7 @@
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">PO Number <span
                                             style="color: rgb(205, 2, 2)">*</span></label>
-                                    <input type="text" value="{{ old('po_number',$dyedquotation->po_number) }}"
+                                    <input type="text" value="{{ old('po_number',$accessoriesquotation->po_number) }}"
                                         class="form-control" name="po_number" readonly>
                                     @error('po_number')
                                     <div class="text-danger mt-2">{{ $message }}</div>
@@ -48,7 +48,7 @@
                             <div class="col-lg-4 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Date</label>
-                                    <input type="date" value="{{ old('order_date',$dyedquotation->order_date) }}"
+                                    <input type="date" value="{{ old('order_date',$accessoriesquotation->order_date) }}"
                                         class="form-control" name="order_date">
                                 </div>
                             </div>
@@ -56,14 +56,15 @@
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Approximate Delivery Date</label>
                                     <input type="date" class="form-control"
-                                        value="{{ old('approximate_delivery_date',$dyedquotation->approximate_delivery_date) }}"
+                                        value="{{ old('approximate_delivery_date',$accessoriesquotation->approximate_delivery_date) }}"
                                         name="approximate_delivery_date">
                                 </div>
                             </div>
                             <div class="col-lg-3 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Order number</label>
-                                    <input type="text" value="{{ old('order_number',$dyedquotation->order_number) }}"
+                                    <input type="text"
+                                        value="{{ old('order_number',$accessoriesquotation->order_number) }}"
                                         class="form-control" id="order_number" name="order_number" readonly>
                                 </div>
                             </div>
@@ -72,15 +73,49 @@
                                     <label class="label text-secondary">Status</label>
                                     <select name="status" class="form-select form-control status_select">
                                         <option value="" disabled selected>Select Status</option>
-                                        <option value="pending" {{ $dyedquotation->status === "pending" ? 'selected' :
+                                        <option value="pending" {{ $accessoriesquotation->status === "pending" ?
+                                            'selected' :
                                             '' }}>Pending</option>
-                                        <option value="approved" {{ $dyedquotation->status === "approved" ? 'selected' :
+                                        <option value="approved" {{ $accessoriesquotation->status === "approved" ?
+                                            'selected' :
                                             '' }}>Approved</option>
-                                        <option value="cancelled" {{ $dyedquotation->status === "cancelled" ? 'selected'
+                                        <option value="cancelled" {{ $accessoriesquotation->status === "cancelled" ?
+                                            'selected'
                                             : '' }}>Cancelled</option>
-                                        <option value="finished" {{ $dyedquotation->status === "finished" ? 'selected' :
+                                        <option value="finished" {{ $accessoriesquotation->status === "finished" ?
+                                            'selected' :
                                             '' }}>Finished</option>
                                     </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Supplier Name</label>
+                                    <input type="text" class="form-control " name="supplier_name"
+                                        placeholder="Supplier Name"
+                                        value="{{ old('supplier_name',$accessoriesquotation->supplier_name) }}">
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Supplier Phone</label>
+                                    <input type="number" class="form-control " name="supplier_phone"
+                                        placeholder="Supplier Phone"
+                                        value="{{ old('supplier_phone',$accessoriesquotation->supplier_phone) }}">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Supplier Address</label>
+                                    <textarea class="form-control" rows="2" name="supplier_address"
+                                        placeholder="Enter Supplier Address">{{ old('supplier_address',$accessoriesquotation->supplier_address) }}</textarea>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Shiphing Address</label>
+                                    <textarea class="form-control" rows="2" name="shiphing_address"
+                                        placeholder="Enter Shiphing Address">{{ old('shiphing_address',$accessoriesquotation->shiphing_address) }}</textarea>
                                 </div>
                             </div>
 
@@ -88,7 +123,7 @@
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Remarks</label>
                                     <textarea class="form-control" name="remarks"
-                                        rows="1">{{ old('remarks',$dyedquotation->remarks) }}</textarea>
+                                        rows="1">{{ old('remarks',$accessoriesquotation->remarks) }}</textarea>
                                 </div>
                             </div>
                             <hr>
@@ -97,7 +132,7 @@
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Style</label>
                                     <input type="text" class="form-control " placeholder="style" id="from_stock"
-                                        value="{{ @$dyedquotation->style }}" name="style" readonly>
+                                        value="{{ @$accessoriesquotation->style }}" name="style" readonly>
 
                                 </div>
                             </div>
@@ -106,15 +141,15 @@
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Description</label>
                                     <textarea rows="1" class="form-control" placeholder="Write your note here...."
-                                        id="description" name="description"
-                                        readonly>{{ @$dyedquotation->description }}</textarea>
+                                        id="description"
+                                        name="description">{{ @$accessoriesquotation->description }}</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-2 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">From Stock(KG)</label>
                                     <input type="text" class="form-control " placeholder="Fill Up from stock"
-                                        id="from_stock" value="{{ @$dyedquotation->from_stock_quantity }}"
+                                        id="from_stock" value="{{ @$accessoriesquotation->from_stock_quantity }}"
                                         name="from_stock_quantity"
                                         oninput="this.value = this.value.replace(/^(\d*\.?\d{0,2}).*$/, '$1')">
                                 </div>
@@ -123,14 +158,14 @@
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Quantity(KG)</label>
                                     <input type="number" class="form-control " placeholder="Quantity" id="unit_quantity"
-                                        min="1" name="quantity" value="{{ @$dyedquotation->quantity }}">
+                                        min="1" name="quantity" value="{{ @$accessoriesquotation->quantity }}">
                                 </div>
                             </div>
                             <div class="col-lg-2 col-sm-6 pe-0">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Price(TK)</label>
                                     <input type="number" class="form-control " min="1" placeholder="Unit Price"
-                                        id="unit_price" name="price" value="{{ @$dyedquotation->price }}">
+                                        id="unit_price" name="price" value="{{ @$accessoriesquotation->price }}">
                                 </div>
                             </div>
                             <div class="col-lg-2 col-sm-6 pe-0">
@@ -138,21 +173,17 @@
                                     <label class="label text-secondary">Total Price</label>
                                     <input type="text" readonly class="form-control " placeholder="Unit Price"
                                         id="total_unit_price" name="total_unit_price"
-                                        value="{{ @$dyedquotation->total_price }}">
+                                        value="{{ @$accessoriesquotation->total_price }}">
                                 </div>
                             </div>
-
-                            <div class="col-lg-2 col-sm-6 pe-0">
+                            <div class="col-lg-2 col-sm-6">
                                 <div class="form-group mb-4">
-                                    <label class="label text-secondary">Knit Factory</label>
-                                    <select name="netting_factory_id" id="delivery_point"
-                                        onchange="selectOneDeliveryPoin('delivery_point')" class="form-control select2">
-                                        <option value="" selected disabled>Select Knit Factory</option>
-                                        @foreach ($knitgFactory as $item)
-                                        <option value="{{ $item->id }}" {{$dyedquotation->delivery_point_id ===
-                                            $item->id
-                                            ? 'selected' : '' }}>{{ $item->name }}</option>
-                                        @endforeach
+                                    <label class="label text-secondary">Unit</label>
+                                    <select class="form-control select2" id="unit" name="unit">
+                                        <option value="kg" {{ $accessoriesquotation->unit === 'kg'? 'selected' : ''
+                                            }}>KG</option>
+                                        <option value="pc" {{ $accessoriesquotation->unit === 'pc'? 'selected' : ''
+                                            }}>PC</option>
                                     </select>
                                 </div>
                             </div>

@@ -207,10 +207,13 @@
 
 
             <li class="menu-item">
-                <a href="/logout" class="menu-link logout">
-                    <span class="material-symbols-outlined menu-icon">logout</span>
-                    <span class="title">Logout</span>
-                </a>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="menu-link logout border-0 w-100">
+                        <span class="material-symbols-outlined menu-icon">logout</span>
+                        <span class="title">Logout</span>
+                    </button>
+                </form>
             </li>
         </ul>
     </aside>

@@ -13,7 +13,7 @@ class DyeingQuotationController extends Controller {
     public function getNetting($po_number) {
         $dyeing = DyeingQuotation::where('po_number', $po_number)->pluck('style');
 
-        $nettings = NettingQuotation::with('nettingQuotationItems.dyeingFactory', 'nettingFactory')
+        $nettings = NettingQuotation::with('dyeingFactory', 'nettingFactory')
             ->where('po_number', $po_number)
             ->where('status', 'approved')
             ->where('delivery_factory_type', 'dyeing')
@@ -87,15 +87,17 @@ class DyeingQuotationController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(DyeingQuotation $dyeingOrder) {
-        //
+    public function show(DyeingQuotation $dyeingquotation) {
+        $dyeingquotation->load('dyeingFactory', 'garmentsFactory');
+        return view('dyeing_quotation.show', compact('dyeingquotation'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(DyeingQuotation $dyeingOrder) {
-        //
+    public function edit(DyeingQuotation $dyeingquotation) {
+        $delivery_point = GarmentsFactroy::where('status', 'active')->get();
+        return view('dyeing_quotation.edit', compact('dyeingquotation', 'delivery_point'));
     }
 
     public function dyeingQtyStatusUpdate(Request $request) {
@@ -114,14 +116,38 @@ class DyeingQuotationController extends Controller {
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, DyeingQuotation $dyeingOrder) {
-        //
+    public function update(Request $request, DyeingQuotation $dyeingquotation) {
+        $request->validate([
+            'po_number' => 'required',
+        ]);
+
+        $dyeingquotation->update([
+            'purchase_date'             => $request->order_date,
+            'approximate_delivery_date' => $request->approximate_delivery_date,
+            'from_stock_quantity'       => $request->from_stock_quantity,
+            'quantity'                  => $request->quantity,
+            'price'                     => $request->price,
+            'total_price'               => $request->total_unit_price,
+            'delivery_point_id'         => $request->delivery_point_id,
+            'remarks'                   => $request->remarks,
+            'status'                    => $request->status,
+            'updated_by'                => Auth::id(),
+        ]);
+        if ($request->status === "approved") {
+            $dyeingquotation->approved_by = Auth::id();
+            $dyeingquotation->save();
+        }
+
+        toastr('Dyeing Successfully Updated!');
+        return back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(DyeingQuotation $dyeingOrder) {
-        //
+    public function destroy(DyeingQuotation $dyeingquotation) {
+        $dyeingquotation->delete();
+        toastr('Dyeing Quotation Successfully Deleted!');
+        return back();
     }
 }

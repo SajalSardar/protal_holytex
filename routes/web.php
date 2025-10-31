@@ -73,11 +73,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::resource('dyeingquotation', DyeingQuotationController::class);
-    Route::post('dyeing-qty-status-update', [DyeingQuotationController::class, 'dyeingQtyStatusUpdate'])->name('dyeing.qty.update.status');
     Route::resource('dyeingreceived', DyeingReceivedController::class);
 
     Route::resource('accessoriesquotation', AccessoriesQuotationController::class);
-    Route::post('acc-qty-status-update', [AccessoriesQuotationController::class, 'accQtyStatusUpdate'])->name('acc.qty.update.status');
     Route::resource('accessoriesreceived', AccessoriesReceivedController::class);
     Route::resource('accessoriesstock', AccessoriesStockController::class);
 

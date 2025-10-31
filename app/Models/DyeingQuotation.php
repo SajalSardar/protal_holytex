@@ -3,8 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DyeingQuotation extends Model {
+
+    use SoftDeletes;
 
     protected $guarded = ['id'];
 
@@ -15,7 +18,6 @@ class DyeingQuotation extends Model {
     public function garmentsFactory() {
         return $this->hasOne(GarmentsFactroy::class, 'id', 'delivery_point_id');
     }
-
 
     public function dyeingReceiveGarments() {
         return $this->hasMany(NettingReceivedGarments::class, 'dyeing_quotation_id');

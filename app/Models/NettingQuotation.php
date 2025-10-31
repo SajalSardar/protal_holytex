@@ -10,8 +10,15 @@ class NettingQuotation extends Model {
     use SoftDeletes;
     protected $guarded = ['id'];
 
-    public function nettingQuotationItems() {
-        return $this->hasMany(NettingQuotationItem::class, 'netting_quotation_id');
+    // public function nettingQuotationItems() {
+    //     return $this->hasMany(NettingQuotationItem::class, 'netting_quotation_id');
+    // }
+
+    public function garmentsFactory() {
+        return $this->hasOne(GarmentsFactroy::class, 'id', 'delivery_point_id');
+    }
+    public function dyeingFactory() {
+        return $this->hasOne(DyeingFactroy::class, 'id', 'delivery_point_id');
     }
 
     public function nettingFactory() {

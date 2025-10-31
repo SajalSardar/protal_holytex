@@ -142,69 +142,67 @@
                     data.forEach(item => {
                         order_number = item.order_number;
                         order_id = item.order_id;
-                        item.netting_quotation_items.forEach(sitem =>{
-                            singleItem +=`<div class="card border-0 rounded-3 mb-3">
-                                        <div class="card-header">
-                                            <div class="row">
-                                                <div class="col-3">
-                                                    <h3 style="text-transform:uppercase">Style: ${item.style}</h3>    
-                                                </div>
-                                                <div class="col-3">
-                                                    <p>Netting Factory: ${item.netting_factory.name}</p>
-                                                </div>
-                                                <div class="col-3">
-                                                    <p>Dyeing Factory: ${sitem.dyeing_factory.name}</p>
-                                                </div>
+                        singleItem +=`<div class="card border-0 rounded-3 mb-3">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <h3 style="text-transform:uppercase">Style: ${item.style}</h3>    
+                                            </div>
+                                            <div class="col-3">
+                                                <p>Netting Factory: ${item.netting_factory.name}</p>
+                                            </div>
+                                            <div class="col-3">
+                                                <p>Dyeing Factory: ${item.dyeing_factory.name}</p>
                                             </div>
                                         </div>
-                                        <div class="card-body"><div class="row">
-                                            <input type="hidden" value=" ${sitem.dyeing_factory.id}" name="items[${item.style}][${sitem.id}][dyeing_factory_id]"> 
-                                            <div class="col-sm-2">
-                                                <div class="form-group mb-4">
-                                                    <label class="label text-secondary">Total Quantity (KG)</label>
-                                                    <input type="text" class="form-control" id="quantity_${item.style}_${sitem.id}" name="items[${item.style}][${sitem.id}][quantity]" value="${sitem.quantity}" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <div class="form-group mb-4">
-                                                    <label class="label text-secondary">From Stock(KG)</label>
-                                                    <input type="text" class="form-control" id="from_stock_${item.style}_${sitem.id}" name="items[${item.style}][${sitem.id}][from_stock]" oninput="knitFromQtyCal(this,'${item.style}_${sitem.id}')">
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <div class="form-group mb-4">
-                                                    <label class="label text-secondary">Quot Quantity(KG)</label>
-                                                    <input type="text" class="form-control" id="quot_quantity_${item.style}_${sitem.id}" value="${sitem.quantity}" name="items[${item.style}][${sitem.id}][quot_quantity]" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <div class="form-group mb-4">
-                                                    <label class="label text-secondary">Rate(TK)</label>
-                                                    <input type="number" class="form-control" oninput="attachRateCalculation(this,'${item.style}_${sitem.id}')" name="items[${item.style}][${sitem.id}][rate]"  id="rate_${item.style}_${sitem.id}" min="1">
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <div class="form-group mb-4">
-                                                    <label class="label text-secondary">Total</label>
-                                                    <input type="number" class="form-control" id="total_amount_${item.style}_${sitem.id}" name="items[${item.style}][${sitem.id}][total]" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-2 col-sm-6" id="deying_select_section_${item.style}_${sitem.id}">
-                                                <div class="form-group mb-4">
-                                                    <label class="label text-secondary">Delivery Point</label>
-                                                    <select name="items[${item.style}][${sitem.id}][delivery_point]" id="deying_point_${item.style}_${sitem.id}" class="form-control select2_innter">
-                                                        <option value="" selected disabled>Select Germents Factory</option>
-                                                        @foreach ($delivery_point as $item)
-                                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
+                                    </div>
+                                    <div class="card-body"><div class="row">
+                                        <input type="hidden" value=" ${item.dyeing_factory.id}" name="items[${item.style}][${item.id}][dyeing_factory_id]"> 
+                                        <div class="col-sm-2">
+                                            <div class="form-group mb-4">
+                                                <label class="label text-secondary">Total Quantity (KG)</label>
+                                                <input type="text" class="form-control" id="quantity_${item.style}_${item.id}" name="items[${item.style}][${item.id}][quantity]" value="${item.quantity}" readonly>
                                             </div>
                                         </div>
-                                </div>
-                                </div>
-                            `;
-                        });
+                                        <div class="col-sm-2">
+                                            <div class="form-group mb-4">
+                                                <label class="label text-secondary">From Stock(KG)</label>
+                                                <input type="text" class="form-control" id="from_stock_${item.style}_${item.id}" name="items[${item.style}][${item.id}][from_stock]" oninput="knitFromQtyCal(this,'${item.style}_${item.id}')">
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group mb-4">
+                                                <label class="label text-secondary">Quot Quantity(KG)</label>
+                                                <input type="text" class="form-control" id="quot_quantity_${item.style}_${item.id}" value="${item.quantity}" name="items[${item.style}][${item.id}][quot_quantity]" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group mb-4">
+                                                <label class="label text-secondary">Rate(TK)</label>
+                                                <input type="number" class="form-control" oninput="attachRateCalculation(this,'${item.style}_${item.id}')" name="items[${item.style}][${item.id}][rate]"  id="rate_${item.style}_${item.id}" min="1">
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group mb-4">
+                                                <label class="label text-secondary">Total</label>
+                                                <input type="number" class="form-control" id="total_amount_${item.style}_${item.id}" name="items[${item.style}][${item.id}][total]" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2 col-sm-6" id="deying_select_section_${item.style}_${item.id}">
+                                            <div class="form-group mb-4">
+                                                <label class="label text-secondary">Delivery Point</label>
+                                                <select name="items[${item.style}][${item.id}][delivery_point]" id="deying_point_${item.style}_${item.id}" class="form-control select2_innter">
+                                                    <option value="" selected disabled>Select Germents Factory</option>
+                                                    @foreach ($delivery_point as $item)
+                                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                            </div>
+                        `;
                         
                     });
                     

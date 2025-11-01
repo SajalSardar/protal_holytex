@@ -115,15 +115,6 @@
                                         name="description">{{ @$yarnquotation->description }}</textarea>
                                 </div>
                             </div>
-                            <div class="col-lg-2 col-sm-6">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">From Stock(KG)</label>
-                                    <input type="text" class="form-control " placeholder="Fill Up from stock"
-                                        id="from_stock" value="{{ @$yarnquotation->from_stock_quantity }}"
-                                        name="from_stock_quantity"
-                                        oninput="this.value = this.value.replace(/^(\d*\.?\d{0,2}).*$/, '$1')">
-                                </div>
-                            </div>
                             <div class="col-lg-2 col-sm-6 pe-0">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Quantity(KG)</label>
@@ -158,30 +149,14 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-2 col-sm-6 pe-0">
+                            <div class="col-lg-2 col-sm-6 px-0">
                                 <div class="form-group mb-4">
-                                    <label class="label text-secondary">Knit Factory</label>
-                                    <select name="netting_factory_id" id="delivery_point"
-                                        onchange="selectOneDeliveryPoin('delivery_point')" class="form-control select2">
-                                        <option value="" selected disabled>Select Knit Factory</option>
-                                        @foreach ($nettingFactory as $item)
-                                        <option value="{{ $item->id }}" {{$yarnquotation->netting_factory_id ===
-                                            $item->id
-                                            ? 'selected' : '' }}>{{ $item->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-2 col-sm-6 pe-0">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">Dyed Factory</label>
-                                    <select name="dyed_factory_id" onchange="selectOneDeliveryPoin('dyed_factory')"
-                                        id="dyed_factory" class="form-control select2">
-                                        <option value="" selected disabled>Select Dyed Factory</option>
-                                        @foreach ($dyenFactory as $item)
-                                        <option value="{{ $item->id }}" {{$yarnquotation->dyed_factory_id ===
-                                            $item->id
-                                            ? 'selected' : '' }}>{{ $item->name }}</option>
+                                    <label class="label text-secondary">Delivery(Store Address)</label>
+                                    <select name="delivery_point" id="delivery_point" class="form-control select2">
+                                        <option value="" selected disabled>Select Store</option>
+                                        @foreach ($storeAddress as $item)
+                                        <option value="{{ $item->id }}" {{ $item->id === $yarnquotation->store_id ?
+                                            'selected': '' }}>{{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>

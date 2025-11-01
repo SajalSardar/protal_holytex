@@ -49,6 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('yarnquotation', YarnQuotationController::class);
     Route::resource('yarnreceived', YarnReceivedController::class);
+    Route::get('get-yarn-quotation-by-po/{po_number}', [YarnReceivedController::class, 'getYarnStyleByPo']);
 
     Route::resource('yarnstorestock', YarnStoreStockController::class);
     Route::post('use-yarn-stock', [YarnStoreStockController::class, 'useYarnStock'])->name('use.yarn.stock');
@@ -95,7 +96,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('get-yarn-style-by-po-dyed/{po_number}', [DyedQuotationController::class, 'getYarnStyleByPo']);
     Route::get('get-yarn-style-by-po/{po_number}', [NettingQuotationController::class, 'getYarnStyleByPo']);
     Route::get('get-netting-order/{po_number}', [DyeingQuotationController::class, 'getNetting']);
-    Route::get('get-yarn-quotation-by-po/{po_number}/{yarn_type}', [YarnReceivedController::class, 'getYarnStyleByPo']);
+
     Route::get('get-yarn-quotation-by-po-dyed/{po_number}', [YarnReceivedDyedController::class, 'getYarnStyleByPo']);
     Route::get('get-netting-quotation-by-po/{po_number}', [NettingReceivedController::class, 'getNettingStyleByPo']);
     Route::get('get-dyeing-quotation-by-po/{po_number}', [DyeingReceivedController::class, 'getDyeingStyleByPo']);

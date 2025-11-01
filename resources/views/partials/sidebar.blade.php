@@ -42,11 +42,10 @@
                     </li>
                 </ul>
             </li>
-            <li
-                class="menu-item {{ request()->routeIs(['yarnquotation.*', 'nettingquotation.*','dyeingquotation.*','accessoriesquotation.*','dyedquotation.*']) ? 'open' : '' }}">
+            <li class="menu-item {{ request()->routeIs(['yarnquotation.*','yarnreceived.*']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
-                    <span class="title">Quotation</span>
+                    <span class="title">Yarn</span>
                 </a>
                 <ul class="menu-sub">
                     <li class="menu-item">
@@ -55,6 +54,28 @@
                             Yarn Quotation
                         </a>
                     </li>
+                    <li class="menu-item">
+                        <a href="{{ route('yarnreceived.create') }}"
+                            class="menu-link {{ request()->routeIs('yarnreceived.create') ? 'active' : '' }}">
+                            Yarn Received
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('yarnreceived.index') }}"
+                            class="menu-link {{ request()->routeIs('yarnreceived.index') ? 'active' : '' }}">
+                            Yarn Stock
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li
+                class="menu-item {{ request()->routeIs(['nettingquotation.*','dyeingquotation.*','accessoriesquotation.*','dyedquotation.*']) ? 'open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <span class="material-symbols-outlined menu-icon">note_stack</span>
+                    <span class="title">Quotation</span>
+                </a>
+                <ul class="menu-sub">
+
                     <li class="menu-item">
                         <a href="{{ route('dyedquotation.index') }}"
                             class="menu-link {{ request()->routeIs('dyedquotation.*') ? 'active' : '' }}">

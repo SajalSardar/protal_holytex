@@ -1,12 +1,13 @@
 @php
 $po_number = request()->po_number ?? '';
+$yarn_type = request()->yarn_type ?? '';
 @endphp
 @extends('layouts.master')
 @section('title', 'Yarn Received')
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-        <h2 class="mb-0">Yarn Receiving</h2>
+        <h2 class="mb-0">Yarn Receiving at Netting Factory</h2>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb align-items-center mb-0 lh-1">
@@ -51,6 +52,22 @@ $po_number = request()->po_number ?? '';
                                     @enderror
                                 </div>
                             </div>
+                            <div class="col-lg-4">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Yarn Type<span
+                                            style="color: rgb(205, 2, 2)">*</span></label>
+                                    <select name="yarn_type" id="yarn_type"
+                                        class="form-control select2  @error('yarn_type') is-invalid @enderror">
+                                        <option value="" selected disabled>Select yarn type</option>
+                                        <option value="yarn" {{ $yarn_type=='yarn' ? "selected" : '' }}>Yarn</option>
+                                        <option value="dyed" {{ $yarn_type=='dyed' ? "selected" : '' }}>Dyed Yarn
+                                        </option>
+                                    </select>
+                                    @error('yarn_type')
+                                    <div class="text-danger mt-2">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -69,31 +86,33 @@ $po_number = request()->po_number ?? '';
     $(function() {
         $('.select2').select2();
 
-        $('#po_number').on('change',function(){
+        $('#yarn_type').on('change',function(){
             let selected_po_number = $('#po_number').val();
+            let yarn_type = $('#yarn_type').val();
             let currentUrl = window.location.origin + window.location.pathname;
-            window.location.href = currentUrl + "?po_number=" + selected_po_number;
+            window.location.href = currentUrl + "?po_number=" + selected_po_number+ "&yarn_type=" + yarn_type;
 
-           loadYarnData(selected_po_number);
+           loadYarnData(selected_po_number,yarn_type);
         });
         
         $(window).on('load',function(){
             let request_po ="{{ $po_number }}"
-            if(request_po != ''){
-                loadYarnData(request_po);
+            let yarn_type ="{{ $yarn_type }}"
+            if(request_po != '' && yarn_type != ''){
+                loadYarnData(request_po,yarn_type);
             }
         });
 
 
-        async function loadYarnData(po_number){
-             if (po_number) {
+        async function loadYarnData(po_number,yarn_type){
+             if (po_number && yarn_type) {
                 try{
-                    const response = await fetch(`/get-yarn-quotation-by-po/${encodeURIComponent(po_number)}`);
+                    const response = await fetch(`/get-yarn-quotation-by-po/${encodeURIComponent(po_number)}/${encodeURIComponent(yarn_type)}`);
                     if (!response.ok) throw new Error('Network response was not ok');
 
                     const data = await response.json();
 
-                        console.log('API response:', data);
+                        // console.log('API response:', data);
                     let order_id = null;
                     let order_number = null;
                     let display_div = $('#show_all_yarn_item');
@@ -101,7 +120,6 @@ $po_number = request()->po_number ?? '';
                         display_div.html(`
                             <div class="col-lg-12"><div class="alert alert-success">Total Received Done!</div></div>
                         `);
-                        return;
                     }
                     
                     let singleItem = `<div class="col-lg-12">
@@ -152,7 +170,7 @@ $po_number = request()->po_number ?? '';
                                 <input type="hidden" name="deliverd_factory_type" value="${data.yarn_type}">
                                 `;
                     // Append new options
-                    for (const [key, items] of Object.entries(data)) {
+                    for (const [key, items] of Object.entries(data.yearns)) {
                         singleItem +=`
                             <div class="accordion mb-5" style="border-bottom:5px solid #605dff;">
                                 <div class="accordion-item">
@@ -164,35 +182,74 @@ $po_number = request()->po_number ?? '';
                                     </h2>
                                     <div id="collapse${key}" class="accordion-collapse collapse show">
                                         <div class="accordion-body p-0 px-2">`;
-                       
                         for (const item of items) {
+                            
                             order_id = item.order_id;
                             order_number = item.order_number;
                             let quotation = parseFloat(item.quantity) || 0;
+                            let stock_quantity = parseFloat(item.from_stock_quantity) || 0;
                             let allTotalRecevied =
-                                                (Number(item.yarn_received_sum_quantity) || 0) +
-                                                (Number(item.yarn_loss_sum_quantity) || 0);
+                                                (Number(item.yarn_received_only_qot_sum_quantity) || 0) +
+                                                (Number(item.yarn_loss_sum_quantity) || 0) +
+                                                (Number(item.store_stock_sum_quantity) || 0);
                             let noreceived = parseFloat(quotation - allTotalRecevied).toFixed(2);
+                            let totalQot = quotation + stock_quantity;
 
-                            
+                            let yarnDyedTotalRec = 0;
+                            if(data.yarn_type === 'dyed'){
+                                const totalReceviedYarnDyed = await fetchReceivedYarn(po_number, key,item.dyed_factory_id);
+
+                                noreceived = parseFloat(totalReceviedYarnDyed.total_received - allTotalRecevied).toFixed(2);
+                                yarnDyedTotalRec =totalReceviedYarnDyed.total_received;
+                            }
+
+
+                            let noreceivedstock = stock_quantity - (Number(item.yarn_received_from_stock_sum_quantity) || 0).toFixed(2)
                             singleItem +=`
                                     <div class="row my-4">
                                         <input type="hidden" name="yarn[${item.id}][description]" value="${item.description}">
-                                        <input type="hidden" name="yarn[${item.id}][style]" value="${item.style}">
-                                        <input type="hidden" name="yarn[${item.id}][yarn_factory_id]" value="${item.yarn_factory_id}">
-                                        <input type="hidden" name="yarn[${item.id}][yarn_id]" value="${item.id}"> 
-                                        <div class="col-lg col-sm-4 pe-0 mb-3"><label class="label text-secondary">Description</label><input class="form-control" value="${item.description}" readonly></div>
-                                        <div class="col-lg col-sm-4 pe-0 mb-3"><label class="label text-secondary">Quotation(KG)</label><input type="text" class="form-control" readonly value="${item.quantity}"></div>
-                                        <div class="col-lg col-sm-4 pe-0 mb-3"><label class="label text-secondary">Yarn Factory</label><input class="form-control" readonly value="${item.yarn_factory.name}"></div>
-                                        <div class="col-lg col-sm-4 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.yarn_received_sum_quantity || 0}"></div>
-                                        <div class="col-lg col-sm-4 pe-0 mb-3"><label class="label text-secondary">Quotation Loss</label><input type="text" class="form-control" readonly  value="${item.yarn_loss_sum_quantity || 0}"></div>
-                                        <div class="col-lg col-sm-4 pe-0 mb-3"><label class="label text-secondary">No Received</label><input type="text" class="form-control" readonly value="${noreceived}"></div>
-                                        <div class="col-lg col-sm-4 mb-3"><label class="label text-secondary">Store Address</label><input type="text" class="form-control" readonly value="${item.yarn_store.name}"></div>
+                                        <input type="hidden" name="yarn[${item.id}][netting_factory_id]" value="${item.netting_factory_id || item.delivery_point_id}">
+                                        <input type="hidden" name="yarn[${item.id}][style]" value="${item.style}">`;
+                                        if(data.yarn_type === 'yarn'){
+                            singleItem +=`<input type="hidden" name="yarn[${item.id}][yarn_factory_id]" value="${item.yarn_factory_id}">
+                                        <input type="hidden" name="yarn[${item.id}][deliverd_factory_type]" value="yarn">
+                                        <input type="hidden" name="yarn[${item.id}][yarn_id]" value="${item.id}">
+                                        `;
+                                        }else{
+                            singleItem +=`<input type="hidden" name="yarn[${item.id}][dyed_factory_id]" value="${item.dyed_factory_id}">
+                                        <input type="hidden" name="yarn[${item.id}][deliverd_factory_type]" value="dyed">
+                                        <input type="hidden" name="yarn[${item.id}][dyed_quotation_id]" value="${item.id}">
+                                        `;
+                                        }
+                            singleItem +=` 
+                                        <div class="col-lg pe-0 mb-3"><label class="label text-secondary">Description</label><input class="form-control" value="${item.description}" readonly></div>
+                                        `;
+                                        if(data.yarn_type === 'dyed'){
+                            singleItem +=`<div class="col-lg pe-0 mb-3"><label class="label text-secondary">Yarn Rece. at Dyed</label><input class="form-control" name="yarn[${item.id}][yarn_recevied]" value="${yarnDyedTotalRec}" readonly></div>`;
+                                        }
+                            singleItem +=`<div class="col-lg pe-0 mb-3"><label class="label text-secondary">Stock Quotation</label><input type="text" class="form-control" readonly value="${item.from_stock_quantity || 0}"></div>
+                                        <div class="col-lg pe-0 mb-3"><label class="label text-secondary">Quotation(KG)</label><input type="text" class="form-control" readonly value="${item.quantity}"></div>
+                                        <div class="col-lg pe-0 mb-3"><label class="label text-secondary">Total Quotation</label><input type="text" class="form-control" readonly value="${(totalQot).toFixed(2)}"></div>
+                                        `;
+                                        if(data.yarn_type === 'yarn'){
+                            singleItem +=`<div class="col-lg pe-0 mb-3"><label class="label text-secondary">Yarn Factory</label><input class="form-control" readonly value="${item.yarn_factory.name}"></div>`;
+                                        }else{
+                            singleItem +=`<div class="col-lg pe-0 mb-3"><label class="label text-secondary">Dyed Factory</label><input class="form-control" readonly value="${item.dyed_factory.name}"></div>`;
+                                        }
+                            singleItem +=`
+                                        <div class="col-lg mb-3"><label class="label text-secondary">Knit Factory</label><input class="form-control" readonly value="${item.netting_factory.name}"></div>
                                     </div>
                                     <div class="row">
                                         <div class="col-12 mb-3">
-                                            <h4 class="fs-18 text-primary">Receive Quantity</h4>
+                                            <h4 class="fs-18 text-primary">Receive Quantity(Yarn, Loss, Store In Stock)</h4>
                                         </div>   
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-3 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.yarn_received_sum_quantity || 0}"></div>
+                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Quotation Loss</label><input type="text" class="form-control" readonly  value="${item.yarn_loss_sum_quantity || 0}"></div>
+                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store In Stock</label><input type="text" class="form-control" readonly value="${item.store_stock_sum_quantity || 0}"></div>
+                                        <div class="col-lg-3 pe-0 mb-3"><label class="label text-secondary">No Quot. Received</label><input type="text" class="form-control" readonly value="${noreceived}"></div>
+                                        <div class="col-lg-2 mb-3"><label class="label text-secondary">No Stock Received</label><input type="text" class="form-control" readonly value="${noreceivedstock}"></div>
                                     </div>
                                     `;
                                     if(allTotalRecevied >= quotation){ 
@@ -202,18 +259,12 @@ $po_number = request()->po_number ?? '';
                                     }else{
                                         singleItem +=`<div class="row">
                                                 <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Lot No.</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="yarn[${item.id}][loat_no]"></div>
-                                                <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Bags</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="yarn[${item.id}][bag_count]"></div>
-                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Yarn(KG)</label><input type="text" max="${noreceived}" id="netting_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="yarn[${item.id}][yarn]"></div>
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Bags</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="yarn[${item.id}][bag_count]"></div>
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Yarn(KG)</label><input type="text" max="${noreceived}" id="netting_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="yarn[${item.id}][netting]"></div>
                                                 <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Loss(KG)</label><input type="text" class="form-control" max="${noreceived}" id="loss_${item.id}" oninput="limitWeightValue(this,${item.id})" name="yarn[${item.id}][loss]"></div>
-                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store Address</label>
-                                                    <select class="form-control address_select_box" name="yarn[${item.id}][store_id]">
-                                                        <option value="" selected>Selete Store</option>
-                                                        @foreach ($storeAddress as $item)
-                                                            <option value="{{ $item->id }}">{{ $item->name }}</option>  
-                                                        @endforeach
-                                                    </select>    
-                                                </div>
-                                                <div class="col-lg-3 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="yarn[${item.id}][remarks]"></textarea></div> 
+                                                <div class="col-lg-4 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="yarn[${item.id}][remarks]"></textarea></div>
+                                                <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store Stock</label><input type="text" class="form-control" max="${noreceived}" id="store_${item.id}" oninput="limitWeightValue(this,${item.id})" name="yarn[${item.id}][stock]"></div>
+                                                <div class="col-lg-4 mb-3"><label class="label text-secondary">Store Address</label><textarea rows="1" class="form-control" name="yarn[${item.id}][store_address]"></textarea></div> 
                                             </div>
                                         <div class="bg-warning w-100" style="height:3px"></div>`;
                                     }
@@ -229,7 +280,7 @@ $po_number = request()->po_number ?? '';
                     display_div.html(singleItem);
                     $('#order_id').val(order_id);
                     $('#order_number').val(order_number);
-                    $('.address_select_box').select2();
+
                 }catch (error) {
                     console.error('Fetch error:', error);
                 }
@@ -247,13 +298,14 @@ $po_number = request()->po_number ?? '';
         
         let netting_= document.getElementById('netting_'+id).value;
         let loss_= document.getElementById('loss_'+id).value;
+        let store_= document.getElementById('store_'+id).value;
 
         let maxVal = parseFloat(input.max);
         let val = parseFloat(input.value);
-        let totalVal = (Number(netting_) || 0) + (Number(loss_) || 0);
+        let totalVal = (Number(netting_) || 0) + (Number(loss_) || 0)+ (Number(store_) || 0);
         // console.log(totalVal);
         if (totalVal > maxVal) {
-            alert(`Max allowed is ${maxVal}Kg`);
+            alert(`Max allowed is ${maxVal}Kg (Netting + Loss + Store)`);
             input.value = 0;
         }
     }
@@ -262,19 +314,19 @@ $po_number = request()->po_number ?? '';
         $('#'+id).val(null).trigger('change');
     }
 
-    // async function fetchReceivedYarn(po_number, style,dyed_fact) {
-    //     try {
-    //         const response =  await fetch(`/get-recevied-total-yarn-by-style-dyed?po_number=${encodeURIComponent(po_number)}&style=${encodeURIComponent(style)}&dyed_fact=${encodeURIComponent(dyed_fact)}`);
+    async function fetchReceivedYarn(po_number, style,dyed_fact) {
+        try {
+            const response =  await fetch(`/get-recevied-total-yarn-by-style-dyed?po_number=${encodeURIComponent(po_number)}&style=${encodeURIComponent(style)}&dyed_fact=${encodeURIComponent(dyed_fact)}`);
 
-    //         if (!response.ok) {
-    //             throw new Error(`Network response was not ok: ${response.status}`);
-    //         }
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.status}`);
+            }
 
-    //         const totalReceived = await response.json();
-    //         return totalReceived;
-    //     } catch (error) {
-    //         console.error('Error fetching received yarn:', error);
-    //     }
-    // }
+            const totalReceived = await response.json();
+            return totalReceived;
+        } catch (error) {
+            console.error('Error fetching received yarn:', error);
+        }
+    }
 </script>
 @endsection

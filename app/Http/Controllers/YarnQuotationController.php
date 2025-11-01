@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DyedFactory;
-use App\Models\NettingFactroy;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Store;
 use App\Models\YarnFactroy;
 use App\Models\YarnQuotation;
 use Illuminate\Http\Request;
@@ -18,7 +17,7 @@ class YarnQuotationController extends Controller {
      */
     public function index() {
         //
-        $yearnList = YarnQuotation::orderBy('id', 'desc')->get();
+        $yearnList = YarnQuotation::with('yarnStore')->orderBy('id', 'desc')->get();
         // ->groupBy('po_number')
         // ->map(function ($items) {
         //     return $items->groupBy('style');
@@ -31,11 +30,10 @@ class YarnQuotationController extends Controller {
      * Show the form for creating a new resource.
      */
     public function create() {
-        $orders         = Order::where('status', 'approved')->pluck('po_number', 'id');
-        $yarnFactory    = YarnFactroy::where('status', 'active')->get();
-        $nettingFactory = NettingFactroy::where('status', 'active')->get();
-        $dyenFactory    = DyedFactory::where('status', 'active')->get();
-        return view('yarn_quotation.create', compact('orders', 'yarnFactory', 'nettingFactory', 'dyenFactory'));
+        $orders       = Order::where('status', 'approved')->pluck('po_number', 'id');
+        $yarnFactory  = YarnFactroy::where('status', 'active')->get();
+        $storeAddress = Store::where('status', 'active')->get();
+        return view('yarn_quotation.create', compact('orders', 'yarnFactory', 'storeAddress'));
     }
 
     /**
@@ -51,7 +49,7 @@ class YarnQuotationController extends Controller {
 
         foreach ($request->style as $key => $item) {
 
-            $yarnCreate = YarnQuotation::create([
+            YarnQuotation::create([
                 'order_number'              => $request->order_number,
                 'po_number'                 => $request->po_number,
                 'order_date'                => $request->order_date,
@@ -59,23 +57,14 @@ class YarnQuotationController extends Controller {
                 'order_id'                  => $request->order_id,
                 'style'                     => $item,
                 'description'               => $request->description[$key],
-                'from_stock_quantity'       => $request->from_stock[$key],
                 'quantity'                  => $request->unit_quantity[$key],
                 'price'                     => $request->unit_price[$key],
                 'total_price'               => $request->total_unit_price[$key],
                 'yarn_factory_id'           => $request->yarn_factory[$key],
-                'receving_factory'          => $request->delivery_fact_type[$key],
                 'remarks'                   => $request->remarks,
                 'created_by'                => Auth::id(),
+                'store_id'                  => $request->delivery_point[$key],
             ]);
-
-            if ($request->delivery_fact_type[$key] === "knit") {
-                $yarnCreate->netting_factory_id = $request->delivery_point[$key];
-            }
-            if ($request->delivery_fact_type[$key] === "dyed") {
-                $yarnCreate->dyed_factory_id = $request->delivery_point[$key];
-            }
-            $yarnCreate->save();
 
         }
 
@@ -87,11 +76,6 @@ class YarnQuotationController extends Controller {
      * Display the specified resource.
      */
     public function show(YarnQuotation $yarnquotation) {
-        $yarnquotation->load(
-            "approvedBy",
-            "creator",
-            "lastUpdateBy"
-        );
 
         return view('yarn_quotation.show', compact('yarnquotation'));
     }
@@ -100,13 +84,12 @@ class YarnQuotationController extends Controller {
      * Show the form for editing the specified resource.
      */
     public function edit(YarnQuotation $yarnquotation) {
-        $yarnFactory    = YarnFactroy::where('status', 'active')->get();
-        $nettingFactory = NettingFactroy::where('status', 'active')->get();
-        $dyenFactory    = DyedFactory::where('status', 'active')->get();
-        $getStyleByPo   = OrderDetail::where('po_number', $yarnquotation->po_number)
+        $yarnFactory  = YarnFactroy::where('status', 'active')->get();
+        $storeAddress = Store::where('status', 'active')->get();
+        $getStyleByPo = OrderDetail::where('po_number', $yarnquotation->po_number)
             ->pluck('style');
         // return $getStyleByPo;
-        return view('yarn_quotation.edit', compact('yarnquotation', 'yarnFactory', 'nettingFactory', 'dyenFactory', 'getStyleByPo'));
+        return view('yarn_quotation.edit', compact('yarnquotation', 'yarnFactory', 'getStyleByPo', 'storeAddress'));
     }
 
     /**
@@ -125,28 +108,20 @@ class YarnQuotationController extends Controller {
             'approximate_delivery_date' => $request->approximate_delivery_date,
             'style'                     => $request->style,
             'description'               => $request->description,
-            'from_stock_quantity'       => $request->from_stock_quantity,
             'quantity'                  => $request->quantity,
             'price'                     => $request->price,
             'total_price'               => $request->total_unit_price,
             'yarn_factory_id'           => $request->yarn_factory,
             'remarks'                   => $request->remarks,
             'updated_by'                => Auth::id(),
-            "netting_factory_id"        => $request->netting_factory_id ?? null,
-            "dyed_factory_id"           => $request->dyed_factory_id ?? null,
             'status'                    => $request->status,
+            'store_id'                  => $request->delivery_point,
         ]);
 
-        if ($request->netting_factory_id) {
-            $yarnquotation->receving_factory = "knit";
-        }
-        if ($request->dyed_factory_id) {
-            $yarnquotation->receving_factory = "dyed";
-        }
         if ($request->status === "approved") {
             $yarnquotation->approved_by = Auth::id();
+            $yarnquotation->save();
         }
-        $yarnquotation->save();
 
         toastr('Yarn Quotation Successfully Updated!');
         return back();

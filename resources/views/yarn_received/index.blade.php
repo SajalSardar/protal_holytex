@@ -58,7 +58,11 @@
                                         <td>{{ $item->unit }}</td>
                                         <td>{{ $item->received_date }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
-                                        <td>{{ $item->store_address }}</td>
+                                        <td>
+                                            {{ $item->yarnStore->name }}
+                                            <br>
+                                            {{ $item->yarnStore->address }}
+                                        </td>
                                         <td>
                                             <div class="d-flex align-items-center gap-1 justify-content-end">
                                                 <button

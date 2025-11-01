@@ -36,27 +36,32 @@
                             <table class="table align-middle">
                                 <thead>
                                     <tr>
+                                        <th>#Id</th>
                                         <th>PO</th>
                                         <th>Style</th>
-                                        <th>From Stock(kg)</th>
                                         <th>Quantity(kg)</th>
                                         <th>Total(TK)</th>
                                         <th>Total Qty.</th>
                                         <th>Status</th>
+                                        <th>Store Address</th>
                                         <th class="text-end">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse ($yearnList as $item)
                                     <tr>
+                                        <td>{{ $item->id }}</td>
                                         <td>{{ $item->po_number }}</td>
                                         <td>{{ $item->style }}</td>
-                                        <td>{{ number_format($item->from_stock_quantity, 2) }}</td>
                                         <td>{{ number_format($item->quantity, 2) }}</td>
                                         <td>{{ number_format($item->total_price, 2) }}</td>
-                                        <td>{{ number_format(($item->from_stock_quantity +
-                                            $item->quantity), 2) }}</td>
+                                        <td>{{ number_format($item->quantity, 2) }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
+                                        <td>
+                                            {{ $item->yarnStore->name }}
+                                            <br>
+                                            {{ $item->yarnStore->address }}
+                                        </td>
                                         <td>
                                             <div class="dropdown text-end">
                                                 <a class="btn btn-primary dropdown-toggle" href="#" role="button"

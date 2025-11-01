@@ -12,56 +12,55 @@ class YarnQuotation extends Model {
     public function yarnFactory() {
         return $this->hasOne(YarnFactroy::class, 'id', 'yarn_factory_id');
     }
-    public function nettingFactory() {
-        return $this->hasOne(NettingFactroy::class, 'id', 'netting_factory_id');
+    public function yarnStore() {
+        return $this->hasOne(Store::class, 'id', 'store_id');
     }
-    public function dyedFactory() {
-        return $this->hasOne(DyedFactory::class, 'id', 'dyed_factory_id');
-    }
+
     public function yarnReceived() {
-        return $this->hasMany(YarnReceived::class, 'yarn_quotation_id')->where('delived_factory_type', 'yarn');
+        return $this->hasMany(YarnReceived::class, 'yarn_quotation_id');
     }
+
     public function yarnReceivedDyed() {
         return $this->hasMany(YarnReceivedDyed::class, 'yarn_quotation_id');
     }
-    public function yarnReceivedOnlyQot() {
-        return $this->hasMany(YarnReceived::class, 'yarn_quotation_id')
-            ->where('delived_factory_type', 'yarn')
-            ->where('is_stock_received', 'No')
-            ->whereNull('stock_id');
-    }
-    public function yarnReceivedFromStock() {
-        return $this->hasMany(YarnReceived::class, 'yarn_quotation_id')
-            ->where('delived_factory_type', 'yarn')
-            ->where('is_stock_received', 'Yes')
-            ->whereNotNull('stock_id');
-    }
-    public function yarnLossFromStock() {
-        return $this->hasMany(YarnLoss::class, 'yarn_quotation_id')
-            ->where('delived_factory_type', 'yarn')
-            ->where('is_stock_received', 'Yes')
-            ->whereNotNull('stock_id');
-    }
-    public function yarnReceivedFromStockDyed() {
-        return $this->hasMany(YarnReceivedDyed::class, 'yarn_quotation_id')
-            ->where('is_stock_received', 'Yes')
-            ->whereNotNull('stock_id');
-    }
-    public function yarnLossFromStockDyed() {
-        return $this->hasMany(YarnReceivedDyed::class, 'yarn_quotation_id')
-            ->where('is_stock_received', 'Yes')
-            ->whereNotNull('stock_id');
-    }
+    // public function yarnReceivedOnlyQot() {
+    //     return $this->hasMany(YarnReceived::class, 'yarn_quotation_id')
+    //         ->where('delived_factory_type', 'yarn')
+    //         ->where('is_stock_received', 'No')
+    //         ->whereNull('stock_id');
+    // }
+    // public function yarnReceivedFromStock() {
+    //     return $this->hasMany(YarnReceived::class, 'yarn_quotation_id')
+    //         ->where('delived_factory_type', 'yarn')
+    //         ->where('is_stock_received', 'Yes')
+    //         ->whereNotNull('stock_id');
+    // }
+    // public function yarnLossFromStock() {
+    //     return $this->hasMany(YarnLoss::class, 'yarn_quotation_id')
+    //         ->where('delived_factory_type', 'yarn')
+    //         ->where('is_stock_received', 'Yes')
+    //         ->whereNotNull('stock_id');
+    // }
+    // public function yarnReceivedFromStockDyed() {
+    //     return $this->hasMany(YarnReceivedDyed::class, 'yarn_quotation_id')
+    //         ->where('is_stock_received', 'Yes')
+    //         ->whereNotNull('stock_id');
+    // }
+    // public function yarnLossFromStockDyed() {
+    //     return $this->hasMany(YarnReceivedDyed::class, 'yarn_quotation_id')
+    //         ->where('is_stock_received', 'Yes')
+    //         ->whereNotNull('stock_id');
+    // }
     public function yarnLoss() {
         return $this->hasMany(YarnLoss::class, 'yarn_quotation_id')
             ->where('delived_factory_type', 'yarn')
             ->where('is_stock_received', 'No')
             ->whereNull('stock_id');
     }
-    public function storeStock() {
-        return $this->hasMany(YarnStoreStock::class, 'yarn_quotation_id')
-            ->where('delived_factory_type', 'yarn');
-    }
+    // public function storeStock() {
+    //     return $this->hasMany(YarnStoreStock::class, 'yarn_quotation_id')
+    //         ->where('delived_factory_type', 'yarn');
+    // }
 
     public function approvedBy() {
         return $this->hasOne(User::class, 'id', 'approved_by');

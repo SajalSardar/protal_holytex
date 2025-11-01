@@ -85,9 +85,13 @@
                     <table class="table">
 
                         <tr>
-                            <td><strong>Recever Factory Type</strong></td>
+                            <td><strong>Store</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->receving_factory ?? '--' }}</td>
+                            <td>
+                                {{ $yarnquotation->yarnStore->name ?? '--' }}
+                                <br>
+                                {{ $yarnquotation->yarnStore->address ?? '--' }}
+                            </td>
                         </tr>
                         <tr>
                             <td><strong>Order Date</strong></td>

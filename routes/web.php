@@ -16,6 +16,7 @@ use App\Http\Controllers\NettingStoreStockController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\orderDetailController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StoreController;
 use App\Http\Controllers\StyleController;
 use App\Http\Controllers\YarnFactroyController;
 use App\Http\Controllers\YarnQuotationController;
@@ -86,6 +87,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('dyeingfactroy', DyeingFactroyController::class)->only(['index', 'edit', 'update', 'store', 'destroy']);
         Route::resource('garmentsfactroy', GarmentsFactroyController::class)->only(['index', 'edit', 'update', 'store', 'destroy']);
         Route::resource('dyedfactory', DyedFactoryController::class)->only(['index', 'edit', 'update', 'store', 'destroy']);
+        Route::resource('store', StoreController::class)->only(['index', 'edit', 'update', 'store', 'destroy']);
     });
     Route::get('get-all-dyeing-factory', [DyeingFactroyController::class, 'showAll']);
     Route::get('get-all-dyed-factory', [DyedFactoryController::class, 'showAll']);

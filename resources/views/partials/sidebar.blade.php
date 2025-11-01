@@ -202,6 +202,12 @@
                             Garments Factory
                         </a>
                     </li>
+                    <li class="menu-item">
+                        <a href="{{ route('settings.store.index') }}"
+                            class="menu-link {{ request()->routeIs('settings.store.*') ? 'active' : '' }}">
+                            Create Store
+                        </a>
+                    </li>
                 </ul>
             </li>
 

@@ -9,6 +9,7 @@ use App\Models\YarnReceived;
 use function Pest\Laravel\json;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class YarnReceivedController extends Controller {
     public function getYarnStyleByPo($po_number) {
@@ -102,6 +103,7 @@ class YarnReceivedController extends Controller {
                     'yarn_quotation_id' => $item['yarn_id'],
                     'po_number'         => $request->po_number,
                     'style'             => $item['style'],
+                    'description'       => $yearnQut->description,
                     'quantity'          => $item['yarn'],
                     'lot_number'        => $item['loat_no'],
                     'bag_count'         => $item['bag_count'],
@@ -151,28 +153,89 @@ class YarnReceivedController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(YarnReceived $yarnReceived) {
-        //
+    public function show(YarnReceived $yarnreceived) {
+        return view('yarn_received.show', compact('yarnreceived'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(YarnReceived $yarnReceived) {
-        //
+    public function edit(YarnReceived $yarnreceived) {
+        $storeAddress  = Store::where('status', 'active')->get();
+        $yarnQuotation = YarnQuotation::with('yarnStore', 'yarnFactory')
+            ->withSum('yarnReceived', 'quantity')
+            ->withSum('yarnLoss', 'quantity')
+            ->where('po_number', $yarnreceived->po_number)
+            ->first();
+        return view('yarn_received.edit', compact('yarnreceived', 'storeAddress', 'yarnQuotation'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, YarnReceived $yarnReceived) {
-        //
+    public function update(Request $request, YarnReceived $yarnreceived) {
+        // return $request;
+
+        $request->validate([
+            'challan_file' => "nullable|max:512|image",
+        ]);
+
+        if ($request->hasFile('challan_file')) {
+            if (!empty($yarnreceived->challan_file) && Storage::disk('public')->exists($yarnreceived->challan_file)) {
+                Storage::disk('public')->delete($yarnreceived->challan_file);
+            }
+            $path = $request->file('challan_file')->store('yarn_received_challan', 'public');
+        } else {
+            $path = $yarnreceived->challan_file;
+        }
+
+        $yearnQut = YarnQuotation::withSum('yarnReceived', 'quantity')
+            ->withSum('yarnLoss', 'quantity')
+            ->where('id', $yarnreceived->yarn_quotation_id)
+            ->first();
+
+        // $totalYearnQut = $yearnQut->quantity;
+
+        // $yearnReceivedTotal = $yearnQut->yarn_received_sum_quantity + $yearnQut->yarn_loss_sum_quantity;
+        // $yarnRec            = array_key_exists('yarn', $item) ? $item['yarn'] : 0;
+        // $yarnLossRec        = array_key_exists('loss', $item) ? $item['loss'] : 0;
+        // $newReceived        = $yarnRec + $yarnLossRec;
+        // $total              = $newReceived + $yearnReceivedTotal;
+
+        $yarnreceived->update([
+            'quantity'       => $request->quantity,
+            'lot_number'     => $request->loat_no,
+            'bag_count'      => $request->bag_count,
+            'challan_date'   => $request->challan_date,
+            'challan_number' => $request->challan_number,
+            'vehicle_number' => $request->vehicle_number,
+            'received_date'  => $request->received_date,
+            'updated_by'     => Auth::id(),
+            'remarks'        => $request->remarks,
+            'store_id'       => $request->store_id ?? $yearnQut->store_id,
+            'challan_file'   => $path,
+        ]);
+
+        // if ($item['yarn'] > 0 || $item['loss'] > 0) {
+        //     if ((float) $totalYearnQut === (float) $total) {
+        //         $yearnQut->update([
+        //             'status'        => 'received',
+        //             'delivery_date' => $request->received_date,
+        //             'updated_by'    => Auth::id(),
+        //         ]);
+        //     }
+        // }
+
+        toastr('Data Successfully Updated!');
+        return back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(YarnReceived $yarnReceived) {
-        //
+    public function destroy(YarnReceived $yarnreceived) {
+        $yarnreceived->delete();
+        toastr('Yarn Quotation Successfully Deleted!');
+        return back();
     }
 }

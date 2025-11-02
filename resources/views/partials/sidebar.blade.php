@@ -62,7 +62,7 @@
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('yarnreceived.index') }}"
-                            class="menu-link {{ request()->routeIs('yarnreceived.index') ? 'active' : '' }}">
+                            class="menu-link {{ request()->routeIs(['yarnreceived.index','yarnreceived.show','yarnreceived.edit']) ? 'active' : '' }}">
                             Yarn Stock
                         </a>
                     </li>

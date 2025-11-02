@@ -1,10 +1,10 @@
 @extends('layouts.master')
-@section('title', 'Yarn Quotation Item Details')
+@section('title', 'Yarn Receive Item Details')
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div class="d-flex">
-            <h2 class="mb-0">Yarn Quotation Item Details</h2>
+            <h2 class="mb-0">Yarn Receive Item Details</h2>
         </div>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
@@ -16,10 +16,10 @@
                     </a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Yarn Quotation</span>
+                    <span class="fw-medium">Yarn Receive</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Yarn Quotation Item Details</span>
+                    <span class="fw-medium">Yarn Receive Item Details</span>
                 </li>
             </ol>
         </nav>
@@ -32,43 +32,60 @@
                         <tr>
                             <td><strong>PO Number</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->po_number }}</td>
+                            <td>{{ $yarnreceived->po_number }}</td>
                         </tr>
                         <tr>
                             <td><strong>Style</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->style }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Description</strong></td>
-                            <td>:</td>
-                            <td>{{ $yarnquotation->description}}
-                            </td>
+                            <td>{{ $yarnreceived->style }}</td>
                         </tr>
                         <tr>
                             <td><strong>Quantity</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->quantity }} {{ $yarnquotation->unit }}</td>
+                            <td>{{ $yarnreceived->quantity }} {{ $yarnreceived->unit }}</td>
                         </tr>
                         <tr>
-                            <td><strong>Price</strong></td>
+                            <td><strong>Lot number</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->price }}</td>
+                            <td>{{ $yarnreceived->lot_number }}</td>
                         </tr>
                         <tr>
-                            <td><strong>Total Price</strong></td>
+                            <td><strong>Bag Count</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->total_price }}</td>
+                            <td>{{ $yarnreceived->bag_count }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Challan Date</strong></td>
+                            <td>:</td>
+                            <td>{{ $yarnreceived->challan_date }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Challan Number</strong></td>
+                            <td>:</td>
+                            <td>{{ $yarnreceived->challan_number }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Vehicle Number</strong></td>
+                            <td>:</td>
+                            <td>{{ $yarnreceived->vehicle_number }}</td>
                         </tr>
                         <tr>
                             <td><strong>Status</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->status }}</td>
+                            <td>{{ $yarnreceived->status }}</td>
                         </tr>
                         <tr>
                             <td><strong>Remarks</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->remarks ?? '--' }}</td>
+                            <td>{{ $yarnreceived->remarks ?? '--' }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Challan</strong></td>
+                            <td>:</td>
+                            <td>
+                                <a href="{{ asset('storage/'.$yarnreceived->challan_file) }}" target="_blank"><img
+                                        src="{{ asset('storage/'.$yarnreceived->challan_file) }}" alt="" width="50"></a>
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -83,51 +100,45 @@
                             <td><strong>Store</strong></td>
                             <td>:</td>
                             <td>
-                                {{ $yarnquotation->yarnStore->name ?? '--' }}
+                                {{ $yarnreceived->yarnStore->name ?? '--' }}
                                 <br>
-                                {{ $yarnquotation->yarnStore->address ?? '--' }}
+                                {{ $yarnreceived->yarnStore->address ?? '--' }}
                             </td>
                         </tr>
                         <tr>
-                            <td><strong>Order Date</strong></td>
+                            <td><strong>Yarn factory</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->order_date ?? '--' }}</td>
+                            <td>
+                                {{ $yarnreceived->yarnFactory->name ?? '--' }}
+                                <br>
+                                {{ $yarnreceived->yarnFactory->address ?? '--' }}
+                            </td>
                         </tr>
                         <tr>
-                            <td><strong>Approximate Delivery Date</strong></td>
+                            <td><strong>Received Date</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->approximate_delivery_date ?? '--' }}</td>
+                            <td>{{ $yarnreceived->received_date ?? '--' }}</td>
                         </tr>
                         <tr>
-                            <td><strong>Delivery Date</strong></td>
+                            <td><strong>Received by</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->delivery_date ?? '--' }}</td>
+                            <td>{{ $yarnreceived->receivedBy->name ?? '--' }}</td>
                         </tr>
 
                         <tr>
-                            <td><strong>Created By</strong></td>
-                            <td>:</td>
-                            <td>{{ $yarnquotation->creator->name ?? '-'}}</td>
-                        </tr>
-                        <tr>
                             <td><strong>Last Updated By</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->lastUpdateBy->name ?? '-'}}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Approved By</strong></td>
-                            <td>:</td>
-                            <td>{{ @$yarnquotation->approvedBy->name}}</td>
+                            <td>{{ $yarnreceived->lastUpdateBy->name ?? '-'}}</td>
                         </tr>
                         <tr>
                             <td><strong>Created At</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->created_at ??'-' }}</td>
+                            <td>{{ $yarnreceived->created_at ??'-' }}</td>
                         </tr>
                         <tr>
                             <td><strong>Updated At</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnquotation->updated_at ??'-' }}</td>
+                            <td>{{ $yarnreceived->updated_at ??'-' }}</td>
                         </tr>
                     </table>
                 </div>

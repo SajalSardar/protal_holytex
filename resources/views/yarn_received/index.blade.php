@@ -4,7 +4,7 @@
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div class="d-flex">
-            <h2 class="mb-0">Yarn Received</h2>
+            <h2 class="mb-0">Yarn Receive</h2>
             <a href="{{ route('yarnreceived.create') }}" class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
                 Create Received</a>
         </div>
@@ -64,20 +64,39 @@
                                             {{ $item->yarnStore->address }}
                                         </td>
                                         <td>
-                                            <div class="d-flex align-items-center gap-1 justify-content-end">
-                                                <button
-                                                    class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
-                                                    <i
-                                                        class="material-symbols-outlined fs-16 text-primary">visibility</i>
-                                                </button>
-                                                <button
-                                                    class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
-                                                    <i class="material-symbols-outlined fs-16 text-body">edit</i>
-                                                </button>
-                                                <button
-                                                    class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
-                                                    <i class="material-symbols-outlined fs-16 text-danger">delete</i>
-                                                </button>
+                                            <div class="dropdown text-end">
+                                                <a class="btn btn-primary dropdown-toggle" href="#" role="button"
+                                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                                    Action
+                                                </a>
+
+                                                <ul class="dropdown-menu dropdown-menu-end table_action_btn">
+                                                    <li>
+                                                        <a class="dropdown-item py-2"
+                                                            href="{{ route('yarnreceived.show',$item->id) }}"> <i
+                                                                class="material-symbols-outlined fs-16 text-primary">visibility</i>
+                                                            View</a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item py-2"
+                                                            href="{{ route('yarnreceived.edit',$item->id) }}"><i
+                                                                class="material-symbols-outlined fs-16 text-body">edit</i>
+                                                            Edit</a>
+                                                    </li>
+                                                    <li>
+                                                        <form action="{{ route('yarnreceived.destroy',$item->id) }}"
+                                                            method="POST">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="button" onclick="deleteAlert(this)"
+                                                                class="dropdown-item py-2">
+                                                                <i
+                                                                    class="material-symbols-outlined fs-16 text-danger">delete</i>
+                                                                Delete
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </td>
                                     </tr>
@@ -97,4 +116,24 @@
 </div>
 
 <div class="flex-grow-1"></div>
+@endsection
+
+@section('script')
+<script>
+    function deleteAlert(element) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $(element).parent('form').submit();
+            }
+        });
+    }
+</script>
 @endsection

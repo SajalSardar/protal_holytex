@@ -149,7 +149,6 @@ $po_number = request()->po_number ?? '';
                                         </div>
                                     </div>
                                 </div>
-                                <input type="hidden" name="deliverd_factory_type" value="${data.yarn_type}">
                                 `;
                     // Append new options
                     for (const [key, items] of Object.entries(data)) {

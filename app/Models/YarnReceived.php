@@ -23,4 +23,8 @@ class YarnReceived extends Model {
     public function lastUpdateBy() {
         return $this->hasOne(User::class, 'id', 'updated_by');
     }
+
+    public function dyedQuotations() {
+        return $this->hasMany(DyedQuotation::class);
+    }
 }

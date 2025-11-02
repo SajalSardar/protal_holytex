@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DyedFactory;
+use App\Models\DyedQuotation;
+use App\Models\NettingFactroy;
+use App\Models\OrderDetail;
 use App\Models\Store;
 use App\Models\YarnLoss;
 use App\Models\YarnQuotation;
@@ -237,5 +241,46 @@ class YarnReceivedController extends Controller {
         $yarnreceived->delete();
         toastr('Yarn Quotation Successfully Deleted!');
         return back();
+    }
+
+    public function yarnDistribute(YarnReceived $yarnreceived) {
+        $yarnreceived->load('dyedQuotations');
+
+        $knitFactory = NettingFactroy::where('status', 'active')->get();
+        $dyedFactory = DyedFactory::where('status', 'active')->get();
+
+        $orderDetail = OrderDetail::where('po_number', $yarnreceived->po_number)->where('style', $yarnreceived->style)->first();
+        // return $orderDetail;
+        return view('yarn_received.distribute', compact('yarnreceived', 'knitFactory', 'dyedFactory', 'orderDetail'));
+    }
+
+    public function yarnDistributeStore(Request $request) {
+
+        // return $request;
+
+        foreach ($request->items as $item) {
+            if ($item['delivery_poin_check'] === 'yarn_dyed') {
+                DyedQuotation::create([
+                    'yarn_received_id'          => $request->yarnreceived_id,
+                    'from_store_id'             => $request->from_store_id,
+                    'description'               => $request->description,
+                    'order_id'                  => $request->order_id,
+                    'style'                     => $request->style,
+                    'po_number'                 => $request->po_number,
+                    'purchase_date'             => $request->order_date,
+                    'approximate_delivery_date' => $request->approximate_delivery_date,
+                    'remarks'                   => $request->remarks,
+                    'dyed_factory_id'           => $item['dyed_factory_id'],
+                    'quantity'                  => $item['quantity'] ?? null,
+                    'price'                     => $item['price'] ?? null,
+                    'total_price'               => $item['total_amount'] ?? null,
+                    'created_by'                => Auth::id(),
+                ]);
+            }
+        }
+
+        toastr('Data Successfully Created!');
+        return back();
+
     }
 }

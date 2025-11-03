@@ -68,7 +68,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="menu-item {{ request()->routeIs(['dyeingquotation.*']) ? 'open' : '' }}">
+            <li class="menu-item {{ request()->routeIs(['dyedquotation.*']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
                     <span class="title">Yarn Dyed</span>
@@ -82,26 +82,29 @@
                     </li>
                 </ul>
             </li>
+            <li class="menu-item {{ request()->routeIs(['nettingquotation.*']) ? 'open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <span class="material-symbols-outlined menu-icon">note_stack</span>
+                    <span class="title">Kniting</span>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="{{ route('nettingquotation.index') }}"
+                            class="menu-link {{ request()->routeIs('nettingquotation.*') ? 'active' : '' }}">
+                            Kniting Quotation
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
             <li
-                class="menu-item {{ request()->routeIs(['nettingquotation.*','dyeingquotation.*','accessoriesquotation.*','dyedquotation.*']) ? 'open' : '' }}">
+                class="menu-item {{ request()->routeIs(['dyeingquotation.*','accessoriesquotation.*','dyedquotation.*']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
                     <span class="title">Quotation</span>
                 </a>
                 <ul class="menu-sub">
 
-                    <li class="menu-item">
-                        <a href="{{ route('dyedquotation.index') }}"
-                            class="menu-link {{ request()->routeIs('dyedquotation.*') ? 'active' : '' }}">
-                            Dyed Quotation
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="{{ route('nettingquotation.index') }}"
-                            class="menu-link {{ request()->routeIs('nettingquotation.*') ? 'active' : '' }}">
-                            Netting Quotation
-                        </a>
-                    </li>
                     <li class="menu-item">
                         <a href="{{ route('dyeingquotation.index') }}"
                             class="menu-link {{ request()->routeIs('dyeingquotation.*') ? 'active' : '' }}">

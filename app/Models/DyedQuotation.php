@@ -28,37 +28,14 @@ class DyedQuotation extends Model {
         return $this->hasOne(User::class, 'id', 'updated_by');
     }
 
-    public function yarnReceived() {
-        return $this->hasMany(YarnReceived::class, 'dyed_quotation_id')
-            ->where('delived_factory_type', 'dyed');
+    public function dyedYarnknitQuot() {
+        return $this->hasOne(NettingQuotation::class, 'dyed_quotation_id');
     }
-    public function yarnReceivedOnlyQot() {
-        return $this->hasMany(YarnReceived::class, 'dyed_quotation_id')
-            ->where('delived_factory_type', 'dyed')
-            ->where('is_stock_received', 'No')
-            ->whereNull('stock_id');
+    public function dyedYarnLoss() {
+        return $this->hasMany(YarnLoss::class, 'dyed_quotation_id');
     }
-    public function yarnReceivedFromStock() {
-        return $this->hasMany(YarnReceived::class, 'dyed_quotation_id')
-            ->where('delived_factory_type', 'dyed')
-            ->where('is_stock_received', 'Yes')
-            ->whereNotNull('stock_id');
-    }
-    public function yarnLossFromStock() {
-        return $this->hasMany(YarnLoss::class, 'dyed_quotation_id')
-            ->where('delived_factory_type', 'dyed')
-            ->where('is_stock_received', 'Yes')
-            ->whereNotNull('stock_id');
-    }
-    public function yarnLoss() {
-        return $this->hasMany(YarnLoss::class, 'dyed_quotation_id')
-            ->where('delived_factory_type', 'dyed')
-            ->where('is_stock_received', 'No')
-            ->whereNull('stock_id');
-    }
-    public function storeStock() {
-        return $this->hasMany(YarnStoreStock::class, 'dyed_quotation_id')
-            ->where('delived_factory_type', 'dyed');
+    public function dyedYarnStock() {
+        return $this->hasMany(YarnStoreStock::class, 'dyed_quotation_id');
     }
 
 }

@@ -27,4 +27,7 @@ class YarnReceived extends Model {
     public function dyedQuotations() {
         return $this->hasMany(DyedQuotation::class);
     }
+    public function KnitQuotations() {
+        return $this->hasMany(NettingQuotation::class);
+    }
 }

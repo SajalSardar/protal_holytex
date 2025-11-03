@@ -81,9 +81,13 @@
                                     </div>
                                     <div class="card-body">
                                         @php
-                                        $dyedQuotations = number_format($yarnreceived->dyedQuotations->sum('quantity'),
-                                        2);
-                                        $totalQut = $dyedQuotations;
+                                        $dyedQuotations =
+                                        number_format($yarnreceived->dyedQuotations->sum('quantity'),2);
+
+                                        $knitQuotations =
+                                        number_format($yarnreceived->KnitQuotations->sum('quantity'),2);
+
+                                        $totalQut = $dyedQuotations + $knitQuotations;
                                         @endphp
                                         <table class="table">
                                             <tbody>

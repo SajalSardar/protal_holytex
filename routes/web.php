@@ -53,6 +53,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('distribute-yarn/{yarnreceived}', [YarnReceivedController::class, 'yarnDistribute'])->name('yarn.distribute');
     Route::post('distribute-yarn', [YarnReceivedController::class, 'yarnDistributeStore'])->name('yarn.distribute.store');
 
+    Route::resource('dyedquotation', DyedQuotationController::class);
+    Route::get('distribute-yarn-dyed/{dyedquotation}', [DyedQuotationController::class, 'yarnDyedDistribute'])->name('yarn.dyed.distribute');
+    Route::post('distribute-yarn-dyed', [DyedQuotationController::class, 'yarnDyedDistributeStore'])->name('yarn.dyed.distribute.store');
+
     Route::resource('yarnstorestock', YarnStoreStockController::class);
     Route::post('use-yarn-stock', [YarnStoreStockController::class, 'useYarnStock'])->name('use.yarn.stock');
     Route::controller(YarnStoreStockController::class)->name('dyedyarnstock.')->group(function () {
@@ -62,7 +66,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('dyed-yarn-stock-edit/{yarnstorestock}', 'edit')->name('edit');
     });
 
-    Route::resource('dyedquotation', DyedQuotationController::class);
     Route::resource('yarnreceiveddyed', YarnReceivedDyedController::class);
 
     Route::resource('nettingquotation', NettingQuotationController::class);

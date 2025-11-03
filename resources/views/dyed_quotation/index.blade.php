@@ -5,9 +5,9 @@
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div class="d-flex">
             <h2 class="mb-0">Dyed Quotation List </h2>
-            <a href="{{ route('dyedquotation.create') }}" class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
+            {{-- <a href="{{ route('dyedquotation.create') }}" class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
                 Create
-                Dyed Quotation</a>
+                Dyed Quotation</a> --}}
         </div>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
@@ -43,6 +43,7 @@
                                         <th>Total(TK)</th>
                                         <th>Approx. delivery_date</th>
                                         <th>Status</th>
+                                        <th>Dyed Factory</th>
                                         <th class="text-end">Action</th>
                                     </tr>
                                 </thead>
@@ -56,6 +57,7 @@
                                         <td>{{ $item->total_price }}</td>
                                         <td>{{ $item->approximate_delivery_date }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
+                                        <td>{{ $item->dyedFactory->name }}</td>
                                         <td>
                                             <div class="dropdown text-end">
                                                 <a class="btn btn-primary dropdown-toggle" href="#" role="button"
@@ -64,6 +66,12 @@
                                                 </a>
 
                                                 <ul class="dropdown-menu dropdown-menu-end table_action_btn">
+                                                    <li>
+                                                        <a class="dropdown-item py-2"
+                                                            href="{{ route('yarn.dyed.distribute',$item->id) }}"> <i
+                                                                class="material-symbols-outlined fs-16 text-body">edit</i>
+                                                            Yarn Distribute</a>
+                                                    </li>
                                                     <li><a class="dropdown-item py-2"
                                                             href="{{ route('dyedquotation.show',$item->id) }}"> <i
                                                                 class="material-symbols-outlined fs-16 text-primary">visibility</i>

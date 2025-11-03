@@ -43,6 +43,7 @@
                                         <th>Total(TK)</th>
                                         <th>Approx. delivery_date</th>
                                         <th>Status</th>
+                                        <th>Yarn Type</th>
                                         <th>Netting Factory</th>
                                         <th class="text-end">Action</th>
                                     </tr>
@@ -57,6 +58,7 @@
                                         <td>{{ $item->total_price }}</td>
                                         <td>{{ $item->approximate_delivery_date }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
+                                        <td>{{$item->dyed_quotation_id ? 'Dyed Yarn' : 'Yarn' }}</td>
                                         <td>
                                             Name:{{ $item->nettingFactory->name }} <br>
                                             Address:{{ $item->nettingFactory->address }}

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DyedFactory;
 use App\Models\DyedQuotation;
 use App\Models\NettingFactroy;
+use App\Models\NettingQuotation;
 use App\Models\OrderDetail;
 use App\Models\Store;
 use App\Models\YarnLoss;
@@ -244,19 +245,17 @@ class YarnReceivedController extends Controller {
     }
 
     public function yarnDistribute(YarnReceived $yarnreceived) {
-        $yarnreceived->load('dyedQuotations');
+        $yarnreceived->load('dyedQuotations', 'KnitQuotations');
 
         $knitFactory = NettingFactroy::where('status', 'active')->get();
         $dyedFactory = DyedFactory::where('status', 'active')->get();
 
         $orderDetail = OrderDetail::where('po_number', $yarnreceived->po_number)->where('style', $yarnreceived->style)->first();
-        // return $orderDetail;
+        // return $yarnreceived;
         return view('yarn_received.distribute', compact('yarnreceived', 'knitFactory', 'dyedFactory', 'orderDetail'));
     }
 
     public function yarnDistributeStore(Request $request) {
-
-        // return $request;
 
         foreach ($request->items as $item) {
             if ($item['delivery_poin_check'] === 'yarn_dyed') {
@@ -274,6 +273,22 @@ class YarnReceivedController extends Controller {
                     'quantity'                  => $item['quantity'] ?? null,
                     'price'                     => $item['price'] ?? null,
                     'total_price'               => $item['total_amount'] ?? null,
+                    'created_by'                => Auth::id(),
+                ]);
+            }
+            if ($item['delivery_poin_check'] === 'knit') {
+                NettingQuotation::create([
+                    'yarn_received_id'          => $request->yarnreceived_id,
+                    'order_id'                  => $request->order_id,
+                    'style'                     => $request->style,
+                    'po_number'                 => $request->po_number,
+                    'order_date'                => $request->order_date,
+                    'approximate_delivery_date' => $request->approximate_delivery_date,
+                    'remarks'                   => $request->remarks,
+                    'netting_factory_id'        => $item['knit_factory_id'] ?? null,
+                    'quantity'                  => $item['quantity'],
+                    'price'                     => $item['price'] ?? null,
+                    'total_price'               => $item['total_amount'],
                     'created_by'                => Auth::id(),
                 ]);
             }

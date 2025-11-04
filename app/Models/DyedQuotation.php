@@ -37,5 +37,8 @@ class DyedQuotation extends Model {
     public function dyedYarnStock() {
         return $this->hasMany(YarnStoreStock::class, 'dyed_quotation_id');
     }
+    public function dyedYarnReceived() {
+        return $this->hasOne(YarnReceivedDyed::class, 'dyed_quotation_id');
+    }
 
 }

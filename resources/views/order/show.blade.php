@@ -371,10 +371,7 @@
                                                             @foreach ($items as $item)
                                                             @php
                                                             $totalQotDelevary =
-                                                            $item->yarn_received_only_qot_sum_quantity
-                                                            +
-                                                            $item->yarn_loss_sum_quantity +
-                                                            $item->store_stock_sum_quantity;
+                                                            $item->yarn_received_sum_quantity;
 
                                                             // $totalQty = $item->quantity + $item->from_stock_quantity;
                                                             $totalQty = $item->quantity;
@@ -397,9 +394,6 @@
                                                                 <td>{{ $item->quantity }}</td>
                                                                 <td>{{ $item->price }}</td>
                                                                 <td>{{ $item->total_price }}</td>
-                                                                <td>{{ number_format($totalQty+
-                                                                    $item->from_stock_quantity, 2) }}
-                                                                </td>
                                                                 <td>{{ Str::ucfirst($item->status) }}</td>
                                                                 <td>{{ number_format($totalQty - $totalQotDelevary,2)
                                                                     ?? '--' }}
@@ -408,8 +402,6 @@
                                                                     ?? '--' }}
                                                                 </td>
                                                                 <td>{{ $yarn_received_sum ?? '--' }}</td>
-                                                                <td>{{ $item->yarn_loss_sum_quantity ?? '--' }}</td>
-                                                                <td>{{ $item->store_stock_sum_quantity ?? '--' }}</td>
                                                             </tr>
                                                             @endforeach
                                                         </tbody>
@@ -852,7 +844,7 @@
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                @foreach ( $item->nettingQuotationItems as $singleItem)
+                                                                {{-- @foreach ( $item->nettingQuotationItems as $singleItem)
 
                                                                 <tr>
                                                                     <td>{{ $singleItem->quantity }}</td>
@@ -871,7 +863,7 @@
                                                                     </td>
                                                                     @endif
                                                                 </tr>
-                                                                @endforeach
+                                                                @endforeach --}}
                                                             </tbody>
                                                         </table>
                                                     </div>

@@ -62,13 +62,13 @@
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('yarnreceived.index') }}"
-                            class="menu-link {{ request()->routeIs(['yarnreceived.index','yarnreceived.show','yarnreceived.edit']) ? 'active' : '' }}">
+                            class="menu-link {{ request()->routeIs(['yarnreceived.index','yarnreceived.show','yarnreceived.edit','yarnreceived.distribute']) ? 'active' : '' }}">
                             Yarn Stock
                         </a>
                     </li>
                 </ul>
             </li>
-            <li class="menu-item {{ request()->routeIs(['dyedquotation.*']) ? 'open' : '' }}">
+            <li class="menu-item {{ request()->routeIs(['dyedquotation.*','yarn.dyed.distribute']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
                     <span class="title">Yarn Dyed</span>
@@ -76,7 +76,7 @@
                 <ul class="menu-sub">
                     <li class="menu-item">
                         <a href="{{ route('dyedquotation.index') }}"
-                            class="menu-link {{ request()->routeIs('dyedquotation.*') ? 'active' : '' }}">
+                            class="menu-link {{ request()->routeIs(['dyedquotation.*', 'yarn.dyed.distribute']) ? 'active' : '' }}">
                             Dyed Quotation
                         </a>
                     </li>

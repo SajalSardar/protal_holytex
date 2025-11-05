@@ -73,7 +73,7 @@
                                                 <ul class="dropdown-menu dropdown-menu-end table_action_btn">
                                                     <li>
                                                         <a class="dropdown-item py-2"
-                                                            href="{{ route('yarn.distribute',$item->id) }}"> <i
+                                                            href="{{ route('yarnreceived.distribute',$item->id) }}"> <i
                                                                 class="material-symbols-outlined fs-16 text-body">edit</i>
                                                             Yarn Distribute</a>
                                                     </li>

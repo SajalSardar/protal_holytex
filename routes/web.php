@@ -50,8 +50,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('yarnquotation', YarnQuotationController::class);
     Route::resource('yarnreceived', YarnReceivedController::class);
     Route::get('get-yarn-quotation-by-po/{po_number}', [YarnReceivedController::class, 'getYarnStyleByPo']);
-    Route::get('distribute-yarn/{yarnreceived}', [YarnReceivedController::class, 'yarnDistribute'])->name('yarn.distribute');
-    Route::post('distribute-yarn', [YarnReceivedController::class, 'yarnDistributeStore'])->name('yarn.distribute.store');
+    Route::get('distribute-yarn/{yarnreceived}', [YarnReceivedController::class, 'yarnDistribute'])->name('yarnreceived.distribute');
+    Route::post('distribute-yarn', [YarnReceivedController::class, 'yarnDistributeStore'])->name('yarnreceived.distribute.store');
 
     Route::resource('dyedquotation', DyedQuotationController::class);
     Route::get('distribute-yarn-dyed/{dyedquotation}', [DyedQuotationController::class, 'yarnDyedDistribute'])->name('yarn.dyed.distribute');

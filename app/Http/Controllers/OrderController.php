@@ -96,38 +96,31 @@ class OrderController extends Controller {
             'lastUpdateBy',
             'yarnQuotations'        => function ($q) {
                 $q->withSum('yarnReceived', 'quantity')
-                    ->withSum('yarnReceivedDyed', 'quantity')
-                    ->withSum('yarnReceivedFromStock', 'quantity')
-                    ->withSum('yarnReceivedOnlyQot', 'quantity')
-                    ->withSum('yarnLoss', 'quantity')
-                    ->withSum('storeStock', 'quantity');
+                    ->withSum('yarnLoss', 'quantity');
             },
             'yarnQuotations.yarnFactory:id,name,address',
-            'yarnQuotations.dyedFactory:id,name,address',
-            'yarnQuotations.nettingFactory:id,name,address',
+            // 'yarnQuotations.dyedFactory:id,name,address',
+            // 'yarnQuotations.nettingFactory:id,name,address',
             'yarnQuotations.creator:id,name',
             'yarnQuotations.lastUpdateBy:id,name',
             'yarnQuotations.approvedBy:id,name',
             'dyedQuotations',
-            'dyedQuotations'        => function ($q) {
-                $q->withSum('yarnReceived', 'quantity')
-                    ->withSum('yarnLoss', 'quantity')
-                    ->withSum('storeStock', 'quantity');
-            },
+            // 'dyedQuotations'        => function ($q) {
+            //     $q->withSum('yarnReceived', 'quantity')
+            //         ->withSum('yarnLoss', 'quantity')
+            //         ->withSum('storeStock', 'quantity');
+            // },
             'nettingQuotations',
-            'nettingQuotations.nettingQuotationItems',
             'nettingQuotations.creator:id,name',
             'nettingQuotations.lastUpdateBy:id,name',
             'nettingQuotations.approvedBy:id,name',
             'nettingQuotations.nettingFactory:id,name,address',
-            'nettingQuotations.nettingQuotationItems.dyeingFactory:id,name,address',
-            'nettingQuotations.nettingQuotationItems.garmentsFactory:id,name,address',
-            'nettingQuotations'     => function ($q) {
-                $q->withSum('nettingReceived', 'quantity')
-                    ->withSum('nettingReceiveGarments', 'quantity')
-                    ->withSum('nettingLoss', 'quantity')
-                    ->withSum('storeStock', 'quantity');
-            },
+            // 'nettingQuotations'     => function ($q) {
+            //     $q->withSum('nettingReceived', 'quantity')
+            //         ->withSum('nettingReceiveGarments', 'quantity')
+            //         ->withSum('nettingLoss', 'quantity')
+            //         ->withSum('storeStock', 'quantity');
+            // },
             'dyeingQuotations',
             'dyeingQuotations.creator:id,name',
             'dyeingQuotations.lastUpdateBy:id,name',

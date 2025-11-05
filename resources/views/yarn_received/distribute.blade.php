@@ -28,8 +28,8 @@
             <div class="card bg-white border-0 rounded-3 mb-4">
                 <div class="card-body p-4">
 
-                    <form action="{{ route('yarn.distribute.store') }}" method="POST" enctype="multipart/form-data"
-                        id="netting_form">
+                    <form action="{{ route('yarnreceived.distribute.store') }}" method="POST"
+                        enctype="multipart/form-data" id="netting_form">
                         @csrf
                         <div class="row">
                             <input type="hidden" name="yarnreceived_id" value="{{ $yarnreceived->id }}">
@@ -323,12 +323,12 @@
                         <div class="form-group  mb-4">
                             <label>
                                 <input type="radio" class="form-check-input"
-                                    style="border:1px solid #000" name="items[${rowIndex}][delevary_poin_check]"
+                                    style="border:1px solid #000" name="items[${rowIndex}][delivery_poin_check]"
                                     value="knit" onclick="showHideDeliveryPoint(this,${rowIndex})">
                                 Knit</label>
                             <label class="ms-3">
                                 <input type="radio" class="form-check-input"
-                                    style="border:1px solid #000" name="items[${rowIndex}][delevary_poin_check]"
+                                    style="border:1px solid #000" name="items[${rowIndex}][delivery_poin_check]"
                                     value="yarn_dyed" onclick="showHideDeliveryPoint(this,${rowIndex})">
                                 Yarn Dyed</label>
                         </div>

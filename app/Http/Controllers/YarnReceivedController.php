@@ -257,6 +257,7 @@ class YarnReceivedController extends Controller {
 
     public function yarnDistributeStore(Request $request) {
 
+        // return $request;
         foreach ($request->items as $item) {
             if ($item['delivery_poin_check'] === 'yarn_dyed') {
                 DyedQuotation::create([

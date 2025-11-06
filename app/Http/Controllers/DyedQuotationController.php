@@ -156,15 +156,16 @@ class DyedQuotationController extends Controller {
                 toastr()->error('Challan info not found!');
                 return back();
             }
-        }
-        $challan = $request->input('challan');
 
-        $requiredFields = ['challan_number', 'vehicle_number', 'challan_date', 'received_date'];
+            $challan = $request->input('challan');
 
-        foreach ($requiredFields as $field) {
-            if (empty($challan[$field])) {
-                toastr()->error('Please fill in all challan information!');
-                return back();
+            $requiredFields = ['challan_number', 'vehicle_number', 'challan_date', 'received_date'];
+
+            foreach ($requiredFields as $field) {
+                if (empty($challan[$field])) {
+                    toastr()->error('Please fill in all challan information!');
+                    return back();
+                }
             }
         }
 

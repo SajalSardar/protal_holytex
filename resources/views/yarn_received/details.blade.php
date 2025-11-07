@@ -4,9 +4,7 @@
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div class="d-flex">
-            <h2 class="mb-0">Yarn Stock</h2>
-            <a href="{{ route('yarnreceived.create') }}" class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
-                Create Received</a>
+            <h2 class="mb-0">Yarn Stock Details</h2>
         </div>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
@@ -21,7 +19,7 @@
                     <span class="fw-medium">Order</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Yarn Received</span>
+                    <span class="fw-medium">Yarn stock</span>
                 </li>
             </ol>
         </nav>
@@ -38,27 +36,21 @@
                                         <th>PO</th>
                                         <th>Style</th>
                                         <th>Description</th>
-                                        <th>Total(kg)</th>
-                                        <th>Dyed</th>
-                                        <th>Knitte</th>
-                                        <th>Available</th>
+                                        <th>Quantity(kg)</th>
                                         <th>Unit</th>
+                                        <th>Store</th>
                                         <th class="text-end">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse ($yarnReceived as $item)
-
                                     <tr>
                                         <td>{{ $item->po_number }}</td>
                                         <td>{{ $item->style }}</td>
                                         <td>{{ $item->description }}</td>
-                                        <td>{{ $item->total_quantity }}</td>
-                                        <td>{{ $item->dyed_total }}</td>
-                                        <td>{{ $item->knit_total }}</td>
-                                        <td>{{ number_format($item->total_quantity - ($item->dyed_total +
-                                            $item->knit_total), 2) }}</td>
+                                        <td>{{ $item->quantity }}</td>
                                         <td>{{ $item->unit }}</td>
+                                        <td>{{ $item->yarnStore->name }} <br> {{ $item->yarnStore->address }}</td>
                                         <td>
                                             <div class="dropdown text-end">
                                                 <a class="btn btn-primary dropdown-toggle" href="#" role="button"
@@ -69,19 +61,29 @@
                                                 <ul class="dropdown-menu dropdown-menu-end table_action_btn">
                                                     <li>
                                                         <a class="dropdown-item py-2"
-                                                            href="{{ route('yarnreceived.distribute',[$item->po_number,$item->style,$item->description]) }}">
-                                                            <i
-                                                                class="material-symbols-outlined fs-16 text-body">edit</i>
-                                                            Yarn Distribute</a>
+                                                            href="{{ route('yarnreceived.show',$item->id) }}"> <i
+                                                                class="material-symbols-outlined fs-16 text-primary">visibility</i>
+                                                            View</a>
                                                     </li>
                                                     <li>
                                                         <a class="dropdown-item py-2"
-                                                            href="{{ route('yarnreceived.detail.view',[$item->po_number,$item->style,$item->description] ) }}">
-                                                            <i
-                                                                class="material-symbols-outlined fs-16 text-primary">visibility</i>
-                                                            Details</a>
+                                                            href="{{ route('yarnreceived.edit',$item->id) }}"><i
+                                                                class="material-symbols-outlined fs-16 text-body">edit</i>
+                                                            Edit</a>
                                                     </li>
-
+                                                    <li>
+                                                        <form action="{{ route('yarnreceived.destroy',$item->id) }}"
+                                                            method="POST">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="button" onclick="deleteAlert(this)"
+                                                                class="dropdown-item py-2">
+                                                                <i
+                                                                    class="material-symbols-outlined fs-16 text-danger">delete</i>
+                                                                Delete
+                                                            </button>
+                                                        </form>
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </td>
@@ -102,4 +104,24 @@
 </div>
 
 <div class="flex-grow-1"></div>
+@endsection
+
+@section('script')
+<script>
+    function deleteAlert(element) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $(element).parent('form').submit();
+            }
+        });
+    }
+</script>
 @endsection

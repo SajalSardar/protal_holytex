@@ -22,6 +22,67 @@
             </ol>
         </nav>
     </div>
+    @php
+    $totalQuantity = 0;
+    $style = '';
+    $description = '';
+    $po_number ='';
+    @endphp
+
+    <div class="row">
+        <div class=" col-lg-12">
+            <div class="card bg-white border-0 rounded-3 mb-4">
+                <div class="card-body p-4">
+                    <div class="default-table-area style-two default-table-width">
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>PO</th>
+                                        <th>Style</th>
+                                        <th>Description</th>
+                                        <th>Quantity(kg)</th>
+                                        <th>Unit</th>
+                                        <th>Store</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($yarnreceived as $item)
+                                    @php
+                                    $totalQuantity += $item->quantity;
+                                    $style = $item->style;
+                                    $description = $item->description;
+                                    $po_number = $item->po_number;
+                                    @endphp
+                                    <tr>
+                                        <td>{{ $item->po_number }}</td>
+                                        <td>{{ $item->style }}</td>
+                                        <td>{{ $item->description }}</td>
+                                        <td>{{ $item->quantity }}</td>
+                                        <td>{{ $item->unit }}</td>
+                                        <td>{{ $item->yarnStore->name }} <br> {{ $item->yarnStore->address }}</td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="3">No Data Found!</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                                <tr>
+                                    <td colspan="3">
+                                        <h4>Total:</h4>
+                                    </td>
+                                    <td colspan="3">
+                                        <h4> <span>{{ $totalQuantity }}</span> kg</h4>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="row">
         <div class=" col-lg-12">
@@ -32,17 +93,14 @@
                         enctype="multipart/form-data" id="netting_form">
                         @csrf
                         <div class="row">
-                            <input type="hidden" name="yarnreceived_id" value="{{ $yarnreceived->id }}">
                             <input type="hidden" name="order_id" value="{{ $orderDetail->order_id }}">
-                            <input type="hidden" name="style" value="{{ $yarnreceived->style }}">
-                            <input type="hidden" name="description" value="{{ $yarnreceived->description }}">
-                            <input type="hidden" name="from_store_id" value="{{ $yarnreceived->yarnStore->id }}">
+                            <input type="hidden" name="style" value="{{ $style }}">
+                            <input type="hidden" name="description" value="{{ $description }}">
                             <div class="col-lg-4 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">PO Number</label>
-                                    <input name="po_number" id="po_number"
-                                        value="{{ old('po_number', $yarnreceived->po_number) }}" class="form-control"
-                                        readonly>
+                                    <input name="po_number" id="po_number" value="{{ old('po_number', $po_number) }}"
+                                        class="form-control" readonly>
                                     @error('po_number')
                                     <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror
@@ -76,43 +134,31 @@
                             <div id="show_all_yarn_item">
                                 <div class="card border-0 rounded-3 mb-5">
                                     <div class="card-header bg-primary">
-                                        <h3 class="text-white" style="text-transform:uppercase">Style: {{
-                                            $yarnreceived->style }}</h3>
+                                        <h3 class="text-white" style="text-transform:uppercase">{{ $po_number }}-{{
+                                            $style }}-{{ $description }}</h3>
                                     </div>
                                     <div class="card-body">
-                                        @php
-                                        $dyedQuotations =
-                                        number_format($yarnreceived->dyedQuotations->sum('quantity'),2);
-
-                                        $knitQuotations =
-                                        number_format($yarnreceived->KnitQuotations->sum('quantity'),2);
-
-                                        $totalQut = $dyedQuotations + $knitQuotations;
-                                        @endphp
                                         <table class="table">
                                             <tbody>
                                                 <tr>
                                                     <th>Description</th>
-                                                    <th>Quantity(KG)</th>
-                                                    <th>Quotation Quantity(KG)</th>
+                                                    <th>Quantity</th>
+                                                    <th>Distribute Quantity(KG)</th>
                                                     <th>Allowed Quantity</th>
-                                                    <th>Store Address</th>
                                                 </tr>
-
+                                                @php
+                                                $totalQut = $dyedQuotations + $knitQuotations;
+                                                @endphp
                                                 <tr>
-                                                    <td>{{ $yarnreceived->description }}</td>
-                                                    <td>{{ $yarnreceived->quantity }} {{ $yarnreceived->unit }}
-                                                        <input type="hidden"
-                                                            value="{{ $yarnreceived->quantity - $totalQut }}"
+                                                    <td>{{ $description }}</td>
+                                                    <td>{{ $totalQuantity }}kg
+                                                        <input type="hidden" value="{{ $totalQuantity - $totalQut }}"
                                                             id="total_stock_quantity" name="total_stock_quantity">
                                                     </td>
                                                     <td>
                                                         {{ $totalQut ?? 0 }}kg
                                                     </td>
-                                                    <td>{{ number_format($yarnreceived->quantity - $totalQut,2) }}kg
-                                                    </td>
-                                                    <td>Name:{{ $yarnreceived->yarnStore->name }} <br> Address:{{
-                                                        $yarnreceived->yarnStore->address }}
+                                                    <td>{{ number_format($totalQuantity - $totalQut,2) }}kg
                                                     </td>
                                                 </tr>
                                             </tbody>

@@ -14,6 +14,7 @@ use App\Models\YarnReceived;
 use function Pest\Laravel\json;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class YarnReceivedController extends Controller {
@@ -57,8 +58,38 @@ class YarnReceivedController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        $yarnReceived = YarnReceived::with('yarnStore')->get();
+        $yarnReceived = YarnReceived::select(
+            DB::raw('MAX(po_number) as po_number'),
+            DB::raw('MAX(style) as style'),
+            DB::raw('MAX(description) as description'),
+            DB::raw('MAX(unit) as unit'),
+            DB::raw('SUM(quantity) as total_quantity')
+        )
+            ->groupBy('po_number', 'style', 'description')
+            ->get();
+
+        foreach ($yarnReceived as $item) {
+            $item->dyed_total = DyedQuotation::where('po_number', $item->po_number)
+                ->where('style', $item->style)
+                ->where('description', $item->description)->sum('quantity');
+            $item->knit_total = NettingQuotation::where('po_number', $item->po_number)
+                ->where('style', $item->style)
+                ->where('description', $item->description)->sum('quantity');
+        }
+
+        // return $yarnReceived;
         return view('yarn_received.index', compact('yarnReceived'));
+    }
+
+    public function detailsView($po_number, $style, $description) {
+        $yarnReceived = YarnReceived::with('yarnStore')
+            ->where('po_number', $po_number)
+            ->where('style', $style)
+            ->where('description', $description)
+            ->get();
+
+        // return $yarnReceived;
+        return view('yarn_received.details', compact('yarnReceived'));
     }
 
     /**
@@ -244,15 +275,27 @@ class YarnReceivedController extends Controller {
         return back();
     }
 
-    public function yarnDistribute(YarnReceived $yarnreceived) {
-        $yarnreceived->load('dyedQuotations', 'KnitQuotations');
+    public function yarnDistribute($po_number, $style, $description) {
 
         $knitFactory = NettingFactroy::where('status', 'active')->get();
         $dyedFactory = DyedFactory::where('status', 'active')->get();
 
-        $orderDetail = OrderDetail::where('po_number', $yarnreceived->po_number)->where('style', $yarnreceived->style)->first();
-        // return $yarnreceived;
-        return view('yarn_received.distribute', compact('yarnreceived', 'knitFactory', 'dyedFactory', 'orderDetail'));
+        $orderDetail = OrderDetail::where('po_number', $po_number)->where('style', $style)->first();
+
+        $yarnreceived = YarnReceived::with('yarnStore')
+            ->where('po_number', $po_number)
+            ->where('style', $style)
+            ->where('description', $description)
+            ->get();
+
+        $dyedQuotations = DyedQuotation::where('po_number', $po_number)
+            ->where('style', $style)
+            ->where('description', $description)->sum('quantity');
+        $knitQuotations = NettingQuotation::where('po_number', $po_number)
+            ->where('style', $style)
+            ->where('description', $description)->sum('quantity');
+
+        return view('yarn_received.distribute', compact('yarnreceived', 'knitFactory', 'dyedFactory', 'orderDetail', 'dyedQuotations', 'knitQuotations'));
     }
 
     public function yarnDistributeStore(Request $request) {
@@ -261,8 +304,6 @@ class YarnReceivedController extends Controller {
         foreach ($request->items as $item) {
             if ($item['delivery_poin_check'] === 'yarn_dyed') {
                 DyedQuotation::create([
-                    'yarn_received_id'          => $request->yarnreceived_id,
-                    'from_store_id'             => $request->from_store_id,
                     'description'               => $request->description,
                     'order_id'                  => $request->order_id,
                     'style'                     => $request->style,
@@ -279,8 +320,8 @@ class YarnReceivedController extends Controller {
             }
             if ($item['delivery_poin_check'] === 'knit') {
                 NettingQuotation::create([
-                    'yarn_received_id'          => $request->yarnreceived_id,
                     'order_id'                  => $request->order_id,
+                    'description'               => $request->description,
                     'style'                     => $request->style,
                     'po_number'                 => $request->po_number,
                     'order_date'                => $request->order_date,

@@ -69,14 +69,14 @@
                                                 <ul class="dropdown-menu dropdown-menu-end table_action_btn">
                                                     <li>
                                                         <a class="dropdown-item py-2"
-                                                            href="{{ route('yarnreceived.distribute',[$item->po_number,urlencode($item->style),urlencode($item->description)]) }}">
+                                                            href="{{ route('yarnreceived.distribute',[$item->po_number,$item->style,$item->description]) }}">
                                                             <i
                                                                 class="material-symbols-outlined fs-16 text-body">edit</i>
                                                             Yarn Distribute</a>
                                                     </li>
                                                     <li>
                                                         <a class="dropdown-item py-2"
-                                                            href="{{ route('yarnreceived.detail.view',[$item->po_number,urlencode($item->style),urlencode($item->description)] ) }}">
+                                                            href="{{ route('yarnreceived.detail.view',[$item->po_number,$item->style,$item->description] ) }}">
                                                             <i
                                                                 class="material-symbols-outlined fs-16 text-primary">visibility</i>
                                                             Details</a>

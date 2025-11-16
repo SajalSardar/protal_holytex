@@ -70,17 +70,25 @@
                             <div class="col-lg-3 col-sm-6">
                                 <div class="form-group">
                                     <label class="label text-secondary">Status</label>
-                                    <select name="status" class="form-select form-control status_select">
+
+                                    <select name="status" class="form-select form-control status_select select2">
                                         <option value="" disabled selected>Select Status</option>
                                         <option value="pending" {{ $yarnquotation->status === "pending" ? 'selected' :
                                             '' }}>Pending</option>
                                         <option value="approved" {{ $yarnquotation->status === "approved" ? 'selected' :
                                             '' }}>Approved</option>
+                                        <option value="recevied" {{ $yarnquotation->status === "recevied" ? 'selected' :
+                                            '' }}>Recevied</option>
+                                        <option value="ready_to_deliver" {{ $yarnquotation->status ===
+                                            "ready_to_deliver" ? 'selected' :
+                                            '' }}>Ready to deliver</option>
+                                        <option value="delivered" {{ $yarnquotation->status === "delivered" ? 'selected'
+                                            : '' }}>Delivered</option>
                                         <option value="cancelled" {{ $yarnquotation->status === "cancelled" ? 'selected'
                                             : '' }}>Cancelled</option>
-                                        <option value="finished" {{ $yarnquotation->status === "finished" ? 'selected' :
-                                            '' }}>Finished</option>
+
                                     </select>
+
                                 </div>
                             </div>
 

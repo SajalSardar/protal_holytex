@@ -54,12 +54,12 @@
                             Yarn Quotation
                         </a>
                     </li>
-                    <li class="menu-item">
+                    {{-- <li class="menu-item">
                         <a href="{{ route('yarnreceived.create') }}"
                             class="menu-link {{ request()->routeIs('yarnreceived.create') ? 'active' : '' }}">
                             Yarn Received
                         </a>
-                    </li>
+                    </li> --}}
                     <li class="menu-item">
                         <a href="{{ route('yarnreceived.index') }}"
                             class="menu-link {{ request()->routeIs(['yarnreceived.index','yarnreceived.show','yarnreceived.edit','yarnreceived.distribute', 'yarnreceived.detail.view']) ? 'active' : '' }}">
@@ -97,7 +97,7 @@
                 </ul>
             </li>
 
-            <li
+            {{-- <li
                 class="menu-item {{ request()->routeIs(['dyeingquotation.*','accessoriesquotation.*','dyedquotation.*']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
@@ -196,7 +196,7 @@
                         </a>
                     </li>
                 </ul>
-            </li>
+            </li> --}}
 
             <li class="menu-item {{ request()->routeIs('settings.*') ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">

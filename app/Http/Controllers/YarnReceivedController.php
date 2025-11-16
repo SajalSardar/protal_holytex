@@ -81,11 +81,11 @@ class YarnReceivedController extends Controller {
         return view('yarn_received.index', compact('yarnReceived'));
     }
 
-    public function detailsView($po_number, $style, $description) {
+    public function detailsView(Request $request) {
         $yarnReceived = YarnReceived::with('yarnStore')
-            ->where('po_number', $po_number)
-            ->where('style', $style)
-            ->where('description', $description)
+            ->where('po_number', $request->po_number)
+            ->where('style', $request->style)
+            ->where('description', $request->description)
             ->get();
 
         // return $yarnReceived;
@@ -282,25 +282,25 @@ class YarnReceivedController extends Controller {
         return back();
     }
 
-    public function yarnDistribute($po_number, $style, $description) {
+    public function yarnDistribute(Request $request) {
 
         $knitFactory = NettingFactroy::where('status', 'active')->get();
         $dyedFactory = DyedFactory::where('status', 'active')->get();
 
-        $orderDetail = OrderDetail::where('po_number', $po_number)->where('style', $style)->first();
+        $orderDetail = OrderDetail::where('po_number', $request->po_number)->where('style', $request->style)->first();
 
         $yarnreceived = YarnReceived::with('yarnStore')
-            ->where('po_number', $po_number)
-            ->where('style', $style)
-            ->where('description', $description)
+            ->where('po_number', $request->po_number)
+            ->where('style', $request->style)
+            ->where('description', $request->description)
             ->get();
 
-        $dyedQuotations = DyedQuotation::where('po_number', $po_number)
-            ->where('style', $style)
-            ->where('description', $description)->sum('quantity');
-        $knitQuotations = NettingQuotation::where('po_number', $po_number)
-            ->where('style', $style)
-            ->where('description', $description)->sum('quantity');
+        $dyedQuotations = DyedQuotation::where('po_number', $request->po_number)
+            ->where('style', $request->style)
+            ->where('description', $request->description)->sum('quantity');
+        $knitQuotations = NettingQuotation::where('po_number', $request->po_number)
+            ->where('style', $request->style)
+            ->where('description', $request->description)->sum('quantity');
 
         return view('yarn_received.distribute', compact('yarnreceived', 'knitFactory', 'dyedFactory', 'orderDetail', 'dyedQuotations', 'knitQuotations'));
     }

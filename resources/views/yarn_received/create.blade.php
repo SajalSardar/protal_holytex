@@ -101,7 +101,7 @@ $po_number = request()->po_number ?? '';
                     <h2 class="accordion-header mb-3">
                         <button style="background: #605dff;" class="accordion-button text-uppercase text-white"
                             type="button" data-bs-toggle="collapse" data-bs-target="#collapse${key}">
-                            <strong>Style: {{ $yarnQuotation->style }}</strong>
+                            <strong>Style: {{ @$yarnQuotation->style }}</strong>
                         </button>
                     </h2>
                     <div id="collapse${key}" class="accordion-collapse collapse show">
@@ -109,56 +109,57 @@ $po_number = request()->po_number ?? '';
 
 
                             @php
-                            $quotation = $yarnQuotation->quantity;
+                            $quotation = $yarnQuotation->quantity ?? 0;
                             $allTotalRecevied =
                             $yarnQuotation->yarn_received_sum_quantity +
                             $yarnQuotation->yarn_loss_sum_quantity;
                             $noreceived = $quotation - $allTotalRecevied;
                             @endphp
                             <div class="row my-4">
-                                <input type="hidden" name="style" value="{{ $yarnQuotation->style}}">
+                                <input type="hidden" name="style" value="{{@ $yarnQuotation->style}}">
 
                                 <input type="hidden" name="yarn_factory_id"
-                                    value="{{ $yarnQuotation->yarn_factory_id}}">
+                                    value="{{ @$yarnQuotation->yarn_factory_id}}">
 
-                                <input type="hidden" name="yarn_id" value="{{ $yarnQuotation->id}}">
+                                <input type="hidden" name="yarn_id" value="{{ @$yarnQuotation->id}}">
 
                                 <div class="col-lg col-sm-4 pe-0 mb-3">
                                     <label class="label text-secondary">Description</label>
                                     <input class="form-control" name="description"
-                                        value="{{ $yarnQuotation->description}}" readonly>
+                                        value="{{ @$yarnQuotation->description}}" readonly>
                                 </div>
                                 <div class="col-lg col-sm-4 pe-0 mb-3">
                                     <label class="label text-secondary">Quotation(KG)</label>
                                     <input type="text" class="form-control" readonly
-                                        value="{{ $yarnQuotation->quantity}}">
+                                        value="{{ @$yarnQuotation->quantity}}">
                                 </div>
                                 <div class="col-lg col-sm-4 pe-0 mb-3">
                                     <label class="label text-secondary">Yarn
                                         Factory</label>
-                                    <input class="form-control" readonly value="{{ $yarnQuotation->yarnFactory->name}}">
+                                    <input class="form-control" readonly
+                                        value="{{ @$yarnQuotation->yarnFactory->name}}">
                                 </div>
                                 <div class="col-lg col-sm-4 pe-0 mb-3">
                                     <label class="label text-secondary">Received</label>
                                     <input type="text" class="form-control" readonly
-                                        value="{{ $yarnQuotation->yarn_received_sum_quantity}}">
+                                        value="{{ @$yarnQuotation->yarn_received_sum_quantity}}">
                                 </div>
                                 <div class="col-lg col-sm-4 pe-0 mb-3">
                                     <label class="label text-secondary">Quotation
                                         Loss</label>
                                     <input type="text" class="form-control" readonly
-                                        value="{{ $yarnQuotation->yarn_loss_sum_quantity ?? 0}}">
+                                        value="{{ @$yarnQuotation->yarn_loss_sum_quantity ?? 0}}">
                                 </div>
                                 <div class="col-lg col-sm-4 pe-0 mb-3">
                                     <label class="label text-secondary">No
                                         Received</label>
-                                    <input type="text" class="form-control" readonly value="{{ $noreceived }}">
+                                    <input type="text" class="form-control" readonly value="{{ @$noreceived }}">
                                 </div>
                                 <div class="col-lg col-sm-4 mb-3">
                                     <label class="label text-secondary">Store
                                         Address</label>
                                     <input type="text" class="form-control" readonly
-                                        value="{{ $yarnQuotation->yarnStore->name}}">
+                                        value="{{ @$yarnQuotation->yarnStore->name}}">
                                 </div>
                             </div>
                             <div class="row">
@@ -185,12 +186,12 @@ $po_number = request()->po_number ?? '';
                                 </div>
                                 <div class="col-lg-2 pe-0 mb-3">
                                     <label class="label text-secondary">Yarn(KG)</label>
-                                    <input type="text" max="{{ $noreceived }}" id="netting_item" class="form-control"
+                                    <input type="text" max="{{ @$noreceived }}" id="netting_item" class="form-control"
                                         oninput="limitWeightValue(this)" name="yarn">
                                 </div>
                                 <div class="col-lg-2 pe-0 mb-3">
                                     <label class="label text-secondary">Loss(KG)</label>
-                                    <input type="text" class="form-control" max="{{ $noreceived }}" id="loss_item"
+                                    <input type="text" class="form-control" max="{{ @$noreceived }}" id="loss_item"
                                         oninput="limitWeightValue(this)" name="loss">
                                 </div>
                                 <div class="col-lg-2 pe-0 mb-3">

@@ -104,10 +104,10 @@ class YarnReceivedController extends Controller {
             ->withSum('yarnReceived', 'quantity')
             ->withSum('yarnLoss', 'quantity')
             ->where('id', $request->yarn_quotation)
-            ->where('status', 'approved')
+            // ->where('status', 'approved')
             ->first();
 
-        // return $yarnQuotation;
+        // return $request->yarn_quotation;
 
         return view('yarn_received.create', compact('yearns', 'storeAddress', 'yarnQuotation'));
     }

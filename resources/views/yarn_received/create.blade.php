@@ -40,7 +40,7 @@ $po_number = request()->po_number ?? '';
                                             style="color: rgb(205, 2, 2)">*</span></label>
                                     <input type="text" name="po_number" id="po_number"
                                         class="form-control  @error('po_number') is-invalid @enderror"
-                                        value="{{$yarnQuotation->po_number  }}" readonly>
+                                        value="{{@$yarnQuotation->po_number}}" readonly>
                                     @error('po_number')
                                     <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror

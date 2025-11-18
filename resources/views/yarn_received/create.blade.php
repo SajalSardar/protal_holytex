@@ -32,8 +32,7 @@ $po_number = request()->po_number ?? '';
                 <div class="card bg-white border-0 rounded-3 mb-4">
                     <div class="card-body p-4">
                         <div class="row">
-                            <input type="hidden" id="order_id" name="order_id">
-                            <input type="hidden" id="order_number" name="order_number">
+                            <input type="hidden" id="order_id" name="order_id" value="{{ $yarnQuotation->order_id }}">
                             <div class="col-lg-4">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">PO Number <span

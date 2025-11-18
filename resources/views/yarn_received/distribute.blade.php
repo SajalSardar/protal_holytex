@@ -144,10 +144,11 @@
                                                     <th>Description</th>
                                                     <th>Quantity</th>
                                                     <th>Distribute Quantity(KG)</th>
+                                                    <th>Loss(KG)</th>
                                                     <th>Allowed Quantity</th>
                                                 </tr>
                                                 @php
-                                                $totalQut = $dyedQuotations + $knitQuotations;
+                                                $totalQut = $dyedQuotations + $knitQuotations + $yarnLoss;
                                                 @endphp
                                                 <tr>
                                                     <td>{{ $description }}</td>
@@ -158,6 +159,7 @@
                                                     <td>
                                                         {{ $totalQut ?? 0 }}kg
                                                     </td>
+                                                    <td>{{ $yarnLoss?? 0 }}</td>
                                                     <td>{{ number_format($totalQuantity - $totalQut,2) }}kg
                                                     </td>
                                                 </tr>

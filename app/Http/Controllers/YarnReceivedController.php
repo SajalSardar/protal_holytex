@@ -75,6 +75,9 @@ class YarnReceivedController extends Controller {
             $item->knit_total = NettingQuotation::where('po_number', $item->po_number)
                 ->where('style', $item->style)
                 ->where('description', $item->description)->sum('quantity');
+            $item->yarn_loss = YarnLoss::where('delived_factory_type', 'yarn')->where('po_number', $item->po_number)
+                ->where('style', $item->style)
+                ->where('description', $item->description)->sum('quantity');
         }
 
         // return $yarnReceived;
@@ -104,7 +107,7 @@ class YarnReceivedController extends Controller {
             ->withSum('yarnReceived', 'quantity')
             ->withSum('yarnLoss', 'quantity')
             ->where('id', $request->yarn_quotation)
-            // ->where('status', 'approved')
+        // ->where('status', 'approved')
             ->first();
 
         // return $request->yarn_quotation;
@@ -146,6 +149,7 @@ class YarnReceivedController extends Controller {
             $successMessageStatus = true;
             YarnReceived::create([
                 'yarn_quotation_id' => $request->yarn_id,
+                'order_id'          => $request->order_id,
                 'po_number'         => $request->po_number,
                 'style'             => $request->style,
                 'description'       => $yearnQut->description,
@@ -168,6 +172,10 @@ class YarnReceivedController extends Controller {
             $successMessageStatus = true;
             YarnLoss::create([
                 'yarn_quotation_id'    => $request->yarn_id,
+                'order_id'             => $request->order_id,
+                'po_number'            => $request->po_number,
+                'style'                => $request->style,
+                'description'          => $yearnQut->description,
                 'quantity'             => $request->loss,
                 'created_by'           => Auth::id(),
                 'delived_factory_type' => 'yarn',
@@ -301,8 +309,11 @@ class YarnReceivedController extends Controller {
         $knitQuotations = NettingQuotation::where('po_number', $request->po_number)
             ->where('style', $request->style)
             ->where('description', $request->description)->sum('quantity');
+        $yarnLoss = YarnLoss::where('delived_factory_type', 'yarn')->where('po_number', $request->po_number)
+            ->where('style', $request->style)
+            ->where('description', $request->description)->sum('quantity');
 
-        return view('yarn_received.distribute', compact('yarnreceived', 'knitFactory', 'dyedFactory', 'orderDetail', 'dyedQuotations', 'knitQuotations'));
+        return view('yarn_received.distribute', compact('yarnreceived', 'knitFactory', 'dyedFactory', 'orderDetail', 'dyedQuotations', 'knitQuotations', 'yarnLoss'));
     }
 
     public function yarnDistributeStore(Request $request) {

@@ -252,6 +252,7 @@ class DyedQuotationController extends Controller {
             $successMessageStatus = 1;
             NettingQuotation::create([
                 'dyed_quotation_id'         => $request->dyed_quotation_id,
+                'description'               => $request->description,
                 'order_id'                  => $request->order_id,
                 'style'                     => $request->style,
                 'po_number'                 => $request->po_number,
@@ -269,6 +270,9 @@ class DyedQuotationController extends Controller {
         if ($request->loss > 0) {
             $successMessageStatus = 1;
             YarnLoss::create([
+                'description'          => $request->description,
+                'order_id'             => $request->order_id,
+                'style'                => $request->style,
                 'dyed_quotation_id'    => $request->dyed_quotation_id,
                 'quantity'             => $request->loss,
                 'delived_factory_type' => 'dyed',
@@ -280,6 +284,8 @@ class DyedQuotationController extends Controller {
             $successMessageStatus = 1;
             YarnStoreStock::create([
                 'dyed_quotation_id'    => $request->dyed_quotation_id,
+                'order_id'             => $request->order_id,
+                'description'          => $request->description,
                 'po_number'            => $request->po_number,
                 'style'                => $request->style,
                 'quantity'             => $request->stock,

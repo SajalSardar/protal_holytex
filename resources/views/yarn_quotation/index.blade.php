@@ -58,9 +58,9 @@
                                         <td>{{ number_format($item->quantity, 2) }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
                                         <td>
-                                            {{ $item->yarnStore->name }}
+                                            {{ @$item->yarnStore->name }}
                                             <br>
-                                            {{ $item->yarnStore->address }}
+                                            {{ @$item->yarnStore->address }}
                                         </td>
                                         <td>
                                             <div class="dropdown text-end">

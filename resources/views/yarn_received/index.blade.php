@@ -19,7 +19,7 @@
                     <span class="fw-medium">Order</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Yarn Received</span>
+                    <span class="fw-medium">Yarn Stock</span>
                 </li>
             </ol>
         </nav>
@@ -39,6 +39,7 @@
                                         <th>Total(kg)</th>
                                         <th>Dyed</th>
                                         <th>Knitte</th>
+                                        <th>Loss</th>
                                         <th>Available</th>
                                         <th>Unit</th>
                                         <th class="text-end">Action</th>
@@ -52,10 +53,11 @@
                                         <td>{{ $item->style }}</td>
                                         <td>{{ $item->description }}</td>
                                         <td>{{ $item->total_quantity }}</td>
-                                        <td>{{ $item->dyed_total }}</td>
-                                        <td>{{ $item->knit_total }}</td>
+                                        <td>{{ $item->dyed_total ?? 0 }}</td>
+                                        <td>{{ $item->knit_total ?? 0 }}</td>
+                                        <td>{{ $item->yarn_loss ?? 0 }}</td>
                                         <td>{{ number_format($item->total_quantity - ($item->dyed_total +
-                                            $item->knit_total), 2) }}</td>
+                                            $item->knit_total + $item->yarn_loss), 2) }}</td>
                                         <td>{{ $item->unit }}</td>
                                         <td>
                                             <div class="dropdown text-end">

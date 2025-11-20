@@ -29,7 +29,7 @@ class DyedQuotation extends Model {
     }
 
     public function dyedYarnknitQuot() {
-        return $this->hasOne(NettingQuotation::class, 'dyed_quotation_id');
+        return $this->hasMany(NettingQuotation::class, 'dyed_quotation_id');
     }
     public function dyedYarnLoss() {
         return $this->hasMany(YarnLoss::class, 'dyed_quotation_id');

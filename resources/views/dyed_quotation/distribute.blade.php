@@ -81,7 +81,7 @@
                                     </div>
                                     <div class="card-body">
                                         @php
-                                        $dyedYarnknitQuot = $dyedquotation->dyedYarnknitQuot->quantity ?? 0;
+                                        $dyedYarnknitQuot = $dyedquotation->dyedYarnknitQuot->sum('quantity') ?? 0;
                                         $dyedYarnLoss = $dyedquotation->dyedYarnLoss->sum('quantity') ?? 0;
                                         $dyedYarnStock = $dyedquotation->dyedYarnStock->sum('quantity') ?? 0;
                                         $totalUse = $dyedYarnknitQuot + $dyedYarnLoss + $dyedYarnStock;
@@ -92,10 +92,10 @@
                                                 <tr>
                                                     <th>Description</th>
                                                     <th>Quantity(KG)</th>
-                                                    <th>Quotation Quantity(KG)</th>
+                                                    <th>Distribute Quantity(KG)</th>
                                                     <th>Loss</th>
                                                     <th>Stock</th>
-                                                    <th>Allowed Quantity</th>
+                                                    <th>Available</th>
                                                     <th>Dyed Factory</th>
                                                 </tr>
 
@@ -126,6 +126,7 @@
                                         </table>
 
                                     </div>
+                                    @if (($dyedquotation->quantity - $totalUse) > 0)
                                     <div class="card-footer">
                                         <div class="row">
                                             <div class="col-sm-3">
@@ -204,9 +205,11 @@
                                             </div>
                                         </div>
                                     </div>
+                                    @endif
                                 </div>
                             </div>
 
+                            @if (($dyedquotation->quantity - $totalUse) > 0)
                             <hr>
                             <div class="col-lg-12 mt-5">
                                 <div class="d-flex flex-wrap gap-3">
@@ -216,6 +219,7 @@
                                             class="ri-add-line text-white fw-medium"></i> Create</button>
                                 </div>
                             </div>
+                            @endif
                         </div>
                     </form>
                 </div>

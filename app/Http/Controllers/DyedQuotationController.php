@@ -34,8 +34,9 @@ class DyedQuotationController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        $dydeQuty = DyedQuotation::with('dyedFactory')->orderBy('id', 'desc')
+        $dydeQuty = DyedQuotation::with('dyedFactory', 'dyedYarnknitQuot', 'dyedYarnLoss', 'dyedYarnStock')->orderBy('id', 'desc')
             ->get();
+        // return $dydeQuty;
         return view('dyed_quotation.index', compact('dydeQuty'));
     }
 

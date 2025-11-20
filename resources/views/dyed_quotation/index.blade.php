@@ -30,7 +30,7 @@
     <div class="row">
         <div class=" col-lg-12">
             <div class="card bg-white border-0 rounded-3 mb-4">
-                <div class="card-body p-4">
+                <div class="card-body p-0">
                     <div class="default-table-area style-two default-table-width">
                         <div class="table-responsive">
                             <table class="table align-middle">
@@ -38,9 +38,12 @@
                                     <tr>
                                         <th>PO</th>
                                         <th>Style</th>
+                                        <th>Description</th>
                                         <th>Quantity(kg)</th>
-                                        <th>Rate(TK)</th>
-                                        <th>Total(TK)</th>
+                                        <th>Distribute</th>
+                                        <th>Loss</th>
+                                        <th>Stock</th>
+                                        <th>Available</th>
                                         <th>Approx. delivery_date</th>
                                         <th>Status</th>
                                         <th>Dyed Factory</th>
@@ -49,12 +52,21 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($dydeQuty as $item)
+                                    @php
+                                    $dyedYarnknitQuot = $item->dyedYarnknitQuot->sum('quantity') ?? 0;
+                                    $dyedYarnLoss = $item->dyedYarnLoss->sum('quantity') ?? 0;
+                                    $dyedYarnStock = $item->dyedYarnStock->sum('quantity') ?? 0;
+                                    $totalUse = $dyedYarnknitQuot + $dyedYarnLoss + $dyedYarnStock;
+                                    @endphp
                                     <tr>
                                         <td>{{ $item->po_number }}</td>
                                         <td>{{ $item->style }}</td>
+                                        <td>{{ $item->description }}</td>
                                         <td>{{ $item->quantity }}</td>
-                                        <td>{{ $item->price }}</td>
-                                        <td>{{ $item->total_price }}</td>
+                                        <td>{{ $dyedYarnknitQuot }}</td>
+                                        <td>{{ $dyedYarnLoss }}</td>
+                                        <td>{{ $dyedYarnStock }}</td>
+                                        <td>{{ $item->quantity - $totalUse }}</td>
                                         <td>{{ $item->approximate_delivery_date }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
                                         <td>{{ $item->dyedFactory->name }}</td>

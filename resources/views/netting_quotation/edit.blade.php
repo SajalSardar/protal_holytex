@@ -61,16 +61,10 @@
                                 </div>
                             </div>
                             <div class="col-lg-3 col-sm-6">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">Order number</label>
-                                    <input type="text" value="{{ old('order_number',$nettingquotation->order_number) }}"
-                                        class="form-control" id="order_number" name="order_number" readonly>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-sm-6">
                                 <div class="form-group">
                                     <label class="label text-secondary">Status</label>
-                                    <select name="status" class="form-select form-control status_select">
+                                    <select name="status" class="form-select form-control status_select select2"
+                                        id="status_select">
                                         <option value="" disabled selected>Select Status</option>
                                         <option value="pending" {{ $nettingquotation->status === "pending" ? 'selected'
                                             :
@@ -78,12 +72,19 @@
                                         <option value="approved" {{ $nettingquotation->status === "approved" ?
                                             'selected' :
                                             '' }}>Approved</option>
+                                        <option value="recevied" {{ $nettingquotation->status === "recevied" ?
+                                            'selected' :
+                                            '' }}>Recevied</option>
+                                        <option value="ready_to_deliver" {{ $nettingquotation->status ===
+                                            "ready_to_deliver" ? 'selected' :
+                                            '' }}>Ready to deliver</option>
+                                        <option value="delivered" {{ $nettingquotation->status === "delivered" ?
+                                            'selected'
+                                            : '' }}>Delivered</option>
                                         <option value="cancelled" {{ $nettingquotation->status === "cancelled" ?
                                             'selected'
                                             : '' }}>Cancelled</option>
-                                        <option value="finished" {{ $nettingquotation->status === "finished" ?
-                                            'selected' :
-                                            '' }}>Finished</option>
+
                                     </select>
                                 </div>
                             </div>
@@ -95,6 +96,51 @@
                                         rows="1">{{ old('remarks',$nettingquotation->remarks) }}</textarea>
                                 </div>
                             </div>
+
+                            @if ($nettingquotation->knittReceived)
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <h3>RECEIVED CHALLAN INFO</h3>
+                                </div>
+                                <div class="col-lg-3 col-sm-4">
+                                    <div class="form-group mb-4">
+                                        <label class="label text-secondary">Challan No.</label>
+                                        <input type="text" name="challan[challan_number]" class="form-control"
+                                            value="{{ old('challan_number',$nettingquotation->knittReceived->challan_number)}}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-sm-4">
+                                    <div class="form-group mb-4">
+                                        <label class="label text-secondary">Vehicle Number</label>
+                                        <input type="text" name="challan[vehicle_number]" class="form-control"
+                                            value="{{ old('vehicle_number',$nettingquotation->knittReceived->vehicle_number)}}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-sm-4">
+                                    <div class="form-group mb-4">
+                                        <label class="label text-secondary">Challan Date</label>
+                                        <input type="date" name="challan[challan_date]" class="form-control"
+                                            value="{{ old('challan_date',$nettingquotation->knittReceived->challan_date)}}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-sm-4">
+                                    <div class="form-group mb-4">
+                                        <label class="label text-secondary">Received Date</label>
+                                        <input type="date" name="challan[received_date]" class="form-control"
+                                            value="{{ old('received_date',$nettingquotation->knittReceived->received_date)}}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-4">
+                                    <div class="form-group mb-4">
+                                        <label class="label text-secondary">Upload Challan</label>
+                                        <input type="file" name="challan[challan_file]" class="form-control">
+                                        <p class="fs-12">Uploaded file size 512kb &amp; File type jpg,png </p>
+                                    </div>
+                                </div>
+                            </div>
+                            @else
+                            <div id="recevied_info"></div>
+                            @endif
                             <hr>
 
                             <div class="col-lg-2 col-sm-6 px-0">
@@ -136,14 +182,54 @@
                                         value="{{ @$nettingquotation->total_price }}">
                                 </div>
                             </div>
-                            <div class="col-lg-2 col-sm-6 pe-0">
+                            <div class="col-sm-2">
+                                <p class="label text-secondary">Delivery factory</p>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label>
+                                            <input type="radio" class="form-check-input" style="border:1px solid #000"
+                                                name="delivery_factory_type" value="germents"
+                                                onclick="showHideDeliveryPoint(this)" {{
+                                                $nettingquotation->delivery_factory_type === 'germents' ? 'checked' :
+                                            '' }}>
+                                            Germents</label>
+                                        <label class="ms-3">
+                                            <input type="radio" class="form-check-input" style="border:1px solid #000"
+                                                name="delivery_factory_type" value="dyeing"
+                                                onclick="showHideDeliveryPoint(this)" {{
+                                                $nettingquotation->delivery_factory_type === 'dyeing' ? 'checked' :
+                                            '' }}>
+                                            Dyeing</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-sm-3 {{ $nettingquotation->delivery_factory_type === 'germents' ? "":"
+                                d-none" }}" id="germents_factory">
                                 <div class="form-group mb-4">
-                                    <label class="label text-secondary">{{ $nettingquotation->delivery_factory_type ===
-                                        "dyeing" ? "Dyeing Factory" : "Germents Factory" }}</label>
-                                    <select name="delivery_point_id" class="form-control select2">
-                                        <option value="" selected disabled>Select Factory</option>
-                                        @foreach ($delivery_factory as $item)
-                                        <option value="{{ $item->id }}" {{$nettingquotation->delivery_point_id ===
+                                    <label class="label text-secondary d-block">Delivery Point</label>
+                                    <select class="form-control select2" name="delivery_point_id">
+                                        <option value="" selected disabled>Germents Factory
+                                        </option>
+                                        @foreach ($garmentsFactroy as $item)
+                                        <option value="{{ $item->id }}" {{ $nettingquotation->delivery_factory_type ===
+                                            'germents' && $nettingquotation->delivery_point_id ===
+                                            $item->id
+                                            ? 'selected' : '' }}>{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-sm-3 {{ $nettingquotation->delivery_factory_type === 'dyeing' ? "":"
+                                d-none" }}" id="dyeing_factory">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary d-block">Delivery Point</label>
+                                    <select class="form-control select2" name="delivery_point_id">
+                                        <option value="" selected disabled>Dyeing Factory
+                                        </option>
+                                        @foreach ($dyeingFactroy as $item)
+                                        <option value="{{ $item->id }}" {{$nettingquotation->delivery_factory_type ===
+                                            'dyeing' && $nettingquotation->delivery_point_id ===
                                             $item->id
                                             ? 'selected' : '' }}>{{ $item->name }}</option>
                                         @endforeach
@@ -182,22 +268,71 @@
                 $(this).html('Saving…');
         });
 
+        $('#status_select').on('change', function(){
+            let selectedValue = $(this).val();
+            if(selectedValue == 'recevied'){
+                $('#recevied_info').html(`<hr>
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <h3>CHALLAN INFO</h3>
+                        </div>
+                        <div class="col-lg-3 col-sm-4">
+                            <div class="form-group mb-4">
+                                <label class="label text-secondary">Challan No.</label>
+                                <input type="text" name="challan[challan_number]" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-sm-4">
+                            <div class="form-group mb-4">
+                                <label class="label text-secondary">Vehicle Number</label>
+                                <input type="text" name="challan[vehicle_number]" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-sm-4">
+                            <div class="form-group mb-4">
+                                <label class="label text-secondary">Challan Date</label>
+                                <input type="date" name="challan[challan_date]" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-sm-4">
+                            <div class="form-group mb-4">
+                                <label class="label text-secondary">Received Date</label>
+                                <input type="date" name="challan[received_date]" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-4">
+                            <div class="form-group mb-4">
+                                <label class="label text-secondary">Upload Challan</label>
+                                <input type="file" name="challan[challan_file]" class="form-control">
+                                <p class="fs-12">Uploaded file size 512kb &amp; File type jpg,png </p>
+                                                                                    </div>
+                        </div>
+                    </div>
+                `);
+            }else{
+                $('#recevied_info').html('')
+            }
+        });
+        
+
     });
 
-    let isResetting = false; 
-    function selectOneDeliveryPoin(selectBox){
-        
-        if (isResetting) return;
-        isResetting = true;
-        if (selectBox === "delivery_point") {
-            $('#dyed_factory').val(null).trigger('change.select2');
-        }
+    function showHideDeliveryPoint(element) {
 
-        if (selectBox === "dyed_factory") {
-            $('#delivery_point').val(null).trigger('change.select2');
+        // if (!element.checked) return; 
+
+        let value = element.value;
+        if (value === "dyeing") {
+            $('#germents_factory').addClass('d-none');
+            $('#dyeing_factory').removeClass('d-none');
+        } 
+        else if (value === "germents") {
+            $('#dyeing_factory').addClass('d-none');
+            $('#germents_factory').removeClass('d-none');
+           
         }
-         isResetting = false;
     }
+
     
     const unit_price = document.getElementById("unit_price");
     const unit_quantity = document.getElementById("unit_quantity");
@@ -216,9 +351,5 @@
     unit_price.addEventListener("input", calculateTotal);
     unit_quantity.addEventListener("input", calculateTotal);
 
-
-    function resetSelect(id) {
-        $('#'+id).val('').trigger('change');
-    }
 </script>
 @endsection

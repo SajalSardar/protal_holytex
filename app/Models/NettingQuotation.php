@@ -25,17 +25,21 @@ class NettingQuotation extends Model {
         return $this->hasOne(NettingFactroy::class, 'id', 'netting_factory_id');
     }
 
-    public function nettingReceived() {
+    public function knittReceived() {
+        return $this->hasOne(NettingReceived::class);
+    }
+
+    public function nettingDyeingQuatiton() {
         return $this->hasMany(NettingReceived::class, 'netting_quotation_id');
     }
-    public function nettingReceiveGarments() {
-        return $this->hasMany(NettingReceivedGarments::class, 'netting_quotation_id');
+    public function nettingGarmentsQuotation() {
+        return $this->hasMany(NettingReceivedGarments::class, 'netting_quotation_id')->where('fabric_type', 'knitting');
     }
     public function nettingLoss() {
-        return $this->hasMany(NettingLoss::class, 'netting_quotation_id');
+        return $this->hasMany(NettingLoss::class, 'netting_quotation_id')->where('fabric_type', 'knitting');
     }
-    public function storeStock() {
-        return $this->hasMany(NettingStoreStock::class, 'netting_quotation_id');
+    public function knitStoreStock() {
+        return $this->hasMany(NettingStoreStock::class, 'netting_quotation_id')->where('fabric_type', 'knitting');
     }
 
     public function approvedBy() {

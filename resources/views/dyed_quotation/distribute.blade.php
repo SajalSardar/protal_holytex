@@ -81,10 +81,8 @@
                                     </div>
                                     <div class="card-body">
                                         @php
-                                        $dyedYarnknitQuot = $dyedquotation->dyedYarnknitQuot->sum('quantity') ?? 0;
-                                        $dyedYarnLoss = $dyedquotation->dyedYarnLoss->sum('quantity') ?? 0;
-                                        $dyedYarnStock = $dyedquotation->dyedYarnStock->sum('quantity') ?? 0;
-                                        $totalUse = $dyedYarnknitQuot + $dyedYarnLoss + $dyedYarnStock;
+                                        $totalUse = $dyedquotation->knit_sum + $dyedquotation->loss_sum +
+                                        $dyedquotation->stock_sum;
                                         @endphp
 
                                         <table class="table">
@@ -107,13 +105,13 @@
                                                             id="total_stock_quantity" name="total_stock_quantity">
                                                     </td>
                                                     <td>
-                                                        {{ $dyedYarnknitQuot ?? 0 }}kg
+                                                        {{ $dyedquotation->knit_sum ?? 0 }}kg
                                                     </td>
                                                     <td>
-                                                        {{ $dyedYarnLoss ?? 0 }}kg
+                                                        {{ $dyedquotation->loss_sum ?? 0 }}kg
                                                     </td>
                                                     <td>
-                                                        {{ $dyedYarnStock ?? 0 }}kg
+                                                        {{ $dyedquotation->stock_sum ?? 0 }}kg
                                                     </td>
                                                     <td>{{ $dyedquotation->quantity -
                                                         $totalUse }}kg

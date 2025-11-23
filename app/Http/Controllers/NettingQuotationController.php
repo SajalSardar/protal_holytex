@@ -44,7 +44,13 @@ class NettingQuotationController extends Controller {
      */
     public function index() {
         //
-        $nettings = NettingQuotation::with('nettingFactory:id,name,address')->orderBy('id', 'desc')->get();
+        $nettings = NettingQuotation::with('nettingFactory:id,name,address')
+            ->withSum('nettingDyeingQuatiton', 'quantity')
+            ->withSum('nettingGarmentsQuotation', 'quantity')
+            ->withSum('nettingLoss', 'quantity')
+            ->withSum('knitStoreStock', 'quantity')
+            ->orderBy('id', 'desc')->get();
+        // return $nettings;
         return view('netting_quotation.index', compact('nettings'));
     }
 
@@ -224,7 +230,12 @@ class NettingQuotationController extends Controller {
 
     public function knitDistribute(NettingQuotation $nettingquotation) {
 
-        // return $dyedquotation;
+        $nettingquotation = NettingQuotation::withSum('nettingDyeingQuatiton', 'quantity')
+            ->withSum('nettingGarmentsQuotation', 'quantity')
+            ->withSum('nettingLoss', 'quantity')
+            ->withSum('knitStoreStock', 'quantity')
+            ->find($nettingquotation->id);
+
         $dyeingFactroy = DyeingFactroy::where('status', 'active')->get();
 
         $garmentsFactroy = GarmentsFactroy::where('status', 'active')->get();
@@ -234,7 +245,10 @@ class NettingQuotationController extends Controller {
         return view('netting_quotation.distribute', compact('nettingquotation', 'orderDetail', 'storeAddress', 'dyeingFactroy', 'garmentsFactroy'));
     }
 
-    public function yarnDyedDistributeStore(Request $request) {
+    public function knitDistributeStore(Request $request) {
+
+        // return $request;
+
         // $request->validate([
         //     'knit_factory_id' => 'required',
         //     'quantity'        => 'required',
@@ -254,7 +268,7 @@ class NettingQuotationController extends Controller {
                 'order_date'                => $request->order_date,
                 'approximate_delivery_date' => $request->approximate_delivery_date,
                 'remarks'                   => $request->remarks,
-                'netting_factory_id'        => $request->knit_factory_id,
+                'dyeing_factory_id'         => $request->dyeing_factory_id,
                 'quantity'                  => $request->quantity,
                 'price'                     => $request->price,
                 'total_price'               => $request->total_amount,
@@ -273,7 +287,7 @@ class NettingQuotationController extends Controller {
                 'order_date'                => $request->order_date,
                 'approximate_delivery_date' => $request->approximate_delivery_date,
                 'remarks'                   => $request->remarks,
-                'netting_factory_id'        => $request->knit_factory_id,
+                'garments_factory_id'       => $request->garments_factory_id,
                 'quantity'                  => $request->quantity,
                 'price'                     => $request->price,
                 'total_price'               => $request->total_amount,
@@ -287,6 +301,8 @@ class NettingQuotationController extends Controller {
             NettingLoss::create([
                 'description'          => $request->description,
                 'order_id'             => $request->order_id,
+                'style'                => $request->style,
+                'po_number'            => $request->po_number,
                 'style'                => $request->style,
                 'netting_quotation_id' => $request->netting_quotation_id,
                 'quantity'             => $request->loss,
@@ -308,6 +324,7 @@ class NettingQuotationController extends Controller {
                 'remarks'              => $request->remarks,
                 'created_by'           => Auth::id(),
                 'fabric_type'          => 'knitting',
+                'status'               => 'pending',
             ]);
         }
         if ($successMessageStatus === 1) {

@@ -33,7 +33,6 @@ $title = $delived_factory_type == 'yarn' ? 'Edit Yarn Stock' : 'Edit Dyed Yarn S
         id="yarn_form">
         @csrf
         @method('PUT')
-        <input type="hidden" name="delived_factory_type" value="{{ $delived_factory_type ?? '' }}">
         <div class="row">
             <div class="col-lg-12">
                 <div class="card bg-white border-0 rounded-3 mb-4">
@@ -44,37 +43,85 @@ $title = $delived_factory_type == 'yarn' ? 'Edit Yarn Stock' : 'Edit Dyed Yarn S
                                     <label class="label text-secondary">PO Number <span
                                             style="color: rgb(205, 2, 2)">*</span></label>
                                     <input type="text" name="po_number" class="form-control"
-                                        value="{{ old('po_number',$yarnstorestock->po_number) }}">
+                                        value="{{ old('po_number',$yarnstorestock->po_number) }}" readonly>
                                     @error('po_number')
-                                    <div class="text-danger mt-2">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-lg-2">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">Style<span
-                                            style="color: rgb(205, 2, 2)">*</span></label>
-                                    <input type="text" name="style" class="form-control"
-                                        value="{{ old('style',$yarnstorestock->style) }}">
-                                    @error('style')
                                     <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
                             <div class="col-lg-3">
                                 <div class="form-group mb-4">
-                                    <label class="label text-secondary">Received Date</label>
-                                    <input type="date" name="received_date" class="form-control"
-                                        value="{{ old('received_date',$yarnstorestock->received_date ? $yarnstorestock->received_date->format('Y-m-d') : '') }}">
-                                    @error('received_date')
+                                    <label class="label text-secondary">Style<span
+                                            style="color: rgb(205, 2, 2)">*</span></label>
+                                    <input type="text" name="style" class="form-control"
+                                        value="{{ old('style',$yarnstorestock->style) }}" readonly>
+                                    @error('style')
                                     <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-lg-4 mb-4">
+
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label class="label text-secondary">Status</label>
+                                    <select name="status" class="form-select form-control status_select select2"
+                                        id="status_select">
+                                        <option value="" disabled selected>Select Status</option>
+                                        <option value="pending" {{ $yarnstorestock->status === "pending" ? 'selected'
+                                            :
+                                            '' }}>Pending</option>
+                                        <option value="received" {{ $yarnstorestock->status === "received" ?
+                                            'selected' :
+                                            '' }}>Received</option>
+
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 mb-4">
                                 <label class="label text-secondary">Remarks</label>
                                 <textarea rows="1" class="form-control"
                                     name="remarks">{{old('remarks',$yarnstorestock->remarks)  }}</textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <h3>RECEIVED CHALLAN INFO</h3>
+                            </div>
+                            <div class="col-lg-3 col-sm-4">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Challan No.</label>
+                                    <input type="text" name="challan_number" class="form-control"
+                                        value="{{old('challan_number',$yarnstorestock->challan_number)  }}">
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-4">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Vehicle Number</label>
+                                    <input type="text" name="vehicle_number" class="form-control"
+                                        value="{{old('vehicle_number',$yarnstorestock->vehicle_number)  }}">
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-4">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Challan Date</label>
+                                    <input type="date" name="challan_date" class="form-control"
+                                        value="{{old('challan_date', $yarnstorestock->challan_date ? $yarnstorestock->challan_date->format('Y-m-d') : '' )  }}">
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-4">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Received Date</label>
+                                    <input type="date" name="received_date" class="form-control"
+                                        value="{{old('received_date',$yarnstorestock->received_date ? $yarnstorestock->received_date->format('Y-m-d') : '')  }}">
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-sm-4">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Upload Challan</label>
+                                    <input type="file" name="challan_file" class="form-control">
+                                    <p class="fs-12">Uploaded file size 512kb &amp; File type jpg,png </p>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -113,8 +160,14 @@ $title = $delived_factory_type == 'yarn' ? 'Edit Yarn Stock' : 'Edit Dyed Yarn S
                             <div class="col-lg-3 mb-3">
                                 <label class="label text-secondary">Store
                                     Address<span style="color: rgb(205, 2, 2)">*</span></label>
-                                <textarea rows="1" class="form-control"
-                                    name="store_address">{{ old('store_address',$yarnstorestock->store_address) }}</textarea>
+
+                                <select name="store_address" id="" class="select2 form-control">
+                                    @foreach ($storeAddress as $item)
+                                    <option value="{{ $item->id }}" {{ $item->id === $yarnstorestock->store_id ?
+                                        'selected' : ''}}>{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+
                                 @error('store_address')
                                 <div class="text-danger mt-2">{{ $message }}</div>
                                 @enderror

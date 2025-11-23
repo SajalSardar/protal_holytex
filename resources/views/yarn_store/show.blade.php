@@ -47,7 +47,7 @@ $title = $delived_factory_type == 'yarn' ? 'Yarn Store Details' : 'Dyed Yarn Sto
                         <tr>
                             <td><strong>Description</strong></td>
                             <td>:</td>
-                            <td>{{ @$yarnstorestock->yarnQty->description ?? ($yarnstorestock->description ?? '--') }}
+                            <td>{{ $yarnstorestock->description ?? '--' }}
                             </td>
                         </tr>
                         <tr>
@@ -96,7 +96,12 @@ $title = $delived_factory_type == 'yarn' ? 'Yarn Store Details' : 'Dyed Yarn Sto
                         <tr>
                             <td><strong>Store Address</strong></td>
                             <td>:</td>
-                            <td>{{ $yarnstorestock->store_address ??'-' }}</td>
+                            <td>
+                                Name:{{ $yarnstorestock->storeDetails->name }}
+                                <br>
+                                Address:{{ $yarnstorestock->storeDetails->address }}
+
+                            </td>
                         </tr>
                         <tr>
                             <td><strong>Remarks</strong></td>
@@ -124,7 +129,7 @@ $title = $delived_factory_type == 'yarn' ? 'Yarn Store Details' : 'Dyed Yarn Sto
                 </div>
             </div>
         </div>
-        <div class=" col-lg-8">
+        {{-- <div class=" col-lg-8">
             <div class="card bg-white border-0 rounded-3 mb-4">
                 <div class="card-header">
                     <h3 class="card-title">Uses This Stock</h3>
@@ -170,7 +175,7 @@ $title = $delived_factory_type == 'yarn' ? 'Yarn Store Details' : 'Dyed Yarn Sto
                 </div>
 
             </div>
-        </div>
+        </div> --}}
     </div>
 </div>
 

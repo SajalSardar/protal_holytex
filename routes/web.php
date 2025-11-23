@@ -14,6 +14,7 @@ use App\Http\Controllers\StyleController;
 use App\Http\Controllers\YarnFactroyController;
 use App\Http\Controllers\YarnQuotationController;
 use App\Http\Controllers\YarnReceivedController;
+use App\Http\Controllers\YarnStoreStockController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/test', function () {
@@ -49,6 +50,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('distribute-yarn-dyed/{dyedquotation}', [DyedQuotationController::class, 'yarnDyedDistribute'])->name('yarn.dyed.distribute');
     Route::post('distribute-yarn-dyed', [DyedQuotationController::class, 'yarnDyedDistributeStore'])->name('yarn.dyed.distribute.store');
 
+    Route::resource('yarnstorestock', YarnStoreStockController::class);
+    Route::post('use-yarn-stock', [YarnStoreStockController::class, 'useYarnStock'])->name('use.yarn.stock');
+
     Route::resource('nettingquotation', NettingQuotationController::class);
     Route::get('distribute-knit/{nettingquotation}', [NettingQuotationController::class, 'knitDistribute'])->name('knit.distribute');
     Route::post('distribute-knit', [NettingQuotationController::class, 'knitDistributeStore'])->name('knit.distribute.store');
@@ -63,8 +67,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('store', StoreController::class)->only(['index', 'edit', 'update', 'store', 'destroy']);
     });
 
-    // Route::resource('yarnstorestock', YarnStoreStockController::class);
-    // Route::post('use-yarn-stock', [YarnStoreStockController::class, 'useYarnStock'])->name('use.yarn.stock');
+    //
+    //
     // Route::controller(YarnStoreStockController::class)->name('dyedyarnstock.')->group(function () {
     //     Route::get('dyed-yarn-stock', 'dyedYarnStock')->name('index');
     //     Route::get('dyed-yarn-stock-create', 'create')->name('create');

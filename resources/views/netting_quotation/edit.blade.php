@@ -72,9 +72,9 @@
                                         <option value="approved" {{ $nettingquotation->status === "approved" ?
                                             'selected' :
                                             '' }}>Approved</option>
-                                        <option value="recevied" {{ $nettingquotation->status === "recevied" ?
+                                        <option value="received" {{ $nettingquotation->status === "received" ?
                                             'selected' :
-                                            '' }}>Recevied</option>
+                                            '' }}>Received</option>
                                         <option value="ready_to_deliver" {{ $nettingquotation->status ===
                                             "ready_to_deliver" ? 'selected' :
                                             '' }}>Ready to deliver</option>

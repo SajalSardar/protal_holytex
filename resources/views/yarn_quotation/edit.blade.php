@@ -77,8 +77,8 @@
                                             '' }}>Pending</option>
                                         <option value="approved" {{ $yarnquotation->status === "approved" ? 'selected' :
                                             '' }}>Approved</option>
-                                        <option value="recevied" {{ $yarnquotation->status === "recevied" ? 'selected' :
-                                            '' }}>Recevied</option>
+                                        <option value="received" {{ $yarnquotation->status === "received" ? 'selected' :
+                                            '' }}>Received</option>
                                         <option value="ready_to_deliver" {{ $yarnquotation->status ===
                                             "ready_to_deliver" ? 'selected' :
                                             '' }}>Ready to deliver</option>

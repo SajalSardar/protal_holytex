@@ -53,19 +53,18 @@
                                 <tbody>
                                     @forelse ($dydeQuty as $item)
                                     @php
-                                    $dyedYarnknitQuot = $item->dyedYarnknitQuot->sum('quantity') ?? 0;
-                                    $dyedYarnLoss = $item->dyedYarnLoss->sum('quantity') ?? 0;
-                                    $dyedYarnStock = $item->dyedYarnStock->sum('quantity') ?? 0;
-                                    $totalUse = $dyedYarnknitQuot + $dyedYarnLoss + $dyedYarnStock;
+                                    $totalUse = $item->dyed_yarnknit_quot_sum_quantity +
+                                    $item->dyed_yarn_loss_sum_quantity +
+                                    $item->dyed_yarn_stock_sum_quantity;
                                     @endphp
                                     <tr>
                                         <td>{{ $item->po_number }}</td>
                                         <td>{{ $item->style }}</td>
                                         <td>{{ $item->description }}</td>
                                         <td>{{ $item->quantity }}</td>
-                                        <td>{{ $dyedYarnknitQuot }}</td>
-                                        <td>{{ $dyedYarnLoss }}</td>
-                                        <td>{{ $dyedYarnStock }}</td>
+                                        <td>{{ $item->dyed_yarnknit_quot_sum_quantity }}</td>
+                                        <td>{{ $item->dyed_yarn_loss_sum_quantity }}</td>
+                                        <td>{{ $item->dyed_yarn_stock_sum_quantity }}</td>
                                         <td>{{ $item->quantity - $totalUse }}</td>
                                         <td>{{ $item->approximate_delivery_date }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>

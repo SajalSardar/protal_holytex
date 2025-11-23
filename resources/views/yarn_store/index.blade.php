@@ -1,15 +1,15 @@
 @extends('layouts.master')
-@section('title', 'Yarn Store')
+@section('title', 'Dyed Yarn Store')
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div class="d-flex">
-            <h2 class="mb-0">Yarn Store</h2>
-            <a href="{{ route('yarnstorestock.create',['delived_factory_type' => 'yarn']) }}"
+            <h2 class="mb-0">Dyed Yarn Store</h2>
+            {{-- <a href="{{ route('yarnstorestock.create',['delived_factory_type' => 'yarn']) }}"
                 class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
                 Create Stock</a>
             <a href="{{ route('yarnreceived.create') }}" class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
-                Receive Stock</a>
+                Receive Stock</a> --}}
         </div>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
@@ -24,7 +24,7 @@
                     <span class="fw-medium">Order</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Yarn Store</span>
+                    <span class="fw-medium">Dyed Yarn Store</span>
                 </li>
             </ol>
         </nav>
@@ -61,14 +61,18 @@
                                             @endif
                                         </td>
                                         <td>{{ $item->po_number }}</td>
-                                        <td>{{ @$item->yarnQty->description ?? ($item->description ?? '--') }}</td>
+                                        <td>{{ $item->description ?? '--' }}</td>
                                         <td>{{ $item->style }}</td>
                                         <td>{{ $item->quantity }}</td>
                                         <td>{{ $item->unit }}</td>
                                         <td>{{ $item->received_date ? $item->received_date->format('d-m-Y') : '-' }}
                                         </td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
-                                        <td>{{ $item->store_address }}</td>
+                                        <td>
+                                            Name:{{ $item->storeDetails->name }}
+                                            <br>
+                                            Address:{{ $item->storeDetails->address }}
+                                        </td>
                                         <td>
                                             @php
                                             $itemjson = [
@@ -193,11 +197,12 @@
                                     class=" @error('use_po_number') is-invalid @enderror">
                                     <option value="" selected disabled>Select PO Number</option>
                                     @foreach ($yearnsQot as $item)
-                                    <option value="{{ $item->id }}" data-from_stock="{{ $item->from_stock_quantity }}"
-                                        data-received_stock={{ $item->yarn_received_from_stock_sum_quantity ?? 0 }}>
+                                    {{-- <option value="{{ $item->id }}"
+                                        data-from_stock="{{ $item->from_stock_quantity }}" data-received_stock={{
+                                        $item->yarn_received_from_stock_sum_quantity ?? 0 }}>
                                         {{ $item->po_number }} - {{ $item->style }} - {{
                                         $item->description }} - {{ $item->receving_factory=== 'knit'?
-                                        $item->nettingFactory->name :$item->dyedFactory->name }}</option>
+                                        $item->nettingFactory->name :$item->dyedFactory->name }}</option> --}}
                                     @endforeach
                                 </select>
                                 @error('use_po_number')

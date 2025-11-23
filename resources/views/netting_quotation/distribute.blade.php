@@ -35,6 +35,7 @@
                             <input type="hidden" name="order_id" value="{{ $orderDetail->order_id }}">
                             <input type="hidden" name="style" value="{{ $nettingquotation->style }}">
                             <input type="hidden" name="description" value="{{ $nettingquotation->description }}">
+                            <input type="hidden" name="netting_quotation_id" value="{{ $nettingquotation->id }}">
                             <div class="col-lg-4 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">PO Number</label>
@@ -72,14 +73,10 @@
                             <hr>
 
                             @php
-                            $nettingDyeingQuatiton = $nettingquotation->nettingDyeingQuatiton->sum('quantity') ?? 0;
-                            $nettingGarmentsQuotation = $nettingquotation->nettingGarmentsQuotation->sum('quantity') ??
-                            0;
-                            $nettingLoss = $nettingquotation->nettingLoss->sum('quantity') ?? 0;
-                            $knitStoreStock = $nettingquotation->knitStoreStock->sum('quantity') ?? 0;
-
-                            $totalUse = $nettingDyeingQuatiton + $nettingGarmentsQuotation + $nettingLoss+
-                            $knitStoreStock;
+                            $totalUse = $nettingquotation->netting_dyeing_quatiton_sum_quantity +
+                            $nettingquotation->netting_garments_quotation_sum_quantity
+                            + $nettingquotation->netting_loss_sum_quantity +
+                            $nettingquotation->knit_store_stock_sum_quantity;
                             @endphp
 
                             <div id="show_all_yarn_item">
@@ -95,7 +92,7 @@
                                                 <tr>
                                                     <th>Description</th>
                                                     <th>Quantity</th>
-                                                    <th>Distribute Quantity(KG)</th>
+                                                    <th>Distribute(KG)</th>
                                                     <th>Loss(KG)</th>
                                                     <th>Store(KG)</th>
                                                     <th>Allowed Quantity</th>
@@ -111,10 +108,12 @@
                                                             id="total_stock_quantity" name="total_stock_quantity">
                                                     </td>
                                                     <td>
-                                                        {{ $totalUse ?? 0 }}kg
+                                                        {{ $nettingquotation->netting_dyeing_quatiton_sum_quantity +
+                                                        $nettingquotation->netting_garments_quotation_sum_quantity }}kg
                                                     </td>
-                                                    <td>{{ $nettingLos ?? 0 }}kg</td>
-                                                    <td>{{ $$knitStoreStock ?? 0 }}kg</td>
+                                                    <td>{{ $nettingquotation->netting_loss_sum_quantity ?? 0 }}kg</td>
+                                                    <td>{{ $nettingquotation->knit_store_stock_sum_quantity ?? 0 }}kg
+                                                    </td>
                                                     <td>{{ $nettingquotation->quantity-$totalUse }}kg</td>
                                                 </tr>
                                             </tbody>

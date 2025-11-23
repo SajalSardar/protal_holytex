@@ -30,7 +30,7 @@ class NettingQuotation extends Model {
     }
 
     public function nettingDyeingQuatiton() {
-        return $this->hasMany(NettingReceived::class, 'netting_quotation_id');
+        return $this->hasMany(DyeingQuotation::class, 'netting_quotation_id');
     }
     public function nettingGarmentsQuotation() {
         return $this->hasMany(NettingReceivedGarments::class, 'netting_quotation_id')->where('fabric_type', 'knitting');

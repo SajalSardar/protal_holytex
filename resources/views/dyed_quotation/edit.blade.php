@@ -70,8 +70,8 @@
                                             '' }}>Pending</option>
                                         <option value="approved" {{ $dyedquotation->status === "approved" ? 'selected' :
                                             '' }}>Approved</option>
-                                        <option value="recevied" {{ $dyedquotation->status === "recevied" ? 'selected' :
-                                            '' }}>Recevied</option>
+                                        <option value="received" {{ $dyedquotation->status === "received" ? 'selected' :
+                                            '' }}>Received</option>
                                         <option value="ready_to_deliver" {{ $dyedquotation->status ===
                                             "ready_to_deliver" ? 'selected' :
                                             '' }}>Ready to deliver</option>

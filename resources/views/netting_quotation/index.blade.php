@@ -5,9 +5,6 @@
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div class="d-flex">
             <h2 class="mb-0">Netting Quotation List </h2>
-            <a href="{{ route('nettingquotation.create') }}" class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
-                Create
-                Netting Quotation</a>
         </div>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
@@ -30,17 +27,21 @@
     <div class="row">
         <div class=" col-lg-12">
             <div class="card bg-white border-0 rounded-3 mb-4">
-                <div class="card-body p-4">
+                <div class="card-body p-0">
                     <div class="default-table-area style-two default-table-width">
                         <div class="table-responsive">
                             <table class="table align-middle">
                                 <thead>
                                     <tr>
+                                        <th>Id</th>
                                         <th>PO</th>
                                         <th>Style</th>
+                                        <th>Description</th>
                                         <th>Quantity(kg)</th>
-                                        <th>Rate(TK)</th>
-                                        <th>Total(TK)</th>
+                                        <th>Distribute</th>
+                                        <th>Loss</th>
+                                        <th>Stock</th>
+                                        <th>Available</th>
                                         <th>Approx. delivery_date</th>
                                         <th>Status</th>
                                         <th>Yarn Type</th>
@@ -50,12 +51,22 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($nettings as $item)
+                                    @php
+                                    $totalUse = $item->netting_dyeing_quatiton_sum_quantity +
+                                    $item->netting_garments_quotation_sum_quantity
+                                    + $item->netting_loss_sum_quantity + $item->knit_store_stock_sum_quantity;
+                                    @endphp
                                     <tr>
+                                        <td>{{ $item->id }}</td>
                                         <td>{{ $item->po_number }}</td>
                                         <td>{{ $item->style }}</td>
+                                        <td>{{ $item->description }}</td>
                                         <td>{{ $item->quantity }}</td>
-                                        <td>{{ $item->price }}</td>
-                                        <td>{{ $item->total_price }}</td>
+                                        <td>{{ ($item->netting_dyeing_quatiton_sum_quantity +
+                                            $item->netting_garments_quotation_sum_quantity) ?? 0 }}</td>
+                                        <td>{{ $item->netting_loss_sum_quantity ?? 0 }}</td>
+                                        <td>{{ $item->knit_store_stock_sum_quantity ?? 0 }}</td>
+                                        <td>{{ $item->quantity - $totalUse }}</td>
                                         <td>{{ $item->approximate_delivery_date }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
                                         <td>{{$item->dyed_quotation_id ? 'Dyed Yarn' : 'Yarn' }}</td>

@@ -34,7 +34,14 @@ class DyedQuotationController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        $dydeQuty = DyedQuotation::with('dyedFactory', 'dyedYarnknitQuot', 'dyedYarnLoss', 'dyedYarnStock')->orderBy('id', 'desc')
+        $dydeQuty = DyedQuotation::with('dyedFactory')
+        // ->withSum(['dyedYarnStock' => function ($q) {
+        //     $q->where('status', 'received');
+        // }], 'quantity')
+            ->withSum('dyedYarnStock', 'quantity')
+            ->withSum('dyedYarnknitQuot', 'quantity')
+            ->withSum('dyedYarnLoss', 'quantity')
+            ->orderBy('id', 'desc')
             ->get();
         // return $dydeQuty;
         return view('dyed_quotation.index', compact('dydeQuty'));
@@ -230,7 +237,11 @@ class DyedQuotationController extends Controller {
     }
 
     public function yarnDyedDistribute(DyedQuotation $dyedquotation) {
-        $dyedquotation->load('dyedYarnknitQuot', 'dyedYarnLoss', 'dyedYarnStock');
+        $dyedquotation->loadSum([
+            'dyedYarnknitQuot as knit_sum' => function ($q) {},
+            'dyedYarnLoss as loss_sum' => function ($q) {},
+            'dyedYarnStock as stock_sum' => function ($q) {},
+        ], 'quantity');
 
         $knitFactory  = NettingFactroy::where('status', 'active')->get();
         $storeAddress = Store::where('status', 'active')->get();
@@ -274,6 +285,7 @@ class DyedQuotationController extends Controller {
                 'description'          => $request->description,
                 'order_id'             => $request->order_id,
                 'style'                => $request->style,
+                'po_number'            => $request->po_number,
                 'dyed_quotation_id'    => $request->dyed_quotation_id,
                 'quantity'             => $request->loss,
                 'delived_factory_type' => 'dyed',
@@ -294,6 +306,7 @@ class DyedQuotationController extends Controller {
                 'remarks'              => $request->remarks,
                 'created_by'           => Auth::id(),
                 'delived_factory_type' => 'dyed',
+                'status'               => 'pending',
             ]);
         }
         if ($successMessageStatus === 1) {

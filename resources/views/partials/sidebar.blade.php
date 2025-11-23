@@ -89,16 +89,36 @@
                     </li>
                 </ul>
             </li>
-            <li class="menu-item {{ request()->routeIs(['nettingquotation.*']) ? 'open' : '' }}">
+            <li class="menu-item {{ request()->routeIs(['nettingquotation.*', 'nettingstorestock.*']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
-                    <span class="title">Kniting</span>
+                    <span class="title">Knitting</span>
                 </a>
                 <ul class="menu-sub">
                     <li class="menu-item">
                         <a href="{{ route('nettingquotation.index') }}"
                             class="menu-link {{ request()->routeIs('nettingquotation.*') ? 'active' : '' }}">
-                            Kniting Quotation
+                            Knitting Quotation
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('nettingstorestock.index') }}"
+                            class="menu-link {{ request()->routeIs(['nettingstorestock.*']) ? 'active' : '' }}">
+                            Knitting Stock
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="menu-item {{ request()->routeIs(['dyeingquotation.*']) ? 'open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <span class="material-symbols-outlined menu-icon">note_stack</span>
+                    <span class="title">Dyeing</span>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="{{ route('dyeingquotation.index') }}"
+                            class="menu-link {{ request()->routeIs('dyeingquotation.*') ? 'active' : '' }}">
+                            Dyeing Quotation
                         </a>
                     </li>
                 </ul>

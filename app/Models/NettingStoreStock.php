@@ -26,4 +26,7 @@ class NettingStoreStock extends Model {
         return $this->hasMany(YarnQuotation::class, 'po_number', 'po_number')
             ->whereColumn('style', 'style');
     }
+    public function storeAddress() {
+        return $this->belongsTo(Store::class, 'store_id');
+    }
 }

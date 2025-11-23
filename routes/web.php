@@ -3,9 +3,11 @@
 use App\Http\Controllers\DyedFactoryController;
 use App\Http\Controllers\DyedQuotationController;
 use App\Http\Controllers\DyeingFactroyController;
+use App\Http\Controllers\DyeingQuotationController;
 use App\Http\Controllers\GarmentsFactroyController;
 use App\Http\Controllers\NettingFactroyController;
 use App\Http\Controllers\NettingQuotationController;
+use App\Http\Controllers\NettingStoreStockController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\orderDetailController;
 use App\Http\Controllers\ProfileController;
@@ -50,12 +52,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('distribute-yarn-dyed/{dyedquotation}', [DyedQuotationController::class, 'yarnDyedDistribute'])->name('yarn.dyed.distribute');
     Route::post('distribute-yarn-dyed', [DyedQuotationController::class, 'yarnDyedDistributeStore'])->name('yarn.dyed.distribute.store');
 
+    //dyed yarn stock
     Route::resource('yarnstorestock', YarnStoreStockController::class);
     Route::post('use-yarn-stock', [YarnStoreStockController::class, 'useYarnStock'])->name('use.yarn.stock');
 
     Route::resource('nettingquotation', NettingQuotationController::class);
     Route::get('distribute-knit/{nettingquotation}', [NettingQuotationController::class, 'knitDistribute'])->name('knit.distribute');
     Route::post('distribute-knit', [NettingQuotationController::class, 'knitDistributeStore'])->name('knit.distribute.store');
+
+    Route::resource('nettingstorestock', NettingStoreStockController::class);
+
+    Route::resource('dyeingquotation', DyeingQuotationController::class);
 
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::resource('style', StyleController::class)->only(['index', 'edit', 'update', 'store', 'destroy']);

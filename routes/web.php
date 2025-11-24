@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\AccessoriesQuotationController;
+use App\Http\Controllers\AccessoriesReceivedController;
+use App\Http\Controllers\AccessoriesStockController;
 use App\Http\Controllers\DyedFactoryController;
 use App\Http\Controllers\DyedQuotationController;
 use App\Http\Controllers\DyeingFactroyController;
@@ -7,6 +10,7 @@ use App\Http\Controllers\DyeingQuotationController;
 use App\Http\Controllers\GarmentsFactroyController;
 use App\Http\Controllers\NettingFactroyController;
 use App\Http\Controllers\NettingQuotationController;
+use App\Http\Controllers\NettingReceivedGarmentsController;
 use App\Http\Controllers\NettingStoreStockController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\orderDetailController;
@@ -82,6 +86,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('store', StoreController::class)->only(['index', 'edit', 'update', 'store', 'destroy']);
     });
 
+    Route::resource('accessoriesquotation', AccessoriesQuotationController::class);
+    Route::resource('accessoriesreceived', AccessoriesReceivedController::class);
+    Route::resource('accessoriesstock', AccessoriesStockController::class);
+
+    Route::get('nettingreceivedgarments', [NettingReceivedGarmentsController::class, 'index'])->name('nettingreceivedgarments.index');
+    Route::get('nettingreceivedgarments/{id}', [NettingReceivedGarmentsController::class, 'edit'])->name('nettingreceivedgarments.edit');
+    Route::put('nettingreceivedgarments', [NettingReceivedGarmentsController::class, 'update'])->name('nettingreceivedgarments.update');
+    Route::get('nettingreceivedgarments/show/{id}', [NettingReceivedGarmentsController::class, 'show'])->name('nettingreceivedgarments.show');
+    Route::delete('nettingreceivedgarments/delete/{id}', [NettingReceivedGarmentsController::class, 'destroy'])->name('nettingreceivedgarments.destroy');
+
     //
     //
     // Route::controller(YarnStoreStockController::class)->name('dyedyarnstock.')->group(function () {
@@ -97,12 +111,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Route::resource('nettingstorestock', NettingStoreStockController::class);
 
-    // Route::resource('dyeingquotation', DyeingQuotationController::class);
     // Route::resource('dyeingreceived', DyeingReceivedController::class);
-
-    // Route::resource('accessoriesquotation', AccessoriesQuotationController::class);
-    // Route::resource('accessoriesreceived', AccessoriesReceivedController::class);
-    // Route::resource('accessoriesstock', AccessoriesStockController::class);
 
     // Route::get('get-all-dyeing-factory', [DyeingFactroyController::class, 'showAll']);
     // Route::get('get-all-dyed-factory', [DyedFactoryController::class, 'showAll']);

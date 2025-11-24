@@ -180,7 +180,7 @@ class DyedQuotationController extends Controller {
         $dyedquotation->load('dyedYarnReceived');
 
         $dyedquotation->update([
-            'purchase_date'             => $request->order_date,
+            'order_date'                => $request->order_date,
             'approximate_delivery_date' => $request->approximate_delivery_date,
             'remarks'                   => $request->remarks,
             'netting_factory_id'        => $request->netting_factory_id ?? null,

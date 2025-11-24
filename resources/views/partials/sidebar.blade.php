@@ -132,20 +132,26 @@
                 </ul>
             </li>
 
-            {{-- <li
-                class="menu-item {{ request()->routeIs(['dyeingquotation.*','accessoriesquotation.*','dyedquotation.*']) ? 'open' : '' }}">
+            <li class="menu-item {{ request()->routeIs(['nettingreceivedgarments.*']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
-                    <span class="title">Quotation</span>
+                    <span class="title">Garments</span>
                 </a>
                 <ul class="menu-sub">
-
                     <li class="menu-item">
-                        <a href="{{ route('dyeingquotation.index') }}"
-                            class="menu-link {{ request()->routeIs('dyeingquotation.*') ? 'active' : '' }}">
-                            Dyeing Quotation
+                        <a href="{{ route('nettingreceivedgarments.index') }}"
+                            class="menu-link {{ request()->routeIs('nettingreceivedgarments.*') ? 'active' : '' }}">
+                            Garments Quotation
                         </a>
                     </li>
+                </ul>
+            </li>
+            <li class="menu-item {{ request()->routeIs(['accessoriesquotation.*']) ? 'open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <span class="material-symbols-outlined menu-icon">note_stack</span>
+                    <span class="title">Accessories</span>
+                </a>
+                <ul class="menu-sub">
                     <li class="menu-item">
                         <a href="{{ route('accessoriesquotation.index') }}"
                             class="menu-link {{ request()->routeIs('accessoriesquotation.*') ? 'active' : '' }}">
@@ -154,6 +160,8 @@
                     </li>
                 </ul>
             </li>
+
+            {{--
             <li
                 class="menu-item {{ request()->routeIs(['yarnreceived.*','nettingreceived.*','dyeingreceived.*','accessoriesreceived.*','yarnreceiveddyed.*']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">

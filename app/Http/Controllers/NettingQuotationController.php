@@ -174,7 +174,7 @@ class NettingQuotationController extends Controller {
         }
 
         $nettingquotation->update([
-            'purchase_date'             => $request->order_date,
+            'order_date'                => $request->order_date,
             'approximate_delivery_date' => $request->approximate_delivery_date,
             'remarks'                   => $request->remarks,
             'quantity'                  => $request->quantity,
@@ -289,10 +289,11 @@ class NettingQuotationController extends Controller {
                 'remarks'                   => $request->remarks,
                 'garments_factory_id'       => $request->garments_factory_id,
                 'quantity'                  => $request->quantity,
-                'price'                     => $request->price,
-                'total_price'               => $request->total_amount,
+                // 'price'                     => $request->price,
+                // 'total_price'               => $request->total_amount,
                 'created_by'                => Auth::id(),
                 'fabric_type'               => 'knitting',
+                'status'                    => 'pending',
             ]);
         }
 

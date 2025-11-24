@@ -38,10 +38,10 @@
                                         <th>Style</th>
                                         <th>Description</th>
                                         <th>Quantity(kg)</th>
-                                        <th>Distribute</th>
+                                        {{-- <th>Distribute</th>
                                         <th>Loss</th>
                                         <th>Stock</th>
-                                        <th>Available</th>
+                                        <th>Available</th> --}}
                                         <th>Approx. delivery_date</th>
                                         <th>Status</th>
                                         <th>Dyeing Factory</th>
@@ -49,27 +49,27 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($dyeings as $item)
-                                    @php
+                                    @forelse ($nettings as $item)
+                                    {{-- @php
                                     $totalUse = $item->dyeing_garments_quot_sum_quantity +
                                     $item->dyeing_loss_sum_quantity +
                                     $item->dyeing_stock_sum_quantity;
-                                    @endphp
+                                    @endphp --}}
                                     <tr>
                                         <td>{{ $item->id }}</td>
                                         <td>{{ $item->po_number }}</td>
                                         <td>{{ $item->style }}</td>
                                         <td>{{ $item->description }}</td>
                                         <td>{{ $item->quantity }}</td>
-                                        <td>{{ $item->dyeing_garments_quot_sum_quantity }}</td>
+                                        {{-- <td>{{ $item->dyeing_garments_quot_sum_quantity }}</td>
                                         <td>{{ $item->dyeing_loss_sum_quantity }}</td>
                                         <td>{{ $item->dyeing_stock_sum_quantity }}</td>
-                                        <td>{{ $item->quantity-$totalUse }}</td>
+                                        <td>{{ $item->quantity-$totalUse }}</td> --}}
                                         <td>{{ $item->approximate_delivery_date }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
                                         <td>
-                                            Name:{{ $item->dyeingFactory->name }} <br>
-                                            Address:{{ $item->dyeingFactory->address }}
+                                            Name:{{ $item->garmentsFactory->name }} <br>
+                                            Address:{{ $item->garmentsFactory->address }}
 
                                         </td>
                                         <td>
@@ -80,26 +80,23 @@
                                                 </a>
 
                                                 <ul class="dropdown-menu dropdown-menu-end table_action_btn">
+
                                                     <li>
                                                         <a class="dropdown-item py-2"
-                                                            href="{{ route('dyeing.distribute',$item->id) }}"> <i
-                                                                class="material-symbols-outlined fs-16 text-body">edit</i>
-                                                            Dyeing Distribute</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item py-2"
-                                                            href="{{ route('dyeingquotation.show',$item->id) }}"> <i
+                                                            href="{{ route('nettingreceivedgarments.show',$item->id) }}">
+                                                            <i
                                                                 class="material-symbols-outlined fs-16 text-primary">visibility</i>
                                                             View</a>
                                                     </li>
                                                     <li>
                                                         <a class="dropdown-item py-2"
-                                                            href="{{ route('dyeingquotation.edit',$item->id) }}"><i
+                                                            href="{{ route('nettingreceivedgarments.edit',$item->id) }}"><i
                                                                 class="material-symbols-outlined fs-16 text-body">edit</i>
                                                             Edit</a>
                                                     </li>
                                                     <li>
-                                                        <form action="{{ route('dyeingquotation.destroy',$item->id) }}"
+                                                        <form
+                                                            action="{{ route('nettingreceivedgarments.destroy',$item->id) }}"
                                                             method="POST">
                                                             @csrf
                                                             @method('DELETE')

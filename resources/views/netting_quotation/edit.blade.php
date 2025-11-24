@@ -270,7 +270,7 @@
 
         $('#status_select').on('change', function(){
             let selectedValue = $(this).val();
-            if(selectedValue == 'recevied'){
+            if(selectedValue == 'received'){
                 $('#recevied_info').html(`<hr>
                     <div class="row">
                         <div class="col-12 mb-3">

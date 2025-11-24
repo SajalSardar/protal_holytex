@@ -191,7 +191,7 @@ class NettingQuotationController extends Controller {
             $nettingquotation->save();
         }
 
-        if ($request->status === "recevied") {
+        if ($request->status === "received") {
             if ($request->hasFile('challan.challan_file')) {
                 $path = $request->file('challan.challan_file')->store('knitt_received_challan', 'public');
             } else {

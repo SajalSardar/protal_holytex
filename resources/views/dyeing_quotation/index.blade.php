@@ -5,9 +5,6 @@
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div class="d-flex">
             <h2 class="mb-0">Dyeing Quotation List </h2>
-            <a href="{{ route('dyeingquotation.create') }}" class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
-                Create
-                Dyeing Quotation</a>
         </div>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
@@ -30,7 +27,7 @@
     <div class="row">
         <div class=" col-lg-12">
             <div class="card bg-white border-0 rounded-3 mb-4">
-                <div class="card-body p-4">
+                <div class="card-body p-0">
                     <div class="default-table-area style-two default-table-width">
                         <div class="table-responsive">
                             <table class="table align-middle">
@@ -39,10 +36,12 @@
                                         <th>#Id</th>
                                         <th>PO</th>
                                         <th>Style</th>
-                                        <th>Stock Quantity(kg)</th>
+                                        <th>Description</th>
                                         <th>Quantity(kg)</th>
-                                        <th>Rate(TK)</th>
-                                        <th>Total(TK)</th>
+                                        <th>Distribute</th>
+                                        <th>Loss</th>
+                                        <th>Stock</th>
+                                        <th>Available</th>
                                         <th>Approx. delivery_date</th>
                                         <th>Status</th>
                                         <th>Dyeing Factory</th>
@@ -51,14 +50,21 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($dyeings as $item)
+                                    @php
+                                    $totalUse = $item->dyeing_garments_quot_sum_quantity +
+                                    $item->dyeing_loss_sum_quantity +
+                                    $item->dyeing_stock_sum_quantity;
+                                    @endphp
                                     <tr>
                                         <td>{{ $item->id }}</td>
                                         <td>{{ $item->po_number }}</td>
                                         <td>{{ $item->style }}</td>
-                                        <td>{{ $item->from_stock_quantity ?? 0 }}</td>
+                                        <td>{{ $item->description }}</td>
                                         <td>{{ $item->quantity }}</td>
-                                        <td>{{ $item->price }}</td>
-                                        <td>{{ $item->total_price }}</td>
+                                        <td>{{ $item->dyeing_garments_quot_sum_quantity }}</td>
+                                        <td>{{ $item->dyeing_loss_sum_quantity }}</td>
+                                        <td>{{ $item->dyeing_stock_sum_quantity }}</td>
+                                        <td>{{ $item->quantity-$totalUse }}</td>
                                         <td>{{ $item->approximate_delivery_date }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
                                         <td>
@@ -74,6 +80,12 @@
                                                 </a>
 
                                                 <ul class="dropdown-menu dropdown-menu-end table_action_btn">
+                                                    <li>
+                                                        <a class="dropdown-item py-2"
+                                                            href="{{ route('dyeing.distribute',$item->id) }}"> <i
+                                                                class="material-symbols-outlined fs-16 text-body">edit</i>
+                                                            Dyeing Distribute</a>
+                                                    </li>
                                                     <li>
                                                         <a class="dropdown-item py-2"
                                                             href="{{ route('dyeingquotation.update',$item->id) }}"> <i

@@ -73,9 +73,7 @@
                                             $itemjson = [
                                             'id' => $item->id,
                                             'po_number' => $item->po_number,
-                                            'description' =>$item->yarnQuotations ?
-                                            $item->yarnQuotations->pluck('description')->map(fn($d) =>
-                                            trim($d))->join(", ") : '',
+                                            'description' =>$item->description,
                                             'style' => $item->style,
                                             'quantity' => $item->quantity,
                                             'store_address' => $item->store_address,

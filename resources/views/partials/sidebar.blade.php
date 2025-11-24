@@ -89,7 +89,8 @@
                     </li>
                 </ul>
             </li>
-            <li class="menu-item {{ request()->routeIs(['nettingquotation.*', 'nettingstorestock.*']) ? 'open' : '' }}">
+            <li
+                class="menu-item {{ request()->routeIs(['nettingquotation.*', 'nettingstorestock.*','knit.distribute']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
                     <span class="title">Knitting</span>
@@ -97,7 +98,7 @@
                 <ul class="menu-sub">
                     <li class="menu-item">
                         <a href="{{ route('nettingquotation.index') }}"
-                            class="menu-link {{ request()->routeIs('nettingquotation.*') ? 'active' : '' }}">
+                            class="menu-link {{ request()->routeIs('nettingquotation.*', 'knit.distribute') ? 'active' : '' }}">
                             Knitting Quotation
                         </a>
                     </li>
@@ -109,7 +110,8 @@
                     </li>
                 </ul>
             </li>
-            <li class="menu-item {{ request()->routeIs(['dyeingquotation.*']) ? 'open' : '' }}">
+            <li
+                class="menu-item {{ request()->routeIs(['dyeingquotation.*','dyeing.distribute','dyeingknitstorestock.*']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
                     <span class="title">Dyeing</span>
@@ -117,8 +119,14 @@
                 <ul class="menu-sub">
                     <li class="menu-item">
                         <a href="{{ route('dyeingquotation.index') }}"
-                            class="menu-link {{ request()->routeIs('dyeingquotation.*') ? 'active' : '' }}">
+                            class="menu-link {{ request()->routeIs('dyeingquotation.*','dyeing.distribute') ? 'active' : '' }}">
                             Dyeing Quotation
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('dyeingknitstorestock.index') }}"
+                            class="menu-link {{ request()->routeIs(['dyeingknitstorestock.*']) ? 'active' : '' }}">
+                            Dyeing Stock
                         </a>
                     </li>
                 </ul>

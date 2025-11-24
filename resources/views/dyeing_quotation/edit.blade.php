@@ -61,16 +61,10 @@
                                 </div>
                             </div>
                             <div class="col-lg-3 col-sm-6">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">Order number</label>
-                                    <input type="text" value="{{ old('order_number',$dyeingquotation->order_number) }}"
-                                        class="form-control" id="order_number" name="order_number" readonly>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-sm-6">
                                 <div class="form-group">
                                     <label class="label text-secondary">Status</label>
-                                    <select name="status" class="form-select form-control status_select">
+                                    <select name="status" class="form-select form-control status_select select2"
+                                        id="status_select">
                                         <option value="" disabled selected>Select Status</option>
                                         <option value="pending" {{ $dyeingquotation->status === "pending" ? 'selected'
                                             :
@@ -78,12 +72,19 @@
                                         <option value="approved" {{ $dyeingquotation->status === "approved" ?
                                             'selected' :
                                             '' }}>Approved</option>
+                                        <option value="received" {{ $dyeingquotation->status === "received" ?
+                                            'selected' :
+                                            '' }}>Received</option>
+                                        <option value="ready_to_deliver" {{ $dyeingquotation->status ===
+                                            "ready_to_deliver" ? 'selected' :
+                                            '' }}>Ready to deliver</option>
+                                        <option value="delivered" {{ $dyeingquotation->status === "delivered" ?
+                                            'selected'
+                                            : '' }}>Delivered</option>
                                         <option value="cancelled" {{ $dyeingquotation->status === "cancelled" ?
                                             'selected'
                                             : '' }}>Cancelled</option>
-                                        <option value="finished" {{ $dyeingquotation->status === "finished" ?
-                                            'selected' :
-                                            '' }}>Finished</option>
+
                                     </select>
                                 </div>
                             </div>
@@ -95,8 +96,55 @@
                                         rows="1">{{ old('remarks',$dyeingquotation->remarks) }}</textarea>
                                 </div>
                             </div>
-                            <hr>
+                        </div>
 
+                        @if ($dyeingquotation->dyeingReceived)
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <h3>RECEIVED CHALLAN INFO</h3>
+                            </div>
+                            <div class="col-lg-3 col-sm-4">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Challan No.</label>
+                                    <input type="text" name="challan[challan_number]" class="form-control"
+                                        value="{{ old('challan_number',$dyeingquotation->dyeingReceived->challan_number)}}">
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-4">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Vehicle Number</label>
+                                    <input type="text" name="challan[vehicle_number]" class="form-control"
+                                        value="{{ old('vehicle_number',$dyeingquotation->dyeingReceived->vehicle_number)}}">
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-4">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Challan Date</label>
+                                    <input type="date" name="challan[challan_date]" class="form-control"
+                                        value="{{ old('challan_date',$dyeingquotation->dyeingReceived->challan_date)}}">
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-4">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Received Date</label>
+                                    <input type="date" name="challan[received_date]" class="form-control"
+                                        value="{{ old('received_date',$dyeingquotation->dyeingReceived->received_date)}}">
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-sm-4">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Upload Challan</label>
+                                    <input type="file" name="challan[challan_file]" class="form-control">
+                                    <p class="fs-12">Uploaded file size 512kb &amp; File type jpg,png </p>
+                                </div>
+                            </div>
+                        </div>
+                        @else
+                        <div id="recevied_info"></div>
+                        @endif
+
+                        <hr>
+                        <div class="row">
                             <div class="col-lg-2 col-sm-6 px-0">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Style</label>
@@ -107,11 +155,9 @@
                             </div>
                             <div class="col-lg-2 col-sm-6">
                                 <div class="form-group mb-4">
-                                    <label class="label text-secondary">From Stock(KG)</label>
-                                    <input type="text" class="form-control " placeholder="Fill Up from stock"
-                                        id="from_stock" value="{{ @$dyeingquotation->from_stock_quantity }}"
-                                        name="from_stock_quantity"
-                                        oninput="this.value = this.value.replace(/^(\d*\.?\d{0,2}).*$/, '$1')">
+                                    <label class="label text-secondary">Description</label>
+                                    <input type="text" class="form-control " placeholder="Description" id="from_stock"
+                                        value="{{ @$dyeingquotation->description }}" name="description">
                                 </div>
                             </div>
                             <div class="col-lg-2 col-sm-6 pe-0">
@@ -180,6 +226,52 @@
             $('#yarn_form').submit();
                 $(this).prop('disabled', true); 
                 $(this).html('Saving…');
+        });
+
+        $('#status_select').on('change', function(){
+            let selectedValue = $(this).val();
+            if(selectedValue == 'received'){
+                $('#recevied_info').html(`<hr>
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <h3>CHALLAN INFO</h3>
+                        </div>
+                        <div class="col-lg-3 col-sm-4">
+                            <div class="form-group mb-4">
+                                <label class="label text-secondary">Challan No.</label>
+                                <input type="text" name="challan[challan_number]" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-sm-4">
+                            <div class="form-group mb-4">
+                                <label class="label text-secondary">Vehicle Number</label>
+                                <input type="text" name="challan[vehicle_number]" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-sm-4">
+                            <div class="form-group mb-4">
+                                <label class="label text-secondary">Challan Date</label>
+                                <input type="date" name="challan[challan_date]" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-sm-4">
+                            <div class="form-group mb-4">
+                                <label class="label text-secondary">Received Date</label>
+                                <input type="date" name="challan[received_date]" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-4">
+                            <div class="form-group mb-4">
+                                <label class="label text-secondary">Upload Challan</label>
+                                <input type="file" name="challan[challan_file]" class="form-control">
+                                <p class="fs-12">Uploaded file size 512kb &amp; File type jpg,png </p>
+                                                                                    </div>
+                        </div>
+                    </div>
+                `);
+            }else{
+                $('#recevied_info').html('')
+            }
         });
 
     });

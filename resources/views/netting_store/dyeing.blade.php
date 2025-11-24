@@ -5,11 +5,7 @@
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div class="d-flex">
             <h2 class="mb-0">Dyeing knit Store</h2>
-            <a href="{{ route('dyeingknitstorestock.create',['delived_factory_type' => 'dyeing']) }}"
-                class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
-                Create Stock</a>
-            <a href="{{ route('nettingreceived.create') }}" class="ms-5 btn btn-primary py-2 px-4 fw-medium fs-16">+
-                Receive Goods in Stock</a>
+
         </div>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
@@ -61,25 +57,28 @@
                                             --
                                             @endif
                                         </td>
-                                        <td width="200">
-                                            @if ($item->yarnQuotations->isNotEmpty())
-                                            <div readonly rows="2" class="overflow-x-auto border rounded-3 p-2"
-                                                style="height:60px;">
-                                                {{ $item->yarnQuotations->pluck('description')->map(fn($d) =>
-                                                trim($d))->join(", ") }}
-                                            </div>
-                                            @else
-                                            --
-                                            @endif
+                                        <td>
+                                            {{ $item->description }}
                                         </td>
                                         <td>{{ $item->po_number }}</td>
                                         <td>{{ $item->style }}</td>
                                         <td>{{ $item->quantity }}</td>
                                         <td>{{ $item->unit }}</td>
-                                        <td>{{ $item->received_date }}</td>
+                                        <td>{{ $item->received_date ?? '--' }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
-                                        <td>{{ $item->store_address }}</td>
+                                        <td>Name:{{ $item->storeAddress->name }} <br> Address:{{
+                                            $item->storeAddress->address }} </td>
                                         <td>
+                                            @php
+                                            $itemjson = [
+                                            'id' => $item->id,
+                                            'po_number' => $item->po_number,
+                                            'description' =>$item->description,
+                                            'style' => $item->style,
+                                            'quantity' => $item->quantity,
+                                            'store_address' => $item->store_address,
+                                            ];
+                                            @endphp
 
                                             <div class="dropdown text-end">
                                                 <a class="btn btn-primary dropdown-toggle" href="#" role="button"
@@ -88,11 +87,11 @@
                                                 </a>
 
                                                 <ul class="dropdown-menu dropdown-menu-end table_action_btn">
-                                                    {{-- <li><a class="dropdown-item py-2" href="#"
+                                                    <li><a class="dropdown-item py-2" href="#"
                                                             onclick="showStockModal('{{ json_encode($itemjson) }}')">
                                                             <i
                                                                 class="material-symbols-outlined fs-16 text-primary">contact_page</i>
-                                                            Use Stock</a></li> --}}
+                                                            Use Stock</a></li>
                                                     <li><a class="dropdown-item py-2"
                                                             href="{{ route('dyeingknitstorestock.show', $item->id) }}">
                                                             <i
@@ -140,7 +139,7 @@
 <!-- Modal -->
 <div class="modal fade" id="stock_change_modal" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-xl">
-        <form action="{{ route('nettingstorestock.store') }}" method="POST">
+        <form action="" method="POST">
             @csrf
             <input type="hidden" id="yarn_quotation_id" name="yarn_quotation_id">
             <input type="hidden" id="stock_id" name="stock_id">

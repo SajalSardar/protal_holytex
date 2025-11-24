@@ -19,11 +19,18 @@ class DyeingQuotation extends Model {
         return $this->hasOne(GarmentsFactroy::class, 'id', 'delivery_point_id');
     }
 
-    public function dyeingReceiveGarments() {
-        return $this->hasMany(NettingReceivedGarments::class, 'dyeing_quotation_id');
+    public function dyeingGarmentsQuot() {
+        return $this->hasMany(NettingReceivedGarments::class, 'dyeing_quotation_id')->where('fabric_type', 'dyeing');
     }
-    public function dyeingStoreStock() {
-        return $this->hasMany(NettingStoreStock::class, 'dyeing_quotation_id');
+    public function dyeingLoss() {
+        return $this->hasMany(NettingLoss::class, 'dyeing_quotation_id')->where('fabric_type', 'dyeing');
+    }
+    public function dyeingStock() {
+        return $this->hasMany(NettingStoreStock::class, 'dyeing_quotation_id')->where('fabric_type', 'dyeing');
+    }
+
+    public function dyeingReceived() {
+        return $this->hasOne(DyeingReceived::class);
     }
 
     public function approvedBy() {

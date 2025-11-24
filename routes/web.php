@@ -61,8 +61,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('distribute-knit', [NettingQuotationController::class, 'knitDistributeStore'])->name('knit.distribute.store');
 
     Route::resource('nettingstorestock', NettingStoreStockController::class);
+    Route::controller(NettingStoreStockController::class)->name('dyeingknitstorestock.')->group(function () {
+        Route::get('dyeing-knit-stock', 'dyeingKnitStock')->name('index');
+        // Route::get('dyeing-knit-stock-create', 'create')->name('create');
+        Route::get('dyeing-knit-stock-show/{nettingstorestock}', 'show')->name('show');
+        Route::get('dyeing-knit-stock-edit/{nettingstorestock}', 'edit')->name('edit');
+    });
 
     Route::resource('dyeingquotation', DyeingQuotationController::class);
+    Route::get('distribute-dyeing/{dyeingquotation}', [DyeingQuotationController::class, 'dyeingDistribute'])->name('dyeing.distribute');
+    Route::post('distribute-dyeing', [DyeingQuotationController::class, 'dyeingDistributeStore'])->name('dyeing.distribute.store');
 
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::resource('style', StyleController::class)->only(['index', 'edit', 'update', 'store', 'destroy']);
@@ -88,12 +96,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route::resource('nettingreceived', NettingReceivedController::class);
 
     // Route::resource('nettingstorestock', NettingStoreStockController::class);
-    // Route::controller(NettingStoreStockController::class)->name('dyeingknitstorestock.')->group(function () {
-    //     Route::get('dyeing-knit-stock', 'dyeingKnitStock')->name('index');
-    //     Route::get('dyeing-knit-stock-create', 'create')->name('create');
-    //     Route::get('dyeing-knit-stock-show/{nettingstorestock}', 'show')->name('show');
-    //     Route::get('dyeing-knit-stock-edit/{nettingstorestock}', 'edit')->name('edit');
-    // });
 
     // Route::resource('dyeingquotation', DyeingQuotationController::class);
     // Route::resource('dyeingreceived', DyeingReceivedController::class);

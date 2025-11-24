@@ -28,11 +28,14 @@ class NettingStoreStockController extends Controller {
         return view('netting_store.index', compact('rowNettingstock', 'nettingQot'));
     }
 
-    // public function dyeingKnitStock() {
-    //     $dyeingNettingstock = NettingStoreStock::with('yarnQuotations:po_number,style,description')->where('fabric_type', 'dyeing')->orderBy('id', 'desc')->get();
+    public function dyeingKnitStock() {
+        $dyeingNettingstock = NettingStoreStock::with('yarnQuotations:po_number,style,description', 'storeAddress')
+            ->where('fabric_type', 'dyeing')
+            ->orderBy('id', 'desc')
+            ->get();
 
-    //     return view('netting_store.dyeing', compact('dyeingNettingstock'));
-    // }
+        return view('netting_store.dyeing', compact('dyeingNettingstock'));
+    }
 
     /**
      * Show the form for creating a new resource.

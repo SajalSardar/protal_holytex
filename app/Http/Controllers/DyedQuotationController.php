@@ -197,7 +197,7 @@ class DyedQuotationController extends Controller {
             $dyedquotation->save();
         }
 
-        if ($request->status === "recevied") {
+        if ($request->status === "received") {
             if ($request->hasFile('challan.challan_file')) {
                 $path = $request->file('challan.challan_file')->store('yarn_received_challan', 'public');
             } else {
@@ -239,8 +239,8 @@ class DyedQuotationController extends Controller {
     public function yarnDyedDistribute(DyedQuotation $dyedquotation) {
         $dyedquotation->loadSum([
             'dyedYarnknitQuot as knit_sum' => function ($q) {},
-            'dyedYarnLoss as loss_sum' => function ($q) {},
-            'dyedYarnStock as stock_sum' => function ($q) {},
+            'dyedYarnLoss as loss_sum'     => function ($q) {},
+            'dyedYarnStock as stock_sum'   => function ($q) {},
         ], 'quantity');
 
         $knitFactory  = NettingFactroy::where('status', 'active')->get();

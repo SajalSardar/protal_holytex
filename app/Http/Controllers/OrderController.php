@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DyedQuotation;
+use App\Models\DyeingQuotation;
+use App\Models\NettingQuotation;
+use App\Models\NettingReceivedGarments;
 use App\Models\Order;
 use App\Models\OrderDelivered;
 use App\Models\OrderDetail;
 use App\Models\Style;
+use App\Models\YarnQuotation;
+use App\Models\YarnReceived;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -84,65 +90,38 @@ class OrderController extends Controller {
      */
     public function show(Order $order) {
 
-        $order = $order->load([
-            'orderDetails',
-            'orderDetails.creator:id,name',
-            'orderDetails.lastUpdateBy:id,name',
-            'orderDetails'          => function ($q) {
-                $q->withSum('orderDeliveryQty', 'quantity');
-            },
-            'approvedBy',
-            'creator',
-            'lastUpdateBy',
-            'yarnQuotations'        => function ($q) {
-                $q->withSum('yarnReceived', 'quantity')
-                    ->withSum('yarnLoss', 'quantity');
-            },
-            'yarnQuotations.yarnFactory:id,name,address',
-            // 'yarnQuotations.dyedFactory:id,name,address',
-            // 'yarnQuotations.nettingFactory:id,name,address',
-            'yarnQuotations.creator:id,name',
-            'yarnQuotations.lastUpdateBy:id,name',
-            'yarnQuotations.approvedBy:id,name',
-            'dyedQuotations',
-            // 'dyedQuotations'        => function ($q) {
-            //     $q->withSum('yarnReceived', 'quantity')
-            //         ->withSum('yarnLoss', 'quantity')
-            //         ->withSum('storeStock', 'quantity');
-            // },
-            'nettingQuotations',
-            'nettingQuotations.creator:id,name',
-            'nettingQuotations.lastUpdateBy:id,name',
-            'nettingQuotations.approvedBy:id,name',
-            'nettingQuotations.nettingFactory:id,name,address',
-            // 'nettingQuotations'     => function ($q) {
-            //     $q->withSum('nettingReceived', 'quantity')
-            //         ->withSum('nettingReceiveGarments', 'quantity')
-            //         ->withSum('nettingLoss', 'quantity')
-            //         ->withSum('storeStock', 'quantity');
-            // },
-            'dyeingQuotations',
-            'dyeingQuotations.creator:id,name',
-            'dyeingQuotations.lastUpdateBy:id,name',
-            'dyeingQuotations.approvedBy:id,name',
-            'dyeingQuotations.garmentsFactory:id,name,address',
-            'dyeingQuotations.dyeingFactory:id,name,address',
-            'dyeingQuotations'      => function ($q) {
-                $q->withSum('dyeingReceiveGarments', 'quantity')
-                    ->withSum('dyeingStoreStock', 'quantity');
-            },
-            'accessoriesQuotations',
-            'accessoriesQuotations.creator:id,name',
-            'accessoriesQuotations.lastUpdateBy:id,name',
-            'accessoriesQuotations.approvedBy:id,name',
-            'accessoriesQuotations' => function ($q) {
-                $q->withSum('accessoriesReceived', 'quantity')
-                    ->withSum('accessoriesLoss', 'quantity')
-                    ->withSum('accessoriesStoreStock', 'quantity');
-            },
-        ]);
-        // return $order;
-        return view('order.show', compact('order'));
+        $yarnQuotation = YarnQuotation::withSum('yarnReceived', 'quantity')->where('order_id', $order->id)->get();
+        $yarnStock     = YarnReceived::where('order_id', $order->id)->get();
+        $dyedQuotation = DyedQuotation::where('order_id', $order->id)
+            ->withSum('dyedYarnStock', 'quantity')
+            ->withSum('dyedYarnknitQuot', 'quantity')
+            ->withSum('dyedYarnLoss', 'quantity')
+            ->get();
+
+        $nettings = NettingQuotation::where('order_id', $order->id)
+            ->with('nettingFactory:id,name,address')
+            ->withSum('nettingDyeingQuatiton', 'quantity')
+            ->withSum('nettingGarmentsQuotation', 'quantity')
+            ->withSum('nettingLoss', 'quantity')
+            ->withSum('knitStoreStock', 'quantity')
+            ->orderBy('id', 'desc')->get();
+
+        $dyeings = DyeingQuotation::where('order_id', $order->id)
+            ->with('dyeingFactory')
+            ->withSum('dyeingGarmentsQuot', 'quantity')
+            ->withSum('dyeingStock', 'quantity')
+            ->withSum('dyeingLoss', 'quantity')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $nettingGarments = NettingReceivedGarments::where('order_id', $order->id)
+            ->with('garmentsFactory')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return view('order.show', compact(
+            'order', 'yarnQuotation', 'yarnStock', 'dyedQuotation', 'nettings', 'dyeings', 'nettingGarments'
+        ));
     }
 
     /**
@@ -161,9 +140,16 @@ class OrderController extends Controller {
             toastr('Order Id not found!', 'error');
             return back();
         }
-        Order::where('id', $request->order_id)->update([
-            'status' => $request->status,
-        ]);
+        $order = Order::where('id', $request->order_id)->first();
+
+        $order->status     = $request->status;
+        $order->updated_by = Auth::id();
+
+        if ($request->status === 'approved') {
+            $order->approved_by = Auth::id();
+        }
+        $order->save();
+
         toastr('Order Status Updated!');
         return back();
     }

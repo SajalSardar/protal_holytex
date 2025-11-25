@@ -39,6 +39,7 @@
                                         <th>#Id</th>
                                         <th>PO</th>
                                         <th>Style</th>
+                                        <th>Description</th>
                                         <th>Quantity(kg)</th>
                                         <th>Total(TK)</th>
                                         <th>Total Qty.</th>
@@ -53,6 +54,7 @@
                                         <td>{{ $item->id }}</td>
                                         <td>{{ $item->po_number }}</td>
                                         <td>{{ $item->style }}</td>
+                                        <td>{{ $item->description }}</td>
                                         <td>{{ number_format($item->quantity, 2) }}</td>
                                         <td>{{ number_format($item->total_price, 2) }}</td>
                                         <td>{{ number_format($item->quantity, 2) }}</td>

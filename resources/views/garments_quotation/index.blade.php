@@ -1,10 +1,10 @@
 @extends('layouts.master')
-@section('title', 'Dyeing Quotation List')
+@section('title', 'Fabric List')
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div class="d-flex">
-            <h2 class="mb-0">Dyeing Quotation List </h2>
+            <h2 class="mb-0">Fabric List </h2>
         </div>
 
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
@@ -19,7 +19,7 @@
                     <span class="fw-medium">Order</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Dyeing Quotation List</span>
+                    <span class="fw-medium">Fabric List</span>
                 </li>
             </ol>
         </nav>
@@ -46,7 +46,7 @@
                                         <th>Fabric Type</th>
                                         <th>Status</th>
                                         <th>Received Date</th>
-                                        <th>Dyeing Factory</th>
+                                        <th>Garments Factory</th>
                                         <th class="text-end">Action</th>
                                     </tr>
                                 </thead>

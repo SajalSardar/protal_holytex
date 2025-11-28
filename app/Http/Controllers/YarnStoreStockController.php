@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\NettingFactroy;
+use App\Models\NettingQuotation;
+use App\Models\OrderDetail;
 use App\Models\Store;
 use App\Models\YarnLoss;
-use App\Models\YarnQuotation;
-use App\Models\YarnReceived;
-use App\Models\YarnReceivedDyed;
 use App\Models\YarnStoreStock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,126 +16,92 @@ class YarnStoreStockController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        $yarnStocks = YarnStoreStock::with('storeDetails')->where('delived_factory_type', 'dyed')
+        $yarnStocks = YarnStoreStock::with('storeDetails')
+        ->withSum('useStock', 'quantity')
+        ->withSum('useStockLoss', 'quantity')
+        ->where('delived_factory_type', 'dyed')
             ->orderBy('id', 'desc')
             ->get();
-        $yearnsQot = YarnQuotation::where('status', 'approved')
-        // with('nettingFactory', 'dyedFactory')
-        // ->withSum('yarnReceivedFromStock', 'quantity')
-        // ->where('receving_factory', 'knit')
-            ->get();
 
-        return view('yarn_store.index', compact('yarnStocks', 'yearnsQot'));
+        // return $yarnStocks;
+
+        return view('yarn_store.index', compact('yarnStocks'));
+    }
+
+    public function useYarnStockCreate($id) {
+        $yarnStock = YarnStoreStock::with('storeDetails')
+            ->where('delived_factory_type', 'dyed')
+            ->orderBy('id', 'desc')
+            ->where('id', $id)
+            ->first();
+        // return $yarnStock->quantity;
+        $knitFactory  = NettingFactroy::where('status', 'active')->get();
+        $orderDetails = OrderDetail::select('po_number', 'order_id', 'style')->where('status', 'processing')->orderBy('id', 'desc')->get();
+
+        $useStockSum     = NettingQuotation::where('stock_id', $id)->sum('quantity');
+        $useStockLossSum = YarnLoss::where('stock_id', $id)->where('delived_factory_type', 'dyed')->sum('quantity');
+
+        return view('yarn_store.distribute', compact('yarnStock', 'knitFactory', 'orderDetails', 'useStockSum', 'useStockLossSum'));
     }
 
     //use stock
     public function useYarnStock(Request $request) {
+        // return $request;
         $request->validate([
-            'stock_id'          => "required",
-            'yarn_quotation_id' => "required",
-            'challan_file'      => "nullable|max:512|image",
+            'stock_id' => "required",
         ]);
-
-        $yarnStock = YarnStoreStock::findOrFail($request->stock_id);
-
-        if ($yarnStock->quantity <= 0) {
-            toastr('Stock Quantity is 0', 'info');
-            return back();
-        }
-
-        $yearnQut = YarnQuotation::findOrFail($request->yarn_quotation_id);
-
-        // Load sums based on factory type
-        if ($yearnQut->receving_factory === 'knit') {
-            $yearnQut->loadSum('yarnReceivedFromStock', 'quantity')
-                ->loadSum('yarnLossFromStock', 'quantity');
-            $yearnReceivedTotal = $yearnQut->yarn_received_from_stock_sum_quantity
-             + $yearnQut->yarn_loss_from_stock_sum_quantity;
-
-        } elseif ($yearnQut->receving_factory === 'dyed') {
-
-            $yearnQut->loadSum('yarnReceivedFromStockDyed', 'quantity')
-                ->loadSum('yarnLossFromStockDyed', 'quantity');
-            $yearnReceivedTotal = $yearnQut->yarn_received_from_stock_dyed_sum_quantity
-             + $yearnQut->yarn_loss_from_stock_dyed_sum_quantity;
-
-        } else {
-            toastr('Invalid factory type!', 'error');
-            return back();
-        }
-
-        // Store challan file if uploaded
-        $path = $request->hasFile('challan_file')
-        ? $request->file('challan_file')->store('yarn_received_challan', 'public')
-        : null;
-
-        $totalYearnQut = $yearnQut->quantity + $yearnQut->from_stock_quantity;
-
-        $yarnRec     = (float) ($request->input_yarn ?? 0);
-        $yarnLossRec = (float) ($request->input_loss ?? 0);
-        $newReceived = $yarnRec + $yarnLossRec;
-        $total       = $newReceived + $yearnReceivedTotal;
 
         $successMessageStatus = false;
 
-        // Save Yarn Received
-        if ($yarnRec > 0 && $totalYearnQut > $yearnReceivedTotal && $totalYearnQut >= $total) {
-            $receivedData = [
-                'yarn_quotation_id' => $request->yarn_quotation_id,
-                'po_number'         => $request->po_number,
-                'style'             => $request->style,
-                'quantity'          => $yarnRec,
-                'lot_number'        => $request->loat_no,
-                'bag_count'         => $request->bag_count,
-                'challan_date'      => $request->challan_date,
-                'challan_number'    => $request->challan_number,
-                'vehicle_number'    => $request->vehicle_number,
-                'received_date'     => $request->received_date,
-                'received_by'       => Auth::id(),
-                'remarks'           => $request->remarks,
-                'is_stock_received' => 'Yes',
-                'stock_id'          => $request->stock_id,
-                'challan_file'      => $path,
-            ];
+        if ($request->quantity) {
+            $receiver_po = explode('-', $request->receiver_po_number);
 
-            if ($yearnQut->receving_factory === 'knit') {
-                YarnReceived::create($receivedData);
-            } else {
-                YarnReceivedDyed::create($receivedData);
+            $orderDetail = OrderDetail::where('po_number', trim($receiver_po[0]))
+                ->where('style', trim($receiver_po[1]))
+                ->first();
+
+            if (!$orderDetail) {
+                toastr('Order Details Not Found!', 'error');
+                return back();
             }
+
+            NettingQuotation::create([
+                'stock_id'                  => $request->stock_id,
+                'description'               => $request->description,
+                'order_id'                  => $orderDetail->order_id,
+                'style'                     => trim($receiver_po[1]),
+                'po_number'                 => trim($receiver_po[0]),
+                'order_date'                => $request->order_date,
+                'approximate_delivery_date' => $request->approximate_delivery_date,
+                'remarks'                   => $request->remarks,
+                'netting_factory_id'        => $request->knit_factory_id,
+                'quantity'                  => $request->quantity,
+                'price'                     => $request->price,
+                'total_price'               => $request->total_amount,
+                'created_by'                => Auth::id(),
+            ]);
 
             $successMessageStatus = true;
         }
 
         // Save Yarn Loss
-        if ($yarnLossRec > 0 && $totalYearnQut > $yearnReceivedTotal && $totalYearnQut >= $total) {
+        if ($request->loss) {
 
             YarnLoss::create([
-                'delived_factory_type' => 'yarn',
+                'delived_factory_type' => 'dyed',
                 'is_stock_received'    => 'Yes',
                 'stock_id'             => $request->stock_id,
-                'quantity'             => $yarnLossRec,
+                'quantity'             => $request->loss,
                 'created_by'           => Auth::id(),
+                'style'                => $request->style,
+                'po_number'            => $request->po_number,
+                'order_id'             => $request->order_id,
+                'description'          => $request->description,
             ]);
 
             $successMessageStatus = true;
         }
 
-        // Update quotation if fully received
-        if ((float) $totalYearnQut === (float) $total) {
-            $yearnQut->update([
-                'status'        => 'recevied',
-                'delivery_date' => $request->received_date,
-                'updated_by'    => Auth::id(),
-            ]);
-        }
-
-        // Update stock
-        if ($newReceived > 0) {
-            $yarnStock->decrement('quantity', $newReceived);
-        }
-
-        // Response
         toastr(
             $successMessageStatus ? 'Data Successfully Created!' : 'No Input data found!',
             $successMessageStatus ? 'success' : 'error'
@@ -188,21 +154,21 @@ class YarnStoreStockController extends Controller {
         }
 
         $yarnstorestock->update([
-            "po_number"     => $request->po_number,
-            "style"         => $request->style,
-            "remarks"       => $request->remarks,
-            "lot_number"    => $request->loat_no,
-            "bag_count"     => $request->bag_count,
-            "quantity"      => $request->quantity,
-            "store_id"      => $request->store_address,
-            "updated_by"    => Auth::id(),
-            "received_date" => $request->received_date,
-            "description"   => $request->description,
-            "status"        => $request->status,
-            "challan_file"  => $path,
-            "vehicle_number"  => $request->vehicle_number,
-            "challan_date"  => $request->challan_date,
-            "challan_number"  => $request->challan_number,
+            "po_number"      => $request->po_number,
+            "style"          => $request->style,
+            "remarks"        => $request->remarks,
+            "lot_number"     => $request->loat_no,
+            "bag_count"      => $request->bag_count,
+            "quantity"       => $request->quantity,
+            "store_id"       => $request->store_address,
+            "updated_by"     => Auth::id(),
+            "received_date"  => $request->received_date,
+            "description"    => $request->description,
+            "status"         => $request->status,
+            "challan_file"   => $path,
+            "vehicle_number" => $request->vehicle_number,
+            "challan_date"   => $request->challan_date,
+            "challan_number" => $request->challan_number,
         ]);
 
         toastr('Data Successfully Updated!');

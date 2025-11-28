@@ -69,7 +69,7 @@
                 </ul>
             </li>
             <li
-                class="menu-item {{ request()->routeIs(['dyedquotation.*','yarn.dyed.distribute','yarnstorestock.*']) ? 'open' : '' }}">
+                class="menu-item {{ request()->routeIs(['dyedquotation.*','yarn.dyed.distribute','yarnstorestock.*','use.yarn.*']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
                     <span class="title">Yarn Dyed</span>
@@ -83,7 +83,7 @@
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('yarnstorestock.index') }}"
-                            class="menu-link {{ request()->routeIs(['yarnstorestock.*']) ? 'active' : '' }}">
+                            class="menu-link {{ request()->routeIs(['yarnstorestock.*','use.yarn.*']) ? 'active' : '' }}">
                             Dyed Stock
                         </a>
                     </li>

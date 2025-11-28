@@ -39,7 +39,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('order', OrderController::class);
     Route::get('order-distribute/{order}', [OrderController::class, 'distributeOrder'])->name('order.distribute');
     Route::post('order-distribute', [OrderController::class, 'deliveredOrder'])->name('order.delivered');
-    Route::post('order-update-status', [OrderController::class, 'updateStatus'])->name('order.update.status');
     Route::name('order.details')->controller(OrderDetailController::class)->group(function () {
 
         Route::get('get-style-by-po-order-detail/{po_number}', 'getStyleByPo');
@@ -58,6 +57,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //dyed yarn stock
     Route::resource('yarnstorestock', YarnStoreStockController::class);
+    Route::get('use-yarn-stock/{id}', [YarnStoreStockController::class, 'useYarnStockCreate'])->name('use.yarn.stock.create');
     Route::post('use-yarn-stock', [YarnStoreStockController::class, 'useYarnStock'])->name('use.yarn.stock');
 
     Route::resource('nettingquotation', NettingQuotationController::class);

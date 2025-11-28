@@ -117,10 +117,6 @@
                 <div class="card-header bg-primary">
                     <div class="d-flex align-items-center">
                         <h3 class="card-title text-white">Basic Order Info</h3>
-                        <button type="button" class="btn btn-success text-white py-2 px-4 fw-semibold ms-3"
-                            data-bs-toggle="modal" data-bs-target="#status_change_modal">
-                            Update Status
-                        </button>
                     </div>
                 </div>
                 <div class="card-body">
@@ -676,51 +672,6 @@
 
 <div class="flex-grow-1"></div>
 
-<!-- Modal -->
-<div class="modal fade" id="status_change_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-hidden="true">
-    <div class="modal-dialog">
-        <form action="{{ route('order.update.status') }}" method="POST">
-            @csrf
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="status_change_modal">Change Order Status</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" name="order_id" id="order_id" value="{{ $order->id }}">
-                    <div class="form-group mb-2">
-                        <label for="">PO Number</label>
-                        <input type="text" class="form-control" name="po_number" id="po_number"
-                            value="{{ $order->po_number }}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="">Select Status</label>
-                        <select name="status" class="form-select form-control">
-                            <option value="" disabled>Select Status</option>
-                            <option value="processing" {{ $order->status === "processing" ? 'selected' : ''
-                                }}>Processing</option>
-                            <option value="approved" {{ $order->status === "approved" ? 'selected' : ''
-                                }}>Approved</option>
-                            <option value="pending" {{ $order->status === "pending" ? 'selected' : ''
-                                }}>Pending</option>
-                            <option value="cancelled" {{ $order->status === "cancelled" ? 'selected' : ''
-                                }}>Cancelled</option>
-                            <option value="finished" {{ $order->status === "finished" ? 'selected' : ''
-                                }}>Finished</option>
-                            <option value="block" {{ $order->status === "block" ? 'selected' : ''
-                                }}>Block</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger text-white" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary text-white">Update</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
 @endsection
 
 @section('script')

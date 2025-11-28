@@ -83,11 +83,7 @@
                                                 </a>
 
                                                 <ul class="dropdown-menu dropdown-menu-end table_action_btn">
-                                                    <li><a class="dropdown-item py-2" href="#"
-                                                            onclick="showStatusModal('{{ $item->id }}', '{{ $item->po_number }}','{{ $item->status }}')">
-                                                            <i
-                                                                class="material-symbols-outlined fs-16 text-primary">contact_page</i>
-                                                            Update Status</a></li>
+
                                                     <li>
                                                         <a class="dropdown-item py-2"
                                                             href="{{ route('order.distribute',$item->id) }}">
@@ -126,62 +122,4 @@
 
 <div class="flex-grow-1"></div>
 
-
-<!-- Modal -->
-<div class="modal fade" id="status_change_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <form action="{{ route('order.update.status') }}" method="POST">
-            @csrf
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Change Order Status</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" name="order_id" id="order_id">
-                    <div class="form-group mb-2">
-                        <label for="">PO Number</label>
-                        <input type="text" class="form-control" name="po_number" id="po_number" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="">Select Status</label>
-                        <select name="status" class="form-select form-control status_select">
-                            <option value="" disabled selected>Select Status</option>
-                            <option value="processing">Processing</option>
-                            <option value="approved">Approved</option>
-                            <option value="pending">Pending</option>
-                            <option value="cancelled">Cancelled</option>
-                            <option value="finished">Finished</option>
-                            <option value="block">Block</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger text-white" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary text-white">Update</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-
-@endsection
-
-@section('script')
-<script>
-    function showStatusModal(order_id, po_number,status){
-        const modalEl = document.getElementById('status_change_modal');
-        const myModal = new bootstrap.Modal(modalEl, {
-            keyboard: false
-        });
-        myModal.show();
-
-        let getorder_id = $('#order_id');
-        let getpo_number = $('#po_number');
-        getorder_id.val(order_id);
-        getpo_number.val(po_number);
-        $('.status_select').val(status);
-    }
-</script>
 @endsection

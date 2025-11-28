@@ -134,64 +134,60 @@ class OrderController extends Controller {
         return view('order.edit', compact('order', 'styles'));
     }
 
-    public function updateStatus(Request $request) {
-        // return $request;
-        if (!$request->order_id) {
-            toastr('Order Id not found!', 'error');
-            return back();
-        }
-        $order = Order::where('id', $request->order_id)->first();
-
-        $order->status     = $request->status;
-        $order->updated_by = Auth::id();
-
-        if ($request->status === 'approved') {
-            $order->approved_by = Auth::id();
-        }
-        $order->save();
-
-        toastr('Order Status Updated!');
-        return back();
-    }
-
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Order $order) {
         // return $request;
-        if ($order->status === 'approved') {
-            toastr('The order is approved but not yet updated in the system.', 'info');
-            return back();
-        }
-        $request->validate([
-            'po_number' => 'required|unique:orders,po_number,' . $order->id,
-            'po_file'   => 'nullable|file|mimes:pdf|max:5120',
-        ]);
+        // if ($order->status === 'approved') {
+        //     toastr('The order is approved but not yet updated in the system.', 'info');
+        //     return back();
+        // }
+        if ($request->update_order_info === 'info') {
+            $request->validate([
+                'po_number' => 'required|unique:orders,po_number,' . $order->id,
+                'po_file'   => 'nullable|file|mimes:pdf|max:5120',
+            ]);
 
-        if ($request->hasFile('po_file')) {
-            if ($order->po_file && Storage::disk('public')->exists($order->po_file)) {
-                Storage::disk('public')->delete($order->po_file);
+            if ($request->hasFile('po_file')) {
+                if ($order->po_file && Storage::disk('public')->exists($order->po_file)) {
+                    Storage::disk('public')->delete($order->po_file);
+                }
+                $path = $request->file('po_file')->store('orders', 'public');
+            } else {
+                $path = $order->po_file;
             }
-            $path = $request->file('po_file')->store('orders', 'public');
-        } else {
-            $path = $order->po_file;
+
+            $order->update([
+                'client_name'               => $request->client_name,
+                'client_email'              => $request->client_email,
+                'client_phone'              => $request->client_phone,
+                'order_date'                => $request->order_date,
+                'client_address'            => $request->client_address,
+                'ship_address'              => $request->ship_address,
+                'total_quantity'            => $request->total_quantity,
+                'grand_total'               => $request->grand_total,
+                'approximate_delivery_date' => $request->approximate_delivery_date,
+                'remarks'                   => $request->remarks,
+                'po_file'                   => $path,
+                'updated_by'                => Auth::id(),
+                'status'                    => $request->status,
+            ]);
+
+            $order->orderDetails()
+                ->where('po_number', $request->po_number)
+                ->update([
+                    'status'     => $request->status,
+                    'updated_by' => Auth::id(),
+                ]);
         }
 
-        $order->update([
-            'client_name'               => $request->client_name,
-            'client_email'              => $request->client_email,
-            'client_phone'              => $request->client_phone,
-            'order_date'                => $request->order_date,
-            'client_address'            => $request->client_address,
-            'ship_address'              => $request->ship_address,
-            'total_quantity'            => $request->total_quantity,
-            'grand_total'               => $request->grand_total,
-            'approximate_delivery_date' => $request->approximate_delivery_date,
-            'remarks'                   => $request->remarks,
-            'po_file'                   => $path,
-            'updated_by'                => Auth::id(),
-        ]);
-        if ($order) {
+        if ($order && $request->update_order_info === 'detail') {
+            $order->update([
+                'total_quantity' => $request->total_quantity,
+                'grand_total'    => $request->grand_total,
+            ]);
+
             foreach ($request->style as $key => $item) {
                 $detail = $order->orderDetails()
                     ->where('po_number', $request->po_number)

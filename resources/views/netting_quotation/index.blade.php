@@ -69,7 +69,7 @@
                                         <td>{{ $item->quantity - $totalUse }}</td>
                                         <td>{{ $item->approximate_delivery_date }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
-                                        <td>{{$item->dyed_quotation_id ? 'Dyed Yarn' : 'Yarn' }}</td>
+                                        <td>{{$item->dyed_quotation_id || $item->stock_id ? 'Dyed Yarn' : 'Yarn' }}</td>
                                         <td>
                                             Name:{{ $item->nettingFactory->name }} <br>
                                             Address:{{ $item->nettingFactory->address }}

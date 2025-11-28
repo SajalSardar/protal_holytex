@@ -29,11 +29,12 @@
             <div class="card bg-white border-0 rounded-3 mb-4">
                 <div class="card-body p-4">
 
-                    <form action="{{ $order->status != 'approved' ? route('order.update', $order->id) : '#' }}"
-                        method="POST" enctype="multipart/form-data" id="order_submit_form">
+                    <form action="{{  route('order.update', $order->id)  }}" method="POST"
+                        enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="row">
+                            <input type="hidden" value="info" name="update_order_info">
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">PO Number <span
@@ -127,6 +128,46 @@
                                 </div>
                             </div>
 
+                            <div class="col-lg-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="label text-secondary" for="">Select Status</label>
+                                    <select name="status" class="form-select form-control select2">
+                                        <option value="" disabled selected>Select Status</option>
+                                        <option value="pending" {{ $order->status === 'pending' ? 'selected' : ''
+                                            }}>Pending</option>
+                                        <option value="approved" {{ $order->status === 'approved' ? 'selected' : ''
+                                            }}>Approved</option>
+                                        <option value="processing" {{ $order->status === 'processing' ? 'selected' : ''
+                                            }}>Processing</option>
+                                        <option value="cancelled" {{ $order->status === 'cancelled' ? 'selected' : ''
+                                            }}>Cancelled</option>
+                                        <option value="finished" {{ $order->status === 'finished' ? 'selected' : ''
+                                            }}>Finished</option>
+                                        <option value="block" {{ $order->status === 'block' ? 'selected' : '' }}>Block
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 my-4">
+                                <div class="d-flex flex-wrap gap-3">
+                                    <button type="submit"
+                                        onclick="this.disabled=true; this.innerHTML='Saving…';this.form.submit();"
+                                        class="btn btn-primary py-2 px-4 fw-medium fs-16">
+                                        <i class="ri-add-line text-white fw-medium"></i>
+                                        Update Order info
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <form action="{{ $order->status != 'approved' ? route('order.update', $order->id) : '#' }}"
+                        method="POST" enctype="multipart/form-data" id="order_submit_form">
+                        @csrf
+                        @method('PUT')
+                        <div class="row">
+                            <input type="hidden" value="detail" name="update_order_info">
+                            <input type="hidden" name="po_number" value="{{ $order->po_number }}">
                             <hr>
                             <h3 class="mb-lg-4 mb-3">Price & Quantity</h3>
                             <div class="col-lg-12 mb-5">
@@ -165,7 +206,7 @@
                                 </div>
                             </div>
 
-                            @if ($order->status != 'approved')
+                            {{-- @if ($order->status != 'approved') --}}
                             <div class="col-md-2 col-sm-6">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">Style</label>
@@ -213,15 +254,17 @@
                             </div>
 
                             <hr>
-                            <div class="col-lg-12 mt-5">
+                            <div class="col-lg-12 mt-4">
                                 <div class="d-flex flex-wrap gap-3">
                                     <button type="button" id="order_submit_btn"
                                         onclick="this.disabled=true; this.innerHTML='Saving…';"
                                         class="btn btn-primary py-2 px-4 fw-medium fs-16"> <i
-                                            class="ri-add-line text-white fw-medium"></i> Update Order</button>
+                                            class="ri-add-line text-white fw-medium"></i>
+                                        Update Order details
+                                    </button>
                                 </div>
                             </div>
-                            @endif
+                            {{-- @endif --}}
                         </div>
                     </form>
                 </div>

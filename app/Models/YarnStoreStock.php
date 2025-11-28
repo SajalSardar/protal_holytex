@@ -18,10 +18,13 @@ class YarnStoreStock extends Model {
     // public function yarnQty() {
     //     return $this->belongsTo(YarnQuotation::class, 'yarn_quotation_id');
     // }
-    // public function usesStock() {
-    //     return $this->hasMany(YarnReceived::class, 'stock_id', 'id');
-    // }
+    public function useStock() {
+        return $this->hasMany(NettingQuotation::class, 'stock_id', 'id');
+    }
+    public function useStockLoss() {
+        return $this->hasMany(YarnLoss::class, 'stock_id', 'id');
+    }
     public function storeDetails() {
-        return $this->belongsTo(Store::class,'store_id');
+        return $this->belongsTo(Store::class, 'store_id');
     }
 }

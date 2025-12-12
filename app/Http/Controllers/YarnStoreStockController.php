@@ -17,9 +17,9 @@ class YarnStoreStockController extends Controller {
      */
     public function index() {
         $yarnStocks = YarnStoreStock::with('storeDetails')
-        ->withSum('useStock', 'quantity')
-        ->withSum('useStockLoss', 'quantity')
-        ->where('delived_factory_type', 'dyed')
+            ->withSum('useStock', 'quantity')
+            ->withSum('useStockLoss', 'quantity')
+            ->where('delived_factory_type', 'dyed')
             ->orderBy('id', 'desc')
             ->get();
 
@@ -48,7 +48,9 @@ class YarnStoreStockController extends Controller {
     public function useYarnStock(Request $request) {
         // return $request;
         $request->validate([
-            'stock_id' => "required",
+            'stock_id'           => "required",
+            'receiver_po_number' => 'required_without:loss|required_with:quantity|nullable',
+            'quantity'           => 'required_without:loss|nullable',
         ]);
 
         $successMessageStatus = false;

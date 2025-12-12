@@ -65,6 +65,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('distribute-knit', [NettingQuotationController::class, 'knitDistributeStore'])->name('knit.distribute.store');
 
     Route::resource('nettingstorestock', NettingStoreStockController::class);
+    Route::get('knit-stock-distribute-create/{id}', [NettingStoreStockController::class, 'knitDistributeCreate'])->name('nettingstorestock.knit.distribute.create');
+    Route::post('knit-stock-distribute', [NettingStoreStockController::class, 'knitDistributeStock'])->name('nettingstorestock.knit.distribute.stock.store');
     Route::controller(NettingStoreStockController::class)->name('dyeingknitstorestock.')->group(function () {
         Route::get('dyeing-knit-stock', 'dyeingKnitStock')->name('index');
         // Route::get('dyeing-knit-stock-create', 'create')->name('create');

@@ -72,6 +72,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route::get('dyeing-knit-stock-create', 'create')->name('create');
         Route::get('dyeing-knit-stock-show/{nettingstorestock}', 'show')->name('show');
         Route::get('dyeing-knit-stock-edit/{nettingstorestock}', 'edit')->name('edit');
+
+        Route::get('dyeing-stock-distribute-create/{id}', 'dyeingDistributeCreate')->name('dyeing.distribute.create');
+        Route::post('dyeing-stock-distribute', 'dyeingDistributeStock')->name('dyeing.distribute.stock.store');
     });
 
     Route::resource('dyeingquotation', DyeingQuotationController::class);

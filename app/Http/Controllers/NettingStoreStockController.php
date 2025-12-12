@@ -34,15 +34,6 @@ class NettingStoreStockController extends Controller {
         return view('netting_store.index', compact('rowNettingstock', 'nettingQot'));
     }
 
-    public function dyeingKnitStock() {
-        $dyeingNettingstock = NettingStoreStock::with('yarnQuotations:po_number,style,description', 'storeAddress')
-            ->where('fabric_type', 'dyeing')
-            ->orderBy('id', 'desc')
-            ->get();
-
-        return view('netting_store.dyeing', compact('dyeingNettingstock'));
-    }
-
     public function knitDistributeCreate($id) {
         $nettingStock = NettingStoreStock::with('storeAddress')
             ->where('fabric_type', 'knitting')
@@ -87,7 +78,6 @@ class NettingStoreStockController extends Controller {
             }
 
             if ($request->quantity && $request->delived_factory_type === 'dyeing') {
-                $successMessageStatus = true;
                 DyeingQuotation::create([
                     'stock_id'                  => $request->stock_id,
                     'description'               => $request->description,
@@ -103,10 +93,10 @@ class NettingStoreStockController extends Controller {
                     'total_price'               => $request->total_amount,
                     'created_by'                => Auth::id(),
                 ]);
+                $successMessageStatus = true;
             }
 
             if ($request->quantity && $request->delived_factory_type === 'garments') {
-                $successMessageStatus = true;
                 NettingReceivedGarments::create([
                     'stock_id'                  => $request->stock_id,
                     'description'               => $request->description,
@@ -124,9 +114,9 @@ class NettingStoreStockController extends Controller {
                     'fabric_type'               => 'knitting',
                     'status'                    => 'pending',
                 ]);
+                $successMessageStatus = true;
             }
 
-            $successMessageStatus = true;
         }
 
         // Save Yarn Loss
@@ -134,6 +124,99 @@ class NettingStoreStockController extends Controller {
 
             NettingLoss::create([
                 'fabric_type' => 'knitting',
+                'stock_id'    => $request->stock_id,
+                'quantity'    => $request->loss,
+                'created_by'  => Auth::id(),
+                'style'       => $request->style,
+                'po_number'   => $request->po_number,
+                'order_id'    => $request->order_id,
+                'description' => $request->description,
+            ]);
+
+            $successMessageStatus = true;
+        }
+
+        toastr(
+            $successMessageStatus ? 'Data Successfully Created!' : 'No Input data found!',
+            $successMessageStatus ? 'success' : 'error'
+        );
+
+        return back();
+    }
+
+    public function dyeingKnitStock() {
+        $dyeingNettingstock = NettingStoreStock::with('yarnQuotations:po_number,style,description', 'storeAddress')
+            ->where('fabric_type', 'dyeing')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return view('netting_store.dyeing', compact('dyeingNettingstock'));
+    }
+
+    public function dyeingDistributeCreate($id) {
+        $nettingStock = NettingStoreStock::with('storeAddress')
+            ->where('fabric_type', 'dyeing')
+            ->orderBy('id', 'desc')
+            ->where('id', $id)
+            ->first();
+        // return $yarnStock->quantity;
+        $garmentsFactory = GarmentsFactroy::where('status', 'active')->get();
+        $orderDetails    = OrderDetail::select('po_number', 'order_id', 'style')->where('status', 'processing')->orderBy('id', 'desc')->get();
+
+        $nettingReceivedGarments = NettingReceivedGarments::where('stock_id', $id)->sum('quantity');
+        $useStockLossSum         = NettingLoss::where('stock_id', $id)->where('fabric_type', 'dyeing')->sum('quantity');
+        $useStockSum             = $nettingReceivedGarments;
+
+        return view('netting_store.distribute_dyeing', compact('nettingStock', 'garmentsFactory', 'orderDetails', 'useStockSum', 'useStockLossSum'));
+    }
+
+    public function dyeingDistributeStock(Request $request) {
+        // return $request;
+
+        $request->validate([
+            'stock_id'           => "required",
+            'receiver_po_number' => 'required_without:loss|required_with:quantity|nullable',
+            'quantity'           => 'required_without:loss|nullable',
+        ]);
+
+        $successMessageStatus = false;
+
+        if ($request->quantity) {
+            $receiver_po = explode('-', $request->receiver_po_number);
+
+            $orderDetail = OrderDetail::where('po_number', trim($receiver_po[0]))
+                ->where('style', trim($receiver_po[1]))
+                ->first();
+
+            if (!$orderDetail) {
+                toastr('Order Details Not Found!', 'error');
+                return back();
+            }
+            NettingReceivedGarments::create([
+                'stock_id'                  => $request->stock_id,
+                'description'               => $request->description,
+                'order_id'                  => $request->order_id,
+                'style'                     => trim($receiver_po[1]),
+                'po_number'                 => trim($receiver_po[0]),
+                'order_date'                => $request->order_date,
+                'approximate_delivery_date' => $request->approximate_delivery_date,
+                'remarks'                   => $request->remarks,
+                'garments_factory_id'       => $request->garments_factory_id,
+                'quantity'                  => $request->quantity,
+                // 'price'                     => $request->price,
+                // 'total_price'               => $request->total_amount,
+                'created_by'                => Auth::id(),
+                'fabric_type'               => 'dyeing',
+                'status'                    => 'pending',
+            ]);
+            $successMessageStatus = true;
+        }
+
+        // Save Yarn Loss
+        if ($request->loss) {
+
+            NettingLoss::create([
+                'fabric_type' => 'dyeing',
                 'stock_id'    => $request->stock_id,
                 'quantity'    => $request->loss,
                 'created_by'  => Auth::id(),

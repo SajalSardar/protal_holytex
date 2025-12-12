@@ -76,7 +76,7 @@
                                         </td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
                                         <td>
-                                            Name:{{ $item->storeDetails->name }}
+                                            Name:{{ @$item->storeDetails->name }}
                                         </td>
                                         <td>
                                             @php

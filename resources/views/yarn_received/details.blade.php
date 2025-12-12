@@ -50,7 +50,7 @@
                                         <td>{{ $item->description }}</td>
                                         <td>{{ $item->quantity }}</td>
                                         <td>{{ $item->unit }}</td>
-                                        <td>{{ $item->yarnStore->name }} <br> {{ $item->yarnStore->address }}</td>
+                                        <td>{{ @$item->yarnStore->name }} <br> {{ @$item->yarnStore->address }}</td>
                                         <td>
                                             <div class="dropdown text-end">
                                                 <a class="btn btn-primary dropdown-toggle" href="#" role="button"

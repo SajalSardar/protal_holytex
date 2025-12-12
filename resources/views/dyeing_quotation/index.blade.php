@@ -68,8 +68,8 @@
                                         <td>{{ $item->approximate_delivery_date }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
                                         <td>
-                                            Name:{{ $item->dyeingFactory->name }} <br>
-                                            Address:{{ $item->dyeingFactory->address }}
+                                            Name:{{ @$item->dyeingFactory->name }} <br>
+                                            Address:{{ @$item->dyeingFactory->address }}
 
                                         </td>
                                         <td>

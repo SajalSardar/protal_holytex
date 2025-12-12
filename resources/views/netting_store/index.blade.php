@@ -66,8 +66,8 @@
                                         <td>{{ $item->unit }}</td>
                                         <td>{{ $item->received_date }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
-                                        <td>Name:{{ $item->storeAddress->name }} <br> Address:{{
-                                            $item->storeAddress->address }}</td>
+                                        <td>Name:{{ @$item->storeAddress->name }} <br> Address:{{
+                                            @$item->storeAddress->address }}</td>
                                         <td>
                                             @php
                                             $itemjson = [

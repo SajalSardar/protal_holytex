@@ -68,7 +68,7 @@
                                         <td>{{ $item->quantity - $totalUse }}</td>
                                         <td>{{ $item->approximate_delivery_date }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
-                                        <td>{{ $item->dyedFactory->name }}</td>
+                                        <td>{{ @$item->dyedFactory->name }}</td>
                                         <td>
                                             <div class="dropdown text-end">
                                                 <a class="btn btn-primary dropdown-toggle" href="#" role="button"

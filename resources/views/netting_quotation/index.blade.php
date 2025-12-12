@@ -71,8 +71,8 @@
                                         <td>{{ Str::ucfirst($item->status) }}</td>
                                         <td>{{$item->dyed_quotation_id || $item->stock_id ? 'Dyed Yarn' : 'Yarn' }}</td>
                                         <td>
-                                            Name:{{ $item->nettingFactory->name }} <br>
-                                            Address:{{ $item->nettingFactory->address }}
+                                            Name:{{ @$item->nettingFactory->name }} <br>
+                                            Address:{{ @$item->nettingFactory->address }}
 
                                         </td>
                                         <td>

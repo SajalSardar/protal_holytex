@@ -72,7 +72,7 @@
                                         <td>{{ Str::ucfirst($item->status) }}</td>
                                         <td>{{ $item->received_date ?? '--' }}</td>
                                         <td>
-                                            {{ $item->garmentsFactory->name }}
+                                            {{ @$item->garmentsFactory->name }}
                                         </td>
                                         <td>
                                             <div class="dropdown text-end">

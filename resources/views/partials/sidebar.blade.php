@@ -155,8 +155,14 @@
                 <ul class="menu-sub">
                     <li class="menu-item">
                         <a href="{{ route('accessoriesquotation.index') }}"
-                            class="menu-link {{ request()->routeIs(['accessoriesquotation.*', 'accessoriesreceived.*']) ? 'active' : '' }}">
+                            class="menu-link {{ request()->routeIs(['accessoriesquotation.*']) ? 'active' : '' }}">
                             Accessories Quotation
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('accessoriesreceived.index') }}"
+                            class="menu-link {{ request()->routeIs('accessoriesreceived.*') ? 'active' : '' }}">
+                            Accessories Stock
                         </a>
                     </li>
                 </ul>

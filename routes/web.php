@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AccessoriesQuotationController;
 use App\Http\Controllers\AccessoriesReceivedController;
-use App\Http\Controllers\AccessoriesStockController;
 use App\Http\Controllers\DyedFactoryController;
 use App\Http\Controllers\DyedQuotationController;
 use App\Http\Controllers\DyeingFactroyController;
@@ -93,7 +92,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('accessoriesquotation', AccessoriesQuotationController::class);
     Route::resource('accessoriesreceived', AccessoriesReceivedController::class);
-    Route::resource('accessoriesstock', AccessoriesStockController::class);
+    // Route::resource('accessoriesstock', AccessoriesStockController::class);
 
     Route::get('nettingreceivedgarments', [NettingReceivedGarmentsController::class, 'index'])->name('nettingreceivedgarments.index');
     Route::get('nettingreceivedgarments/{id}', [NettingReceivedGarmentsController::class, 'edit'])->name('nettingreceivedgarments.edit');

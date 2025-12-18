@@ -8,26 +8,32 @@ use App\Models\AccessoriesReceived;
 use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AccessoriesReceivedController extends Controller {
-    public function getAccessoriesStyleByPo($po_number) {
-        $dyeing = AccessoriesQuotation::where('po_number', $po_number)
-            ->withSum('accessoriesReceived', 'quantity')
-            ->withSum('accessoriesLoss', 'quantity')
-            ->withSum('accessoriesStoreStock', 'quantity')
-            ->get()
-            ->groupBy('style');
-        if ($dyeing) {
-            return $dyeing;
-        } else {
-            return 'Datas not found!';
-        }
-    }
+
     /**
      * Display a listing of the resource.
      */
     public function index() {
-        return view('accessories_received.index');
+        $accessoriesReceived = AccessoriesReceived::select(
+            DB::raw('MAX(po_number) as po_number'),
+            DB::raw('MAX(style) as style'),
+            DB::raw('MAX(description) as description'),
+            DB::raw('MAX(unit) as unit'),
+            DB::raw('SUM(quantity) as total_quantity')
+        )
+            ->groupBy('po_number', 'style', 'description')
+            ->get();
+
+        // foreach ($accessoriesReceived as $item) {
+        //     $item->dyed_total = DyedQuotation::where('po_number', $item->po_number)
+        //         ->where('style', $item->style)
+        //         ->where('description', $item->description)->sum('quantity');
+        // }
+
+        // return $accessoriesReceived;
+        return view('accessories_received.index', compact('accessoriesReceived'));
     }
 
     /**

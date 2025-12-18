@@ -92,9 +92,12 @@
                             <td>{{ $accessoriesquotation->supplier_address ?? '--' }}</td>
                         </tr>
                         <tr>
-                            <td><strong>Shiphing Address</strong></td>
+                            <td><strong>Store Address</strong></td>
                             <td>:</td>
-                            <td>{{ $accessoriesquotation->shiphing_address ?? '--' }}</td>
+                            <td>
+                                {{ @$accessoriesquotation->storeAddress->name ?? '--' }} <br>
+                                {{ @$accessoriesquotation->storeAddress->address ?? '--' }}
+                            </td>
                         </tr>
                     </table>
                 </div>

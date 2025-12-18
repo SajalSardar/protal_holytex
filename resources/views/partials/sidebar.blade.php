@@ -146,7 +146,8 @@
                     </li>
                 </ul>
             </li>
-            <li class="menu-item {{ request()->routeIs(['accessoriesquotation.*']) ? 'open' : '' }}">
+            <li
+                class="menu-item {{ request()->routeIs(['accessoriesquotation.*', 'accessoriesreceived.*']) ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">note_stack</span>
                     <span class="title">Accessories</span>
@@ -154,7 +155,7 @@
                 <ul class="menu-sub">
                     <li class="menu-item">
                         <a href="{{ route('accessoriesquotation.index') }}"
-                            class="menu-link {{ request()->routeIs('accessoriesquotation.*') ? 'active' : '' }}">
+                            class="menu-link {{ request()->routeIs(['accessoriesquotation.*', 'accessoriesreceived.*']) ? 'active' : '' }}">
                             Accessories Quotation
                         </a>
                     </li>

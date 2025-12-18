@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AccessoriesQuotation;
 use App\Models\Order;
+use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,7 +13,10 @@ class AccessoriesQuotationController extends Controller {
      * Display a listing of the resource.
      */
     public function index() {
-        $accessoriesQuotation = AccessoriesQuotation::orderBy('id', 'desc')->get();
+        $accessoriesQuotation = AccessoriesQuotation::with('storeAddress')
+            ->withSum('accessoriesReceived', 'quantity')
+            ->withSum('accessoriesLoss', 'quantity')
+            ->orderBy('id', 'desc')->get();
         // return $accessoriesQuotation;
         return view('accessories_quotation.index', compact('accessoriesQuotation'));
     }
@@ -21,8 +25,9 @@ class AccessoriesQuotationController extends Controller {
      * Show the form for creating a new resource.
      */
     public function create() {
-        $ordersPo = Order::where('status', 'approved')->pluck('po_number', 'id');
-        return view('accessories_quotation.create', compact('ordersPo'));
+        $ordersPo     = Order::where('status', 'approved')->pluck('po_number', 'id');
+        $storeAddress = Store::where('status', 'active')->get();
+        return view('accessories_quotation.create', compact('ordersPo', 'storeAddress'));
     }
 
     /**
@@ -34,6 +39,7 @@ class AccessoriesQuotationController extends Controller {
 
         $request->validate([
             'po_number' => 'required',
+            'store_id'  => 'required',
         ]);
 
         foreach ($request->style as $key => $item) {
@@ -44,13 +50,12 @@ class AccessoriesQuotationController extends Controller {
                 'supplier_name'             => $request->supplier_name,
                 'supplier_phone'            => $request->supplier_phone,
                 'supplier_address'          => $request->supplier_address,
-                'purchase_date'             => $request->order_date,
-                'shiphing_address'          => $request->shiphing_address,
+                'order_date'                => $request->order_date,
+                'store_id'                  => $request->store_id,
                 'approximate_delivery_date' => $request->approximate_delivery_date,
                 'remarks'                   => $request->remarks,
                 'style'                     => $item,
                 'description'               => $request->description[$key],
-                'from_stock_quantity'       => $request->from_stock_quantity[$key],
                 'quantity'                  => $request->unit_quantity[$key],
                 'price'                     => $request->unit_price[$key],
                 'total_price'               => $request->total_unit_price[$key],
@@ -74,8 +79,9 @@ class AccessoriesQuotationController extends Controller {
      * Show the form for editing the specified resource.
      */
     public function edit(AccessoriesQuotation $accessoriesquotation) {
-        $ordersPo = Order::where('status', 'approved')->pluck('po_number', 'id');
-        return view('accessories_quotation.edit', compact('accessoriesquotation', 'ordersPo'));
+        $ordersPo     = Order::where('status', 'approved')->pluck('po_number', 'id');
+        $storeAddress = Store::where('status', 'active')->get();
+        return view('accessories_quotation.edit', compact('accessoriesquotation', 'ordersPo', 'storeAddress'));
     }
 
     /**
@@ -84,21 +90,22 @@ class AccessoriesQuotationController extends Controller {
     public function update(Request $request, AccessoriesQuotation $accessoriesquotation) {
         $request->validate([
             'po_number' => 'required',
+            'store_id'  => 'required',
         ]);
         $accessoriesquotation->update([
             'supplier_name'             => $request->supplier_name,
             'supplier_phone'            => $request->supplier_phone,
             'supplier_address'          => $request->supplier_address,
-            'purchase_date'             => $request->order_date,
-            'shiphing_address'          => $request->shiphing_address,
+            'order_date'                => $request->order_date,
+            'store_id'                  => $request->store_id,
             'approximate_delivery_date' => $request->approximate_delivery_date,
             'remarks'                   => $request->remarks,
             'description'               => $request->description,
-            'from_stock_quantity'       => $request->from_stock_quantity,
             'quantity'                  => $request->quantity,
             'price'                     => $request->price,
             'total_price'               => $request->total_unit_price,
             'unit'                      => $request->unit,
+            'status'                    => $request->status,
             'updated_by'                => Auth::id(),
         ]);
         if ($request->status === "approved") {

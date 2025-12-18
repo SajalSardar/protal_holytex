@@ -2,7 +2,7 @@
 $po_number = request()->po_number ?? '';
 @endphp
 @extends('layouts.master')
-@section('title', 'Accessories Receiving')
+@section('title', 'Yarn Received')
 @section('content')
 <div class="main-content-container overflow-hidden">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
@@ -20,7 +20,7 @@ $po_number = request()->po_number ?? '';
                     <span class="fw-medium">Order</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span class="fw-medium">Accessories Receiving</span>
+                    <span class="fw-medium">Accessories Received</span>
                 </li>
             </ol>
         </nav>
@@ -32,20 +32,16 @@ $po_number = request()->po_number ?? '';
                 <div class="card bg-white border-0 rounded-3 mb-4">
                     <div class="card-body p-4">
                         <div class="row">
-                            <input type="hidden" id="order_id" name="order_id">
-                            <input type="hidden" id="order_number" name="order_number">
-                            <div class="col-lg-6">
+                            <input type="hidden" id="order_id" name="order_id" value="{{ $accessoriesQut->order_id }}">
+                            <input type="hidden" id="accessoriesQut_id" name="accessoriesQut_id"
+                                value="{{ $accessoriesQut->id }}">
+                            <div class="col-lg-4">
                                 <div class="form-group mb-4">
                                     <label class="label text-secondary">PO Number <span
-                                            style="color: rgb(205, 2, 2)">*</span>(Show only received yarn)</label>
-                                    <select name="po_number" id="po_number"
-                                        class="form-control select2  @error('po_number') is-invalid @enderror">
-                                        <option value="" selected disabled>Select PO Number</option>
-                                        @foreach ($accessoriesQut as $item)
-                                        <option value="{{ $item->po_number }}" {{ $po_number==$item->po_number ?
-                                            "selected" : '' }}>{{ $item->po_number }}</option>
-                                        @endforeach
-                                    </select>
+                                            style="color: rgb(205, 2, 2)">*</span></label>
+                                    <input type="text" name="po_number" id="po_number"
+                                        class="form-control  @error('po_number') is-invalid @enderror"
+                                        value="{{@$accessoriesQut->po_number}}" readonly>
                                     @error('po_number')
                                     <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror
@@ -55,8 +51,175 @@ $po_number = request()->po_number ?? '';
                     </div>
                 </div>
             </div>
+            <div class="col-lg-12">
+                <div class="card bg-white border-0 rounded-3 mb-4">
+                    <div class="card-body p-4">
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <h3>CHALLAN INFO</h3>
+                            </div>
+                            <div class="col-lg-3 col-sm-4">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Challan No.</label>
+                                    <input type="text" name="challan_number" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-4">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Vehicle Number</label>
+                                    <input type="text" name="vehicle_number" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-4">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Challan Date</label>
+                                    <input type="date" name="challan_date" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-4">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Received Date</label>
+                                    <input type="date" name="received_date" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-sm-4">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Upload Challan</label>
+                                    <input type="file" name="challan_file" class="form-control">
+                                    <p class="fs-12">Uploaded file size 512kb & File type jpg,png </p>
+                                    @error('challan_file')
+                                    <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion mb-5">
+                <div class="accordion-item">
+                    <h2 class="accordion-header mb-3">
+                        <button style="background: #605dff;" class="accordion-button text-uppercase text-white"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#collapse${key}">
+                            <strong>Style: {{ @$accessoriesQut->style }}</strong>
+                        </button>
+                    </h2>
+                    <div id="collapse${key}" class="accordion-collapse collapse show">
+                        <div class="accordion-body p-0 px-2">
+
+
+                            @php
+                            $quotation = $accessoriesQut->quantity ?? 0;
+                            $allTotalRecevied =
+                            $accessoriesQut->accessories_received_sum_quantity +
+                            $accessoriesQut->accessories_loss_sum_quantity;
+                            $noreceived =number_format($quotation - $allTotalRecevied, 2);
+                            @endphp
+                            <div class="row my-4">
+                                <input type="hidden" name="style" value="{{@ $accessoriesQut->style}}">
+
+                                <input type="hidden" name="accessoriesQut_id" value="{{ @$accessoriesQut->id}}">
+                                <input type="hidden" name="unit" value="{{ @$accessoriesQut->unit}}">
+
+                                <div class="col-lg col-sm-4 pe-0 mb-3">
+                                    <label class="label text-secondary">Description</label>
+                                    <input class="form-control" name="description"
+                                        value="{{ @$accessoriesQut->description}}" readonly>
+                                </div>
+                                <div class="col-lg col-sm-4 pe-0 mb-3">
+                                    <label class="label text-secondary">Quotation(KG)</label>
+                                    <input type="text" class="form-control" readonly
+                                        value="{{ @$accessoriesQut->quantity}}">
+                                </div>
+                                <div class="col-lg col-sm-4 pe-0 mb-3">
+                                    <label class="label text-secondary">Supplier</label>
+                                    <input class="form-control" readonly value="{{ @$accessoriesQut->supplier_name}}">
+                                </div>
+                                <div class="col-lg col-sm-4 pe-0 mb-3">
+                                    <label class="label text-secondary">Received</label>
+                                    <input type="text" class="form-control" readonly
+                                        value="{{ @$accessoriesQut->accessories_received_sum_quantity}}">
+                                </div>
+                                <div class="col-lg col-sm-4 pe-0 mb-3">
+                                    <label class="label text-secondary">Quotation
+                                        Loss</label>
+                                    <input type="text" class="form-control" readonly
+                                        value="{{ @$accessoriesQut->accessories_loss_sum_quantity ?? 0}}">
+                                </div>
+                                <div class="col-lg col-sm-4 pe-0 mb-3">
+                                    <label class="label text-secondary">No
+                                        Received</label>
+                                    <input type="text" class="form-control" readonly value="{{ @$noreceived }}">
+                                </div>
+                                <div class="col-lg col-sm-4 mb-3">
+                                    <label class="label text-secondary">Store
+                                        Address</label>
+                                    <input type="text" class="form-control" readonly
+                                        value="{{ @$accessoriesQut->storeAddress->name}}">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <h4 class="fs-18 text-primary">Receive Quantity</h4>
+                                </div>
+                            </div>
+                            {{-- <div class="col-12">
+                                <div class="alert alert-success mb-3">Total Quotation Received Done!</div>
+                            </div> --}}
+                            <div class="row">
+                                <div class="col-lg-2 pe-0 mb-3">
+                                    <label class="label text-secondary">Lot
+                                        No.</label>
+                                    <input type="text" class="form-control"
+                                        oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')"
+                                        name="loat_no">
+                                </div>
+                                <div class="col-lg-1 pe-0 mb-3">
+                                    <label class="label text-secondary">Bags</label>
+                                    <input type="text" class="form-control"
+                                        oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')"
+                                        name="bag_count">
+                                </div>
+                                <div class="col-lg-2 pe-0 mb-3">
+                                    <label class="label text-secondary">Accessories</label>
+                                    <input type="text" max="{{ @$noreceived }}" id="netting_item" class="form-control"
+                                        oninput="limitWeightValue(this)" name="accessories">
+                                </div>
+                                <div class="col-lg-2 pe-0 mb-3">
+                                    <label class="label text-secondary">Loss</label>
+                                    <input type="text" class="form-control" max="{{ @$noreceived }}" id="loss_item"
+                                        oninput="limitWeightValue(this)" name="loss">
+                                </div>
+                                <div class="col-lg-2 pe-0 mb-3">
+                                    <label class="label text-secondary">Store
+                                        Address</label>
+                                    <select class="form-control address_select_box select2" name="store_id">
+                                        <option value="" selected>Selete Store</option>
+                                        @foreach ($storeAddress as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-lg-3 mb-3">
+                                    <label class="label text-secondary">Remarks</label>
+                                    <textarea rows="1" class="form-control" name="remarks"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12 my-3">
+                <div class="d-flex flex-wrap gap-3">
+                    <button type="submit" class="btn btn-primary py-2 px-4 fw-medium fs-16"
+                        onclick="this.disabled=true; this.innerHTML='Saving…'; this.form.submit();"> <i
+                            class="ri-add-line text-white fw-medium"></i> Create</button>
+                </div>
+            </div>
+
         </div>
-        <div id="show_all_yarn_item" class="row"></div>
     </form>
 </div>
 
@@ -67,192 +230,25 @@ $po_number = request()->po_number ?? '';
 @section('script')
 <script>
     $(function() {
-        $('.select2').select2();
-
-        $('#po_number').on('change',function(){
-            let selected_po_number = $(this).val();
-            let currentUrl = window.location.origin + window.location.pathname;
-            window.location.href = currentUrl + "?po_number=" + selected_po_number;
-
-           loadYarnData(selected_po_number);
-        });
-        
-        $(window).on('load',function(){
-            let request_po ="{{ $po_number }}"
-            if(request_po != ''){
-                loadYarnData(request_po);
-            }
-        });
-
-
-        function loadYarnData(po_number){
-             if (po_number) {
-
-                fetch(`/get-accessories-quotation-by-po/${encodeURIComponent(po_number)}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    // console.log('API response:', response);
-                    return response.json();
-                })
-                .then(data => {
-                    let order_id = null;
-                    let order_number = null;
-                    // console.log('API response:', data);
-                    let display_div = $('#show_all_yarn_item');
-                    let singleItem = `<div class="col-lg-12">
-                                    <div class="card bg-white border-0 rounded-3 mb-4">
-                                        <div class="card-body p-4">
-                                            <div class="row">
-                                                <div class="col-12 mb-3">
-                                                    <h3>CHALLAN INFO</h3>
-                                                </div>
-                                                <div class="col-lg-3 col-sm-4">
-                                                    <div class="form-group mb-4">
-                                                        <label class="label text-secondary">Challan No.</label>
-                                                        <input type="text" name="challan_number" class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-2 col-sm-4">
-                                                    <div class="form-group mb-4">
-                                                        <label class="label text-secondary">Vehicle Number</label>
-                                                        <input type="text" name="vehicle_number" class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-2 col-sm-4">
-                                                    <div class="form-group mb-4">
-                                                        <label class="label text-secondary">Challan Date</label>
-                                                        <input type="date" name="challan_date" class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-2 col-sm-4">
-                                                    <div class="form-group mb-4">
-                                                        <label class="label text-secondary">Received Date</label>
-                                                        <input type="date" name="received_date" class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-3 col-sm-4">
-                                                    <div class="form-group mb-4">
-                                                        <label class="label text-secondary">Upload Challan</label>
-                                                        <input type="file" name="challan_file" class="form-control">
-                                                        <p class="fs-12">Uploaded file size 512kb & File type jpg,png </p>
-                                                        @error('challan_file')
-                                                            <p class="text-danger">{{ $message }}</p>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>`;
-                    // Append new options
-                    Object.entries(data).forEach(([key, items]) => {
-                        singleItem +=`<div class="col-lg-12">
-                            <div class="accordion mb-5" style="border-bottom:5px solid #605dff;">
-                        <div class="accordion-item">
-                                <h2 class="accordion-header mb-3">
-                                    <button style="background: #605dff;" class="accordion-button text-uppercase text-white"
-                                        type="button" data-bs-toggle="collapse" data-bs-target="#collapse${key}">
-                                        <strong>Style: ${key}</strong>
-                                    </button>
-                                </h2>
-                            <div id="collapse${key}" class="accordion-collapse collapse show">
-                                <div class="accordion-body p-0 px-2">`;
-                         items.forEach(item => {
-                            order_id = item.order_id;
-                            order_number = item.order_number;
-                            let quotation = parseFloat(item.quantity);
-                            let allTotalRecevied =
-                                                (Number(item.accessories_received_sum_quantity) || 0) +
-                                                (Number(item.accessories_loss_sum_quantity) || 0) +
-                                                (Number(item.accessories_store_stock_sum_quantity) || 0);
-                            let noreceived = parseFloat(quotation - allTotalRecevied).toFixed(2);
-                            
-                            singleItem +=`<div class="row my-4">
-                                        <input type="hidden" name="items[${item.id}][acc_qyt_id]" value="${item.id}">
-                                        <input type="hidden" name="items[${item.id}][style]" value="${item.style}">
-                                        <input type="hidden" name="items[${item.id}][unit]" value="${item.unit}">
-                                        
-                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Quotation</label><input type="text" class="form-control" readonly value="${item.quantity}-${item.unit}"></div>
-                                        <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Received</label><input type="text" class="form-control" readonly value="${item.accessories_received_sum_quantity || 0}"></div>
-                                       <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store In Stock</label><input type="text" class="form-control" readonly value="${item.accessories_store_stock_sum_quantity || 0}"></div>
-                                        <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">Loss</label><input type="text" class="form-control" readonly  value="${item.accessories_loss_sum_quantity || 0}"></div>
-                                        <div class="col-lg-1 pe-0 mb-3"><label class="label text-secondary">No Received</label><input type="text" class="form-control" readonly value="${noreceived}"></div>
-                                        <div class="col-md-2 pe-0 mb-3"><label class="label text-secondary">Supplier Address</label><input class="form-control" readonly value="Name:${item.supplier_name} - Address:${item.supplier_address} - Phone:${item.supplier_phone}"></div>
-                                       <div class="col-md-2 mb-3"><label class="label text-secondary">Shiphing Address</label><input class="form-control" readonly value="${item.shiphing_address}"></div>
-                                    `;
-                                    
-                                    
-                                    if(allTotalRecevied >= quotation){ 
-                                        singleItem +=`<div class="col-12">
-                                                        <div class="alert alert-success mb-3">Total Received Done!</div>
-                                                    </div> <hr class="m-0">`;
-                                    }else{
-                                        singleItem +=`<div class="col-12">
-                                                <div class="row">
-                                                    <div class="col-12 mb-2 mt-3">
-                                                        <h4 class="fs-16 text-primary">Receive Quantity(Accessories, Loss, Store In Stock):</h4>
-                                                    </div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Lot No.</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][loat_no]"></div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Bags</label><input type="text" class="form-control" oninput="this.value = this.value.replace(/^(\\d*\\.?\\d{0,2}).*$/,'$1')" name="items[${item.id}][bag_count]"></div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Accessories</label><input type="text" max="${noreceived}" id="accessories_${item.id}" class="form-control" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][accessories]"></div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Loss</label><input type="text" class="form-control" max="${noreceived}" id="loss_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][loss]"></div>
-                                                    <div class="col-lg-4 mb-3"><label class="label text-secondary">Remarks</label><textarea rows="1" class="form-control" name="items[${item.id}][remarks]"></textarea></div>
-                                                    <div class="col-lg-2 pe-0 mb-3"><label class="label text-secondary">Store Stock</label><input type="text" class="form-control" max="${noreceived}" id="stock_${item.id}" oninput="limitWeightValue(this,${item.id})" name="items[${item.id}][stock]"></div>
-                                                    <div class="col-lg-4 mb-3"><label class="label text-secondary">Store Address</label><textarea rows="1" class="form-control" name="items[${item.id}][store_address]"></textarea></div>
-                                                    
-                                                </div>
-                                            </div>
-                                        </div> <hr class="m-0">`;
-                                    }
-                        });
-                       singleItem +=`</div></div></div>
-                                    </div></div></div>`;
-                    });
-                   
-                    singleItem +=`<div class="col-lg-12 my-3">
-                                    <div class="d-flex flex-wrap gap-3">
-                                        <button type="submit" class="btn btn-primary py-2 px-4 fw-medium fs-16"> <i
-                                                class="ri-add-line text-white fw-medium"></i> Create</button>
-                                    </div>
-                                </div>`;
-                    display_div.html(singleItem);
-                    $('#order_id').val(order_id);
-                     $('#order_number').val(order_number);
-
-                })
-                .catch(error => {
-                     console.error('Fetch error:', error);
-                });
-            }
-            
-            
-        };
-
-        
+        $('.select2').select2();  
 
     });
     
-    function limitWeightValue(input, id){
+    function limitWeightValue(input){
          input.value = input.value.replace(/^(\d*\.?\d{0,2}).*$/, '$1');
         
-        let accessories_= document.getElementById('accessories_'+id).value;
-        let loss_= document.getElementById('loss_'+id).value;
-        let stock_= document.getElementById('stock_'+id).value;
+        let netting_= $('#netting_item').val();
+        let loss_= $('#loss_item').val();
 
         let maxVal = parseFloat(input.max);
-        let val = parseFloat(input.value);
-        let totalVal = (Number(accessories_) || 0) + (Number(loss_) || 0) +(Number(stock_) || 0);
-        // console.log(totalVal);
+
+        let totalVal = (Number(netting_) || 0) + (Number(loss_) || 0);
+        console.log(maxVal);
         if (totalVal > maxVal) {
-            alert(`Max allowed is ${maxVal}Kg (Netting + Loss + Stock)`);
+            alert(`Max allowed is ${maxVal}Kg`);
             input.value = 0;
         }
     }
 
-    function resetSelect(id) {
-        $('#'+id).val(null).trigger('change');
-    }
 </script>
 @endsection

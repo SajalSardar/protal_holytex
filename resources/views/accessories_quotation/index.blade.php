@@ -30,8 +30,8 @@
     <div class="row">
         <div class=" col-lg-12">
             <div class="card bg-white border-0 rounded-3 mb-4">
-                <div class="card-body p-4">
-                    <div class="default-table-area style-two default-table-width">
+                <div class="card-body">
+                    <div class="default-table-area style-two">
                         <div class="table-responsive">
                             <table class="table align-middle">
                                 <thead>
@@ -40,33 +40,41 @@
                                         <th>PO</th>
                                         <th>Style</th>
                                         <th>Description</th>
-                                        <th>Quantity(kg)</th>
-                                        <th>Rate(TK)</th>
-                                        <th>Total(TK)</th>
+                                        <th>Quantity</th>
+                                        <th>Distribute</th>
+                                        <th>Loss</th>
+                                        <th>Available</th>
                                         <th>Unit</th>
-                                        <th>Approx. delivery_date</th>
+                                        <th>Delivery date</th>
                                         <th>Status</th>
+                                        <th>Store</th>
                                         <th>Supplier</th>
                                         <th class="text-end">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse ($accessoriesQuotation as $item)
+                                    @php
+                                    $totalUse = $item->accessories_received_sum_quantity +
+                                    $item->accessories_loss_sum_quantity
+                                    @endphp
                                     <tr>
                                         <td>{{ $item->id }}</td>
                                         <td>{{ $item->po_number }}</td>
                                         <td>{{ $item->style }}</td>
                                         <td>{{ $item->description }}</td>
                                         <td>{{ $item->quantity }}</td>
-                                        <td>{{ $item->price }}</td>
-                                        <td>{{ $item->total_price }}</td>
+                                        <td>{{ $item->accessories_received_sum_quantity }}</td>
+                                        <td>{{ $item->accessories_loss_sum_quantity }}</td>
+                                        <td>{{ number_format($item->quantity - $totalUse,2 ) }}</td>
                                         <td>{{ $item->unit }}</td>
                                         <td>{{ $item->approximate_delivery_date }}</td>
                                         <td>{{ Str::ucfirst($item->status) }}</td>
+                                        <td>{{ @$item->storeAddress->name }}</td>
                                         <td>
                                             Name:{{ $item->supplier_name }} <br>
                                             Phone:{{ $item->supplier_phone }}<br>
-                                            Address:{{ $item->supplier_address }}
+                                            {{-- Address:{{ $item->supplier_address }} --}}
 
                                         </td>
                                         <td>
@@ -77,15 +85,29 @@
                                                 </a>
 
                                                 <ul class="dropdown-menu dropdown-menu-end table_action_btn">
-                                                    <li><a class="dropdown-item py-2"
+                                                    <li>
+                                                        <a class="dropdown-item py-2"
+                                                            href="{{ route('accessoriesreceived.create', ['accessories_quotation'=> $item->id]) }}">
+                                                            <i
+                                                                class="material-symbols-outlined fs-16 text-body">edit</i>
+                                                            Accessories Receive</a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item py-2"
                                                             href="{{ route('accessoriesquotation.show',$item->id ) }}">
                                                             <i
                                                                 class="material-symbols-outlined fs-16 text-primary">visibility</i>
-                                                            View</a></li>
-                                                    <li><a class="dropdown-item py-2"
-                                                            href="{{ route('accessoriesquotation.edit',$item->id ) }}"><i
+                                                            View
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item py-2"
+                                                            href="{{ route('accessoriesquotation.edit',$item->id ) }}">
+                                                            <i
                                                                 class="material-symbols-outlined fs-16 text-body">edit</i>
-                                                            Edit</a></li>
+                                                            Edit
+                                                        </a>
+                                                    </li>
                                                     <li>
                                                         <form
                                                             action="{{ route('accessoriesquotation.destroy',$item->id) }}"

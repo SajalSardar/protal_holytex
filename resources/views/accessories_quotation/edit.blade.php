@@ -71,7 +71,7 @@
                             <div class="col-lg-3 col-sm-6">
                                 <div class="form-group">
                                     <label class="label text-secondary">Status</label>
-                                    <select name="status" class="form-select form-control status_select">
+                                    <select name="status" class="form-select form-control status_select select2">
                                         <option value="" disabled selected>Select Status</option>
                                         <option value="pending" {{ $accessoriesquotation->status === "pending" ?
                                             'selected' :
@@ -79,12 +79,19 @@
                                         <option value="approved" {{ $accessoriesquotation->status === "approved" ?
                                             'selected' :
                                             '' }}>Approved</option>
+                                        <option value="received" {{ $accessoriesquotation->status === "received" ?
+                                            'selected' :
+                                            '' }}>Received</option>
+                                        <option value="ready_to_deliver" {{ $accessoriesquotation->status ===
+                                            "ready_to_deliver" ? 'selected' :
+                                            '' }}>Ready to deliver</option>
+                                        <option value="delivered" {{ $accessoriesquotation->status === "delivered" ?
+                                            'selected'
+                                            : '' }}>Delivered</option>
                                         <option value="cancelled" {{ $accessoriesquotation->status === "cancelled" ?
                                             'selected'
                                             : '' }}>Cancelled</option>
-                                        <option value="finished" {{ $accessoriesquotation->status === "finished" ?
-                                            'selected' :
-                                            '' }}>Finished</option>
+
                                     </select>
                                 </div>
                             </div>
@@ -111,13 +118,6 @@
                                         placeholder="Enter Supplier Address">{{ old('supplier_address',$accessoriesquotation->supplier_address) }}</textarea>
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-sm-6">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">Shiphing Address</label>
-                                    <textarea class="form-control" rows="2" name="shiphing_address"
-                                        placeholder="Enter Shiphing Address">{{ old('shiphing_address',$accessoriesquotation->shiphing_address) }}</textarea>
-                                </div>
-                            </div>
 
                             <div class="col-lg-6 col-sm-6">
                                 <div class="form-group mb-4">
@@ -126,6 +126,25 @@
                                         rows="1">{{ old('remarks',$accessoriesquotation->remarks) }}</textarea>
                                 </div>
                             </div>
+
+                            <div class="col-lg-4 col-sm-6">
+                                <div class="form-group mb-4">
+                                    <label class="label text-secondary">Store Address<span
+                                            style="color: rgb(205, 2, 2)">*</span></label>
+                                    <select name="store_id" value="{{ old('store_id') }}"
+                                        class="form-control select2  @error('store_id') is-invalid @enderror">
+                                        <option value="" selected disabled>Select store address</option>
+                                        @foreach ($storeAddress as $item)
+                                        <option value="{{ $item->id }}" {{ $accessoriesquotation->store_id === $item->id
+                                            ? 'selected': '' }}>{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('store_id')
+                                    <div class="text-danger mt-2">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <hr>
 
                             <div class="col-lg-2 col-sm-6 px-0">
@@ -143,15 +162,6 @@
                                     <textarea rows="1" class="form-control" placeholder="Write your note here...."
                                         id="description"
                                         name="description">{{ @$accessoriesquotation->description }}</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-2 col-sm-6">
-                                <div class="form-group mb-4">
-                                    <label class="label text-secondary">From Stock(KG)</label>
-                                    <input type="text" class="form-control " placeholder="Fill Up from stock"
-                                        id="from_stock" value="{{ @$accessoriesquotation->from_stock_quantity }}"
-                                        name="from_stock_quantity"
-                                        oninput="this.value = this.value.replace(/^(\d*\.?\d{0,2}).*$/, '$1')">
                                 </div>
                             </div>
                             <div class="col-lg-2 col-sm-6 pe-0">

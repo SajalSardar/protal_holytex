@@ -26,7 +26,11 @@ class AccessoriesQuotation extends Model {
     public function accessoriesLoss() {
         return $this->hasMany(AccessoriesLoss::class, 'accessories_quotation_id');
     }
-    public function accessoriesStoreStock() {
-        return $this->hasMany(AccessoriesStock::class, 'accessories_quotation_id');
+    // public function accessoriesStoreStock() {
+    //     return $this->hasMany(AccessoriesStock::class, 'accessories_quotation_id');
+    // }
+
+    public function storeAddress() {
+        return $this->hasOne(Store::class, 'id', 'store_id');
     }
 }
